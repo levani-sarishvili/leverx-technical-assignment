@@ -1,0 +1,84 @@
+{
+  "_version": "1.12.0",
+
+  "sap.app": {
+    "title": "UI5 Application: levani.sarishvili",
+    "id": "levani.sarishvili",
+    "type": "application",
+    "applicationVersion": {
+      "version": "1.0.0"
+    }
+  },
+
+  "sap.ui": {
+    "technology": "UI5",
+    "icons": {},
+    "deviceTypes": {
+      "desktop": true,
+      "tablet": true,
+      "phone": true
+    }
+  },
+
+  "sap.ui5": {
+    "dependencies": {
+      "minUI5Version": "1.135.0",
+      "libs": {
+        "sap.ui.core": {},
+        "sap.m": {},
+        "sap.f": {}
+      }
+    },
+
+    "rootView": {
+      "viewName": "levani.sarishvili.view.App",
+      "type": "XML",
+      "id": "app"
+    },
+
+    "handleValidation": true,
+
+    "contentDensities": {
+      "compact": true,
+      "cozy": true
+    },
+
+    "models": {
+      "i18n": {
+        "type": "sap.ui.model.resource.ResourceModel",
+        "settings": {
+          "bundleName": "levani.sarishvili.i18n.i18n",
+          "bundleLocale": "en"
+        }
+      },
+
+      "ui": {
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "./model/ui.json"
+      }
+    },
+
+    "routing": {
+      "config": {
+        "routerClass": "sap.m.routing.Router",
+        "viewType": "XML",
+        "viewPath": "levani.sarishvili.view",
+        "controlId": "app",
+        "controlAggregation": "pages"
+      },
+      "routes": [
+        {
+          "pattern": "",
+          "name": "StoreOverview",
+          "target": ["StoreOverview"]
+        }
+      ],
+      "targets": {
+        "StoreOverview": {
+          "viewId": "StoreOverview",
+          "viewName": "StoreOverview"
+        }
+      }
+    }
+  }
+}
