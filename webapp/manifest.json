@@ -52,10 +52,13 @@
         }
       },
 
-      "ui": {
-        "type": "sap.ui.model.json.JSONModel",
-        "uri": "./model/ui.json"
+      "": {
+      "type": "sap.ui.model.json.JSONModel",
+      "uri": "model/data.json",
+      "settings": {
+        "bindRequest": true
       }
+    }
     },
 
     "routing": {
@@ -69,14 +72,14 @@
       "routes": [
         {
           "pattern": "",
-          "name": "StoreOverview",
-          "target": ["StoreOverview"]
+          "name": "ProductList",
+          "target": ["ProductList"]
         }
       ],
       "targets": {
-        "StoreOverview": {
-          "viewId": "StoreOverview",
-          "viewName": "StoreOverview"
+        "ProductList": {
+          "viewId": "ProductList",
+          "viewName": "ProductList"
         }
       }
     }

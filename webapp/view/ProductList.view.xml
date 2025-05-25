@@ -1,0 +1,216 @@
+<mvc:View
+  controllerName="levani.sarishvili.controller.ProductList"
+  displayBlock="true"
+  xmlns="sap.m"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:f="sap.f"
+  xmlns:core="sap.ui.core"
+  xmlns:layout="sap.ui.layout">
+
+  <f:DynamicPage
+    id="productListPage"
+    showFooter="true"
+    headerExpanded="true"
+    toggleHeaderOnTitleClick="true"
+    preserveHeaderStateOnScroll="false"
+    class="sapUiNoContentPadding">
+
+    <!-- Title -->
+    <f:title>
+      <f:DynamicPageTitle>
+        <f:snappedContent>
+          <Breadcrumbs separatorStyle="{/selected}">
+            <Link text="ProductList" />
+          </Breadcrumbs>
+        </f:snappedContent>
+        <f:heading>
+          <Title text="ProductList" level="H1" />
+        </f:heading>
+        <f:expandedContent>
+          <Breadcrumbs separatorStyle="{/selected}">
+            <Link text="ProductList" />
+          </Breadcrumbs>
+        </f:expandedContent>
+      </f:DynamicPageTitle>
+    </f:title>
+
+    <!-- DynamicPage Header -->
+    <f:header>
+      <f:DynamicPageHeader pinnable="true">
+
+      </f:DynamicPageHeader>
+    </f:header>
+
+
+    <!-- Content wrapped in a VBox -->
+    <f:content>
+      <VBox width="100%">
+        <!-- Products Table -->
+        <Table
+          id="productsTable"
+          items="{/Products}"
+          sticky="ColumnHeaders"
+          backgroundDesign="Solid"
+          width="100%"
+          noDataText="No products found"
+        >
+          <headerToolbar>
+            <OverflowToolbar>
+              <content>
+                <Title text="Products" level="H2" />
+                <ToolbarSpacer />
+                <SearchField
+                  id="productSearchField"
+                  width="25rem"
+                  placeholder="Search product"
+                  search="onProductSearchPress"
+                />
+              </content>
+            </OverflowToolbar>
+          </headerToolbar>
+
+          <columns>
+            <Column width="12em" hAlign="Begin">
+              <header>
+                <Text text="Image" />
+              </header>
+            </Column>
+
+            <Column width="12em" hAlign="Begin">
+              <header>
+                <HBox alignItems="Center">
+                  <Button
+                    type="Transparent"
+                    icon="sap-icon://sort"
+                    press="onSortPress"
+                    class="sapUiTinyMarginEnd">
+                    <customData>
+                      <core:CustomData key="sortField" value="Name" />
+                    </customData>
+                  </Button>
+                  <Text text="Name" />
+                </HBox>
+              </header>
+            </Column>
+
+            <Column minScreenWidth="1360px" demandPopin="true" hAlign="Begin">
+              <header>
+                <HBox alignItems="Center">
+                  <Button
+                    type="Transparent"
+                    icon="sap-icon://sort"
+                    press="onSortPress"
+                    class="sapUiTinyMarginEnd">
+                    <customData>
+                      <core:CustomData key="sortField" value="Price" />
+                    </customData>
+                  </Button>
+                  <Text text="Price" />
+                </HBox>
+              </header>
+            </Column>
+
+            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+              <header>
+                <HBox alignItems="Center">
+                  <Button
+                    type="Transparent"
+                    icon="sap-icon://sort"
+                    press="onSortPress"
+                    class="sapUiTinyMarginEnd">
+                    <customData>
+                      <core:CustomData key="sortField" value="Category" />
+                    </customData>
+                  </Button>
+                  <Text text="Category" />
+                </HBox>
+              </header>
+            </Column>
+
+            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+              <header>
+                <HBox alignItems="Center">
+                  <Button
+                    type="Transparent"
+                    icon="sap-icon://sort"
+                    press="onSortPress"
+                    class="sapUiTinyMarginEnd">
+                    <customData>
+                      <core:CustomData key="sortField" value="Stock" />
+                    </customData>
+                  </Button>
+                  <Text text="Stock" />
+                </HBox>
+              </header>
+            </Column>
+
+            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+              <header>
+                <HBox alignItems="Center">
+                  <Button
+                    type="Transparent"
+                    icon="sap-icon://sort"
+                    press="onSortPress"
+                    class="sapUiTinyMarginEnd">
+                    <customData>
+                      <core:CustomData key="sortField" value="Brand" />
+                    </customData>
+                  </Button>
+                  <Text text="Brand" />
+                </HBox>
+              </header>
+            </Column>
+
+            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+              <header>
+                <HBox alignItems="Center">
+                  <Button
+                    type="Transparent"
+                    icon="sap-icon://sort"
+                    press="onSortPress"
+                    class="sapUiTinyMarginEnd">
+                    <customData>
+                      <core:CustomData key="sortField" value="Rating" />
+                    </customData>
+                  </Button>
+                  <Text text="Rating" />
+                </HBox>
+              </header>
+            </Column>
+
+            <!-- Empty column for table actions -->
+            <Column minScreenWidth="360px" demandPopin="true" hAlign="Begin">
+            </Column>
+          </columns>
+          <items>
+            <ColumnListItem type="Navigation" press="onProductPress">
+              <Image src="{thumbnail}" width="50px" height="50px" />
+              <Text text="{title}" />
+              <Text text="{= ${price} + ' ' + 'USD'}" />
+              <Text text="{category}" />
+              <Text text="{stock}" />
+              <Text text="{brand}" />
+              <RatingIndicator
+                id="RI_display_only"
+                iconSize="1rem"
+                maxValue="5"
+                class="sapUiSmallMarginBottom"
+                value="{rating}"
+                displayOnly="true" />
+
+            </ColumnListItem>
+          </items>
+        </Table>
+      </VBox>
+    </f:content>
+
+    <!-- Footer -->
+    <f:footer>
+      <OverflowToolbar>
+        <ToolbarSpacer />
+        <Button press="onProductCreatePress" icon="sap-icon://add" type="Ghost"
+          text="Create" />
+      </OverflowToolbar>
+    </f:footer>
+  </f:DynamicPage>
+</mvc:View>
