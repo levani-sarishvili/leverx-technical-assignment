@@ -53,12 +53,12 @@
       },
 
       "": {
-      "type": "sap.ui.model.json.JSONModel",
-      "uri": "model/data.json",
-      "settings": {
-        "bindRequest": true
+        "type": "sap.ui.model.json.JSONModel",
+        "uri": "model/data.json",
+        "settings": {
+          "bindRequest": true
+        }
       }
-    }
     },
 
     "routing": {

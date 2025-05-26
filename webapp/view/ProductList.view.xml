@@ -37,7 +37,53 @@
     <!-- DynamicPage Header -->
     <f:header>
       <f:DynamicPageHeader pinnable="true">
+        <FlexBox wrap="Wrap" alignItems="End" justifyContent="SpaceBetween"
+          width="100%">
+          <!-- Search field -->
+          <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+            <SearchField
+              id="productSearchField"
+              placeholder="Search product"
+              search="onProductSearchPress"
+            />
+          </VBox>
 
+          <!-- Combobox -->
+          <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+            <Label text="Category" showColon="true" />
+            <ComboBox
+              items="{
+              path: '/Products',
+              sorter: { path: 'text' }
+              }">
+              <core:Item key="{key}" text="{text}" />
+            </ComboBox>
+          </VBox>
+
+          <!-- Multi combobox -->
+          <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+            <Label text="Brand" showColon="true" />
+            <MultiComboBox
+              selectionChange="handleSelectionChange"
+              selectionFinish="handleSelectionFinish"
+              width="350px"
+              items="{
+              path: '/Products',
+              sorter: { path: 'Name' }
+              }">
+              <core:Item key="{ProductId}" text="{Name}" />
+            </MultiComboBox>
+          </VBox>
+
+          <!-- Date picker -->
+          <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
+            <Label text="Release date" showColon="true" />
+            <DatePicker
+              id="DP1"
+              change="handleChange"
+            />
+          </VBox>
+        </FlexBox>
       </f:DynamicPageHeader>
     </f:header>
 
@@ -59,23 +105,11 @@
               <content>
                 <Title text="Products" level="H2" />
                 <ToolbarSpacer />
-                <SearchField
-                  id="productSearchField"
-                  width="25rem"
-                  placeholder="Search product"
-                  search="onProductSearchPress"
-                />
               </content>
             </OverflowToolbar>
           </headerToolbar>
 
           <columns>
-            <Column width="12em" hAlign="Begin">
-              <header>
-                <Text text="Image" />
-              </header>
-            </Column>
-
             <Column width="12em" hAlign="Begin">
               <header>
                 <HBox alignItems="Center">
@@ -136,10 +170,10 @@
                     press="onSortPress"
                     class="sapUiTinyMarginEnd">
                     <customData>
-                      <core:CustomData key="sortField" value="Stock" />
+                      <core:CustomData key="sortField" value="ReleaseDate" />
                     </customData>
                   </Button>
-                  <Text text="Stock" />
+                  <Text text="ReleaseDate" />
                 </HBox>
               </header>
             </Column>
@@ -170,6 +204,23 @@
                     press="onSortPress"
                     class="sapUiTinyMarginEnd">
                     <customData>
+                      <core:CustomData key="sortField" value="SupplierName" />
+                    </customData>
+                  </Button>
+                  <Text text="SupplierName" />
+                </HBox>
+              </header>
+            </Column>
+
+            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+              <header>
+                <HBox alignItems="Center">
+                  <Button
+                    type="Transparent"
+                    icon="sap-icon://sort"
+                    press="onSortPress"
+                    class="sapUiTinyMarginEnd">
+                    <customData>
                       <core:CustomData key="sortField" value="Rating" />
                     </customData>
                   </Button>
@@ -184,18 +235,18 @@
           </columns>
           <items>
             <ColumnListItem type="Navigation" press="onProductPress">
-              <Image src="{thumbnail}" width="50px" height="50px" />
-              <Text text="{title}" />
-              <Text text="{= ${price} + ' ' + 'USD'}" />
-              <Text text="{category}" />
-              <Text text="{stock}" />
-              <Text text="{brand}" />
+              <Text text="{Name}" />
+              <Text text="{= ${Price} + ' ' + 'USD'}" />
+              <Text text="{Category}" />
+              <Text text="{ReleaseDate}" />
+              <Text text="{Brand}" />
+              <Text text="{SupplierName}" />
               <RatingIndicator
                 id="RI_display_only"
                 iconSize="1rem"
                 maxValue="5"
                 class="sapUiSmallMarginBottom"
-                value="{rating}"
+                value="{Rating}"
                 displayOnly="true" />
 
             </ColumnListItem>
