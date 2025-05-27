@@ -5,12 +5,14 @@
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:f="sap.f"
   xmlns:fb="sap.ui.comp.filterbar"
+  xmlns:t="sap.ui.table"
+  xmlns:rowmode="sap.ui.table.rowmodes"
+  xmlns:rowmodes="sap.ui.table.rowmodes"
   xmlns:core="sap.ui.core"
   xmlns:layout="sap.ui.layout">
 
   <f:DynamicPage
     id="productListPage"
-    showFooter="true"
     headerExpanded="true"
     toggleHeaderOnTitleClick="true"
     preserveHeaderStateOnScroll="false"
@@ -32,6 +34,7 @@
             <Link text="ProductList" />
           </Breadcrumbs>
         </f:expandedContent>
+
       </f:DynamicPageTitle>
     </f:title>
 
@@ -42,7 +45,7 @@
         <fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false"
           search=".onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad">
           <fb:filterGroupItems>
-            <fb:FilterGroupItem name="Name" groupName="Group1"
+            <fb:FilterGroupItem name="Search" groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
                 <!-- Search field -->
@@ -68,14 +71,13 @@
               </fb:control>
             </fb:FilterGroupItem>
 
-            <fb:FilterGroupItem name="SupplierName" label="SupplierName" groupName="Group1"
+            <fb:FilterGroupItem name="SupplierName" label="Supplier Name" groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
                 <!-- Multi combobox -->
                 <MultiComboBox
                   selectionChange="handleSelectionChange"
                   selectionFinish="handleSelectionFinish"
-                  width="350px"
                   items="{
                     path: '/Products',
                     sorter: { path: 'Name' }
@@ -85,7 +87,7 @@
               </fb:control>
             </fb:FilterGroupItem>
 
-            <fb:FilterGroupItem name="ReleaseDate" label="ReleaseDate" groupName="Group1"
+            <fb:FilterGroupItem name="ReleaseDate" label="Release Date" groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
                 <!-- Data picker -->
@@ -97,185 +99,126 @@
             </fb:FilterGroupItem>
           </fb:filterGroupItems>
         </fb:FilterBar>
-
       </f:DynamicPageHeader>
     </f:header>
 
-
     <!-- Content wrapped in a VBox -->
     <f:content>
-      <VBox width="100%">
+      <FlexBox width="100%">
         <!-- Products Table -->
-        <Table
-          id="productsTable"
-          items="{/Products}"
-          sticky="ColumnHeaders"
-          backgroundDesign="Solid"
-          width="100%"
-          noDataText="No products found"
+        <t:Table
+          class="sapUiResponsiveMargin"
+          rows="{/Products}"
+          rowSelectionChange="onRowSelectionChange"
+          ariaLabelledBy="title"
+          id="productTable"
+          selectionMode="MultiToggle"
+          rowActionCount="1"
         >
-          <headerToolbar>
-            <OverflowToolbar>
-              <content>
-                <Title text="Products" level="H2" />
-                <ToolbarSpacer />
-              </content>
+
+          <t:extension>
+            <OverflowToolbar style="Clear">
+              <Title id="title" text="Products" />
             </OverflowToolbar>
-          </headerToolbar>
+          </t:extension>
 
-          <columns>
-            <Column hAlign="Begin">
-              <header>
-                <HBox alignItems="Center">
-                  <Button
-                    type="Transparent"
-                    icon="sap-icon://sort"
-                    press="onSortPress"
-                    class="sapUiTinyMarginEnd">
-                    <customData>
-                      <core:CustomData key="sortField" value="Name" />
-                    </customData>
-                  </Button>
-                  <Text text="Name" />
-                </HBox>
-              </header>
-            </Column>
+          <t:columns>
+            <!-- Product name -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="Name"
+            >
+              <Label text="Name" />
+              <t:template>
+                <Text text="{Name}" />
+              </t:template>
+            </t:Column>
 
-            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
-              <header>
-                <HBox alignItems="Center">
-                  <Button
-                    type="Transparent"
-                    icon="sap-icon://sort"
-                    press="onSortPress"
-                    class="sapUiTinyMarginEnd">
-                    <customData>
-                      <core:CustomData key="sortField" value="Price" />
-                    </customData>
-                  </Button>
-                  <Text text="Price" />
-                </HBox>
-              </header>
-            </Column>
+            <!-- Price -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="Price"
+            >
+              <Label text="Price" />
+              <t:template>
+                <Text text="{path: 'Price', formatter: '.formatter.formatPrice'}" />
+              </t:template>
+            </t:Column>
 
-            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
-              <header>
-                <HBox alignItems="Center">
-                  <Button
-                    type="Transparent"
-                    icon="sap-icon://sort"
-                    press="onSortPress"
-                    class="sapUiTinyMarginEnd">
-                    <customData>
-                      <core:CustomData key="sortField" value="Category" />
-                    </customData>
-                  </Button>
-                  <Text text="Category" />
-                </HBox>
-              </header>
-            </Column>
+            <!-- Category -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="Category"
+            >
+              <Label text="Category" />
+              <t:template>
+                <Text text="{Category}" />
+              </t:template>
+            </t:Column>
 
-            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
-              <header>
-                <HBox alignItems="Center">
-                  <Button
-                    type="Transparent"
-                    icon="sap-icon://sort"
-                    press="onSortPress"
-                    class="sapUiTinyMarginEnd">
-                    <customData>
-                      <core:CustomData key="sortField" value="ReleaseDate" />
-                    </customData>
-                  </Button>
-                  <Text text="ReleaseDate" />
-                </HBox>
-              </header>
-            </Column>
+            <!-- Brand -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="Brand"
+            >
+              <Label text="Brand" />
+              <t:template>
+                <Text text="{Brand}" />
+              </t:template>
+            </t:Column>
 
-            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
-              <header>
-                <HBox alignItems="Center">
-                  <Button
-                    type="Transparent"
-                    icon="sap-icon://sort"
-                    press="onSortPress"
-                    class="sapUiTinyMarginEnd">
-                    <customData>
-                      <core:CustomData key="sortField" value="Brand" />
-                    </customData>
-                  </Button>
-                  <Text text="Brand" />
-                </HBox>
-              </header>
-            </Column>
+            <!-- SupplierName -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="SupplierName"
+            >
+              <Label text="SupplierName" />
+              <t:template>
+                <Text text="{SupplierName}" />
+              </t:template>
+            </t:Column>
 
-            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
-              <header>
-                <HBox alignItems="Center">
-                  <Button
-                    type="Transparent"
-                    icon="sap-icon://sort"
-                    press="onSortPress"
-                    class="sapUiTinyMarginEnd">
-                    <customData>
-                      <core:CustomData key="sortField" value="SupplierName" />
-                    </customData>
-                  </Button>
-                  <Text text="SupplierName" />
-                </HBox>
-              </header>
-            </Column>
+            <!-- ReleaseDate -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="ReleaseDate"
+            >
+              <Label text="ReleaseDate" />
+              <t:template>
+                <Text text="{ReleaseDate}" />
+              </t:template>
+            </t:Column>
 
-            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
-              <header>
-                <HBox alignItems="Center">
-                  <Button
-                    type="Transparent"
-                    icon="sap-icon://sort"
-                    press="onSortPress"
-                    class="sapUiTinyMarginEnd">
-                    <customData>
-                      <core:CustomData key="sortField" value="Rating" />
-                    </customData>
-                  </Button>
-                  <Text text="Rating" />
-                </HBox>
-              </header>
-            </Column>
+            <!-- Rating -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="Rating"
+            >
+              <Label text="Rating" />
+              <t:template>
+                <RatingIndicator
+                  id="RI_display_only"
+                  iconSize="1rem"
+                  maxValue="5"
+                  class="sapUiSmallMarginBottom"
+                  value="{Rating}"
+                  displayOnly="true" />
+              </t:template>
+            </t:Column>
+          </t:columns>
 
-            <!-- Empty column for table actions -->
-            <Column minScreenWidth="360px" demandPopin="true" hAlign="Begin">
-            </Column>
-          </columns>
-          <items>
-            <ColumnListItem type="Navigation" press="onProductPress">
-              <Text text="{Name}" />
-              <Text text="{= ${Price} + ' ' + 'USD'}" />
-              <Text text="{Category}" />
-              <Text text="{ReleaseDate}" />
-              <Text text="{Brand}" />
-              <Text text="{SupplierName}" />
-              <RatingIndicator
-                id="RI_display_only"
-                iconSize="1rem"
-                maxValue="5"
-                class="sapUiSmallMarginBottom"
-                value="{Rating}"
-                displayOnly="true" />
-
-            </ColumnListItem>
-          </items>
-        </Table>
-      </VBox>
+          <!-- Row Actions -->
+          <t:rowActionTemplate>
+            <t:RowAction>
+              <t:RowActionItem
+                icon="sap-icon://feeder-arrow"
+                text="Edit"
+                type="Custom"
+                press=".onEditRowPress" />
+            </t:RowAction>
+          </t:rowActionTemplate>
+        </t:Table>
+      </FlexBox>
     </f:content>
-
-    <!-- Footer -->
-    <f:footer>
-      <OverflowToolbar>
-        <ToolbarSpacer />
-        <Button press="onProductCreatePress" icon="sap-icon://add" type="Ghost"
-          text="Create" />
-      </OverflowToolbar>
-    </f:footer>
   </f:DynamicPage>
 </mvc:View>
