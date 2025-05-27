@@ -4,6 +4,7 @@
   xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:f="sap.f"
+  xmlns:fb="sap.ui.comp.filterbar"
   xmlns:core="sap.ui.core"
   xmlns:layout="sap.ui.layout">
 
@@ -37,53 +38,66 @@
     <!-- DynamicPage Header -->
     <f:header>
       <f:DynamicPageHeader pinnable="true">
-        <FlexBox wrap="Wrap" alignItems="End" justifyContent="SpaceBetween"
-          width="100%">
-          <!-- Search field -->
-          <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
-            <SearchField
-              id="productSearchField"
-              placeholder="Search product"
-              search="onProductSearchPress"
-            />
-          </VBox>
+        <!-- Filter bar -->
+        <fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false"
+          search=".onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad">
+          <fb:filterGroupItems>
+            <fb:FilterGroupItem name="Name" groupName="Group1"
+              visibleInFilterBar="true">
+              <fb:control>
+                <!-- Search field -->
+                <SearchField
+                  id="productSearchField"
+                  placeholder="Search product"
+                  search="onProductSearchPress"
+                />
+              </fb:control>
+            </fb:FilterGroupItem>
 
-          <!-- Combobox -->
-          <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
-            <Label text="Category" showColon="true" />
-            <ComboBox
-              items="{
-              path: '/Products',
-              sorter: { path: 'text' }
-              }">
-              <core:Item key="{key}" text="{text}" />
-            </ComboBox>
-          </VBox>
+            <fb:FilterGroupItem name="Category" label="Category" groupName="Group1"
+              visibleInFilterBar="true">
+              <fb:control>
+                <!-- Combobox -->
+                <ComboBox
+                  items="{
+                    path: '/Products',
+                    sorter: { path: 'text' }
+                    }">
+                  <core:Item key="{key}" text="{text}" />
+                </ComboBox>
+              </fb:control>
+            </fb:FilterGroupItem>
 
-          <!-- Multi combobox -->
-          <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
-            <Label text="Brand" showColon="true" />
-            <MultiComboBox
-              selectionChange="handleSelectionChange"
-              selectionFinish="handleSelectionFinish"
-              width="350px"
-              items="{
-              path: '/Products',
-              sorter: { path: 'Name' }
-              }">
-              <core:Item key="{ProductId}" text="{Name}" />
-            </MultiComboBox>
-          </VBox>
+            <fb:FilterGroupItem name="SupplierName" label="SupplierName" groupName="Group1"
+              visibleInFilterBar="true">
+              <fb:control>
+                <!-- Multi combobox -->
+                <MultiComboBox
+                  selectionChange="handleSelectionChange"
+                  selectionFinish="handleSelectionFinish"
+                  width="350px"
+                  items="{
+                    path: '/Products',
+                    sorter: { path: 'Name' }
+                    }">
+                  <core:Item key="{ProductId}" text="{Name}" />
+                </MultiComboBox>
+              </fb:control>
+            </fb:FilterGroupItem>
 
-          <!-- Date picker -->
-          <VBox class="sapUiSmallMarginEnd sapUiTinyMarginBottom">
-            <Label text="Release date" showColon="true" />
-            <DatePicker
-              id="DP1"
-              change="handleChange"
-            />
-          </VBox>
-        </FlexBox>
+            <fb:FilterGroupItem name="ReleaseDate" label="ReleaseDate" groupName="Group1"
+              visibleInFilterBar="true">
+              <fb:control>
+                <!-- Data picker -->
+                <DatePicker
+                  id="DP1"
+                  change="handleChange"
+                />
+              </fb:control>
+            </fb:FilterGroupItem>
+          </fb:filterGroupItems>
+        </fb:FilterBar>
+
       </f:DynamicPageHeader>
     </f:header>
 
@@ -110,7 +124,7 @@
           </headerToolbar>
 
           <columns>
-            <Column width="12em" hAlign="Begin">
+            <Column hAlign="Begin">
               <header>
                 <HBox alignItems="Center">
                   <Button
@@ -127,7 +141,7 @@
               </header>
             </Column>
 
-            <Column minScreenWidth="1360px" demandPopin="true" hAlign="Begin">
+            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
               <header>
                 <HBox alignItems="Center">
                   <Button
@@ -178,7 +192,7 @@
               </header>
             </Column>
 
-            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
               <header>
                 <HBox alignItems="Center">
                   <Button
@@ -195,7 +209,7 @@
               </header>
             </Column>
 
-            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
               <header>
                 <HBox alignItems="Center">
                   <Button
@@ -212,7 +226,7 @@
               </header>
             </Column>
 
-            <Column minScreenWidth="Desktop" demandPopin="true" hAlign="Begin">
+            <Column minScreenWidth="Tablet" demandPopin="true" hAlign="Begin">
               <header>
                 <HBox alignItems="Center">
                   <Button
