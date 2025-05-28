@@ -13,8 +13,19 @@ sap.ui.define(
     "sap/ui/model/json/JSONModel",
     "levani/sarishvili/model/formatter",
     "sap/ui/core/Fragment",
+    "sap/m/MessageBox",
+    "sap/ui/model/Filter",
+    "sap/ui/model/FilterOperator",
   ],
-  function (Controller, JSONModel, formatter, Fragment) {
+  function (
+    Controller,
+    JSONModel,
+    formatter,
+    Fragment,
+    MessageBox,
+    Filter,
+    FilterOperator
+  ) {
     "use strict";
 
     return Controller.extend("levani.sarishvili.controller.ProductList", {
@@ -23,14 +34,19 @@ sap.ui.define(
         this._createSearchFilters = this._createSearchFilters.bind(this);
         this._resetProductForm = this._resetProductForm.bind(this);
 
+        sap.ui
+          .getCore()
+          .getMessageManager()
+          .registerObject(this.getView(), true);
+
         const oFormModel = new JSONModel({
           Name: "",
-          Price: "",
-          Category: null,
-          Brand: null,
+          Price: null,
+          Category: "",
+          Brand: "",
           SupplierName: "",
           ReleaseDate: "",
-          Rating: "",
+          Rating: null,
         });
         this.getView().setModel(oFormModel, "productFormModel");
       },
@@ -58,7 +74,7 @@ sap.ui.define(
         }
 
         const aFilters = this._createSearchFilters(aSearchableFields, sQuery);
-        oBinding.filter(new sap.ui.model.Filter(aFilters, false));
+        oBinding.filter(new Filter(aFilters, false));
       },
 
       // Helper function to create search filters
@@ -69,11 +85,9 @@ sap.ui.define(
 
         return aSearchableFields.map((field) => {
           const isNumericField = field === "Price" || field === "Rating";
-          return new sap.ui.model.Filter(
+          return new Filter(
             field,
-            isNumericField
-              ? sap.ui.model.FilterOperator.EQ
-              : sap.ui.model.FilterOperator.Contains,
+            isNumericField ? FilterOperator.EQ : FilterOperator.Contains,
             isNumericField ? parseFloat(sQuery) : sQuery
           );
         });
@@ -97,8 +111,8 @@ sap.ui.define(
           // Create filter(s)
           if (Array.isArray(value)) {
             aFilters.push(
-              new sap.ui.model.Filter(
-                value.map((v) => new sap.ui.model.Filter(sField, "EQ", v)),
+              new Filter(
+                value.map((v) => new Filter(sField, "EQ", v)),
                 false
               )
             );
@@ -109,7 +123,7 @@ sap.ui.define(
                 value
               );
               if (searchFilters.length) {
-                aFilters.push(new sap.ui.model.Filter(searchFilters, false));
+                aFilters.push(new Filter(searchFilters, false));
               }
               return;
             }
@@ -119,15 +133,13 @@ sap.ui.define(
               // Handle date formatting
               const formattedDate = this._formatDate(value);
               if (formattedDate) {
-                aFilters.push(
-                  new sap.ui.model.Filter(sField, "EQ", formattedDate)
-                );
+                aFilters.push(new Filter(sField, "EQ", formattedDate));
               }
               return;
             }
 
             aFilters.push(
-              new sap.ui.model.Filter(
+              new Filter(
                 sField,
                 typeof value === "string" ? "Contains" : "EQ",
                 value
@@ -140,9 +152,7 @@ sap.ui.define(
 
         oTable
           .getBinding("rows")
-          .filter(
-            aFilters.length ? new sap.ui.model.Filter(aFilters, true) : null
-          );
+          .filter(aFilters.length ? new Filter(aFilters, true) : null);
       },
 
       // get filter values from controls
@@ -206,7 +216,23 @@ sap.ui.define(
         const oView = this.getView();
         const oDialog = oView.byId("addProductDialog");
         const oFormModel = oView.getModel("productFormModel");
-        console.log("Product Form Data:", oFormModel.getData());
+        const oMainModel = oView.getModel();
+
+        const aProducts = oMainModel.getProperty("/Products") || [];
+        const oNewProduct = oFormModel.getData();
+
+        // Optionally assign an ID if needed
+        oNewProduct.ProductId = Date.now().toString();
+
+        // Add to array and update model
+        aProducts.push(oNewProduct);
+        oMainModel.setProperty("/Products", aProducts);
+
+        // Reset and close
+        this._resetProductForm();
+        oDialog.close();
+
+        console.log("New product added:", oNewProduct);
       },
 
       // Close dialog
@@ -223,14 +249,15 @@ sap.ui.define(
       _resetProductForm: function () {
         const oView = this.getView();
         const oFormModel = oView.getModel("productFormModel");
+
         oFormModel.setData({
           Name: "",
-          Price: "",
-          Category: null,
-          Brand: null,
+          Price: null,
+          Category: "",
+          Brand: "",
           SupplierName: "",
           ReleaseDate: null,
-          Rating: "",
+          Rating: null,
         });
       },
     });

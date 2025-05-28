@@ -127,7 +127,7 @@
           alternateRowColors="true"
         >
           <t:rowMode>
-            <rowmode:Auto minRowCount="25" fixedTopRowCount="1" />
+            <rowmode:Auto minRowCount="25" />
           </t:rowMode>
           <t:extension>
             <OverflowToolbar style="Standard">
