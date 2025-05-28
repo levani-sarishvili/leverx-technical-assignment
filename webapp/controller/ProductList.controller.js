@@ -12,15 +12,36 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/json/JSONModel",
     "levani/sarishvili/model/formatter",
+    "sap/ui/core/Fragment",
   ],
-  function (Controller, JSONModel, formatter) {
+  function (Controller, JSONModel, formatter, Fragment) {
     "use strict";
 
     return Controller.extend("levani.sarishvili.controller.ProductList", {
       onInit: function () {
         this.onProductSearchPress = this.onProductSearchPress.bind(this);
-        this._createSearchFilters;
+        this._createSearchFilters = this._createSearchFilters.bind(this);
+        this._resetProductForm = this._resetProductForm.bind(this);
+
+        const oFormModel = new JSONModel({
+          Name: "",
+          Price: "",
+          Category: null,
+          Brand: null,
+          SupplierName: "",
+          ReleaseDate: "",
+          Rating: "",
+        });
+        this.getView().setModel(oFormModel, "productFormModel");
       },
+
+      // Get i18n text
+      // _getTranslatedText: function (sKey, aArgs) {
+      //   return this.getView()
+      //     .getModel("i18n")
+      //     .getResourceBundle()
+      //     .getText(sKey, aArgs);
+      // },
 
       // Formatters
       formatter: formatter,
@@ -48,7 +69,6 @@ sap.ui.define(
 
         return aSearchableFields.map((field) => {
           const isNumericField = field === "Price" || field === "Rating";
-
           return new sap.ui.model.Filter(
             field,
             isNumericField
@@ -89,7 +109,7 @@ sap.ui.define(
                 value
               );
               if (searchFilters.length) {
-                aFilters.push(new sap.ui.model.Filter(searchFilters, false)); // false = OR
+                aFilters.push(new sap.ui.model.Filter(searchFilters, false));
               }
               return;
             }
@@ -152,6 +172,67 @@ sap.ui.define(
       //     oSelectedRow ? oSelectedRow.getObject() : "None"
       //   );
       // },
+
+      // Product addition
+      onAddProductPress: function () {
+        const oView = this.getView();
+        const oDialog = oView.byId("addProductDialog");
+
+        if (!oDialog) {
+          Fragment.load({
+            id: oView.getId(),
+            name: "levani.sarishvili.view.fragments.AddProductDialog",
+            controller: this,
+          }).then((oDialog) => {
+            oView.addDependent(oDialog);
+            this.oDialog = oDialog;
+            this.oDialog.bindElement({
+              path: "/",
+              model: "productFormModel",
+            });
+            oDialog.open();
+          });
+        } else {
+          this.oDialog.bindElement({
+            path: "/",
+            model: "productFormModel",
+          });
+          oDialog.open();
+        }
+      },
+
+      // Submit product creation form
+      onProductCreatePress: function () {
+        const oView = this.getView();
+        const oDialog = oView.byId("addProductDialog");
+        const oFormModel = oView.getModel("productFormModel");
+        console.log("Product Form Data:", oFormModel.getData());
+      },
+
+      // Close dialog
+      onProductCancelPress: function () {
+        const oView = this.getView();
+        const oDialog = oView.byId("addProductDialog");
+        if (oDialog) {
+          oDialog.close();
+          this._resetProductForm();
+        }
+      },
+
+      // Reset product creation form
+      _resetProductForm: function () {
+        const oView = this.getView();
+        const oFormModel = oView.getModel("productFormModel");
+        oFormModel.setData({
+          Name: "",
+          Price: "",
+          Category: null,
+          Brand: null,
+          SupplierName: "",
+          ReleaseDate: null,
+          Rating: "",
+        });
+      },
     });
   }
 );

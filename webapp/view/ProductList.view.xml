@@ -7,7 +7,6 @@
   xmlns:fb="sap.ui.comp.filterbar"
   xmlns:t="sap.ui.table"
   xmlns:rowmode="sap.ui.table.rowmodes"
-  xmlns:rowmodes="sap.ui.table.rowmodes"
   xmlns:core="sap.ui.core"
   xmlns:layout="sap.ui.layout">
 
@@ -42,8 +41,13 @@
     <f:header>
       <f:DynamicPageHeader pinnable="true">
         <!-- Filter bar -->
-        <fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false"
-          search=".onSearch" filterChange=".onFilterChange">
+        <fb:FilterBar
+          id="filterbar"
+          persistencyKey="myPersKey"
+          useToolbar="false"
+          search=".onSearch"
+          filterChange=".onFilterChange"
+        >
           <fb:filterGroupItems>
             <fb:FilterGroupItem name="Search" groupName="Group1"
               visibleInFilterBar="true">
@@ -119,10 +123,14 @@
           id="productTable"
           selectionMode="MultiToggle"
           rowActionCount="1"
+          selectionBehavior="Row"
+          alternateRowColors="true"
         >
-
+          <t:rowMode>
+            <rowmode:Auto minRowCount="25" fixedTopRowCount="1" />
+          </t:rowMode>
           <t:extension>
-            <OverflowToolbar style="Clear">
+            <OverflowToolbar style="Standard">
               <Title id="title" text="Products" />
               <ToolbarSpacer />
               <Button

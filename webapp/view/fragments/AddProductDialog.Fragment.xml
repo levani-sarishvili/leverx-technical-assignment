@@ -1,0 +1,101 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:f="sap.ui.layout.form"
+  xmlns:core="sap.ui.core">
+  <Dialog
+    id="addProductDialog"
+    title="{i18n>productDialogTitle}"
+    afterClose="onAfterClose">
+    <f:SimpleForm
+      id="storeDialogForm"
+      maxContainerCols="1"
+      layout="ResponsiveGridLayout"
+      labelSpanL="12"
+      labelSpanM="12"
+      emptySpanL="0"
+      emptySpanM="0"
+      columnsL="1"
+      columnsM="1">
+      <f:content>
+        <!-- Name -->
+        <Label text="{i18n>productNameLabel}" labelFor="name" />
+        <Input
+          id="name"
+          value="{productFormModel>Name}"
+          placeholder="{i18n>productNameInputPlaceholder}"
+          type="Text"
+          required="true" />
+
+        <!-- Price -->
+        <Label text="{i18n>productPriceLabel}" labelFor="price" />
+        <Input
+          id="price"
+          value="{productFormModel>Price}"
+          placeholder="{i18n>productPriceInputPlaceholder}"
+          type="Number"
+          required="true" />
+
+        <!-- Category -->
+        <Label text="{i18n>productCategoryLabel}" labelFor="category" />
+        <Select
+          id="category"
+          forceSelection="false"
+          required="true"
+          selectedKey="{productFormModel>Category}"
+          items="{
+							path: '/ProductCategories',
+							sorter: { path: 'Name' }
+						}">
+          <core:Item key="{Key}" text="{Name}" />
+        </Select>
+
+        <!-- Brand -->
+        <Label text="{i18n>productBrandLabel}" labelFor="brand" />
+        <Select
+          id="brand"
+          forceSelection="false"
+          required="true"
+          selectedKey="{productFormModel>Brand}"
+          items="{
+							path: '/ProductBrands',
+							sorter: { path: 'Name' }
+						}">
+          <core:Item key="{Key}" text="{Name}" />
+        </Select>
+
+        <!-- SupplierName -->
+        <Label text="{i18n>productSupplierLabel}" labelFor="price" />
+        <Input
+          id="supplierName"
+          value="{productFormModel>SupplierName}"
+          placeholder="{i18n>productSupplierInputPlaceholder}"
+          type="Text"
+          required="true" />
+
+        <!-- ReleaseDate -->
+        <Label text="{i18n>productReleaseDateLabel}" labelFor="DP1" />
+        <DatePicker
+          id="DP1"
+          placeholder="{i18n>productReleaseDateInputPlaceholder}"
+          displayFormat="dd/MM/yyyy"
+          valueFormat="yyyy-MM-dd"
+          value="{productFormModel>ReleaseDate}"
+          class="sapUiSmallMarginBottom" required="true" />
+
+        <!-- Rating -->
+        <Label text="{i18n>productRatingLabel}" labelFor="rating" />
+        <Input
+          id="rating"
+          value="{productFormModel>Rating}"
+          placeholder="{i18n>productRatingInputPlaceholder}"
+          type="Number"
+          required="true" />
+      </f:content>
+    </f:SimpleForm>
+
+    <buttons>
+      <Button type="Accept" text="{i18n>createButton}" press="onProductCreatePress" />
+      <Button type="Reject" text="{i18n>cancelButton}" press="onProductCancelPress" />
+    </buttons>
+  </Dialog>
+</core:FragmentDefinition>
