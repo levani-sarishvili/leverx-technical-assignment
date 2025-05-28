@@ -43,7 +43,7 @@
       <f:DynamicPageHeader pinnable="true">
         <!-- Filter bar -->
         <fb:FilterBar id="filterbar" persistencyKey="myPersKey" useToolbar="false"
-          search=".onSearch" filterChange=".onFilterChange" afterVariantLoad=".onAfterVariantLoad">
+          search=".onSearch" filterChange=".onFilterChange">
           <fb:filterGroupItems>
             <fb:FilterGroupItem name="Search" groupName="Group1"
               visibleInFilterBar="true">
@@ -57,42 +57,47 @@
               </fb:control>
             </fb:FilterGroupItem>
 
-            <fb:FilterGroupItem name="Category" label="Category" groupName="Group1"
+            <fb:FilterGroupItem name="Category" label="Category"
+              groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
                 <!-- Combobox -->
                 <ComboBox
+                  id="categoryFilter"
                   items="{
-                    path: '/Products',
-                    sorter: { path: 'text' }
+                    path: '/ProductCategories',
+                    sorter: { path: 'Name' }
                     }">
-                  <core:Item key="{key}" text="{text}" />
+                  <core:Item key="{Key}" text="{Name}" />
                 </ComboBox>
               </fb:control>
             </fb:FilterGroupItem>
 
-            <fb:FilterGroupItem name="SupplierName" label="Supplier Name" groupName="Group1"
+            <fb:FilterGroupItem name="Brand" label="Brand"
+              groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
                 <!-- Multi combobox -->
                 <MultiComboBox
+                  id="brandFilter"
                   selectionChange="handleSelectionChange"
                   selectionFinish="handleSelectionFinish"
                   items="{
-                    path: '/Products',
+                    path: '/ProductBrands',
                     sorter: { path: 'Name' }
                     }">
-                  <core:Item key="{ProductId}" text="{Name}" />
+                  <core:Item key="{Key}" text="{Name}" />
                 </MultiComboBox>
               </fb:control>
             </fb:FilterGroupItem>
 
-            <fb:FilterGroupItem name="ReleaseDate" label="Release Date" groupName="Group1"
+            <fb:FilterGroupItem name="ReleaseDate" label="Release Date"
+              groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
                 <!-- Data picker -->
                 <DatePicker
-                  id="DP1"
+                  id="releaseDateFilter"
                   change="handleChange"
                 />
               </fb:control>
@@ -119,6 +124,16 @@
           <t:extension>
             <OverflowToolbar style="Clear">
               <Title id="title" text="Products" />
+              <ToolbarSpacer />
+              <Button
+                id="addProductButton"
+                text="Add"
+                press=".onAddProductPress" />
+              <Button
+                id="deleteProductButton"
+                text="Delete"
+                enabled="false"
+                press=".onDeleteProductPress" />
             </OverflowToolbar>
           </t:extension>
 

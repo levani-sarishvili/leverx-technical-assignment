@@ -1,3 +1,12 @@
+const aSearchableFields = [
+  "Name",
+  "Price",
+  "Category",
+  "Brand",
+  "SupplierName",
+  "Rating",
+];
+
 sap.ui.define(
   [
     "sap/ui/core/mvc/Controller",
@@ -8,7 +17,10 @@ sap.ui.define(
     "use strict";
 
     return Controller.extend("levani.sarishvili.controller.ProductList", {
-      onInit: function () {},
+      onInit: function () {
+        this.onProductSearchPress = this.onProductSearchPress.bind(this);
+        this._createSearchFilters;
+      },
 
       // Formatters
       formatter: formatter,
@@ -24,30 +36,101 @@ sap.ui.define(
           return;
         }
 
-        const aSearchableFields = [
-          "Name",
-          "Price",
-          "Category",
-          "Brand",
-          "SupplierName",
-        ];
-
-        const aFilters = aSearchableFields.map((field) => {
-          return field === "Price"
-            ? new sap.ui.model.Filter(
-                field,
-                sap.ui.model.FilterOperator.EQ,
-                parseFloat(sQuery)
-              )
-            : new sap.ui.model.Filter(
-                field,
-                sap.ui.model.FilterOperator.Contains,
-                sQuery
-              );
-        });
-
+        const aFilters = this._createSearchFilters(aSearchableFields, sQuery);
         oBinding.filter(new sap.ui.model.Filter(aFilters, false));
       },
+
+      // Helper function to create search filters
+      _createSearchFilters: function (aSearchableFields, sQuery) {
+        if (!sQuery || !aSearchableFields?.length) {
+          return [];
+        }
+
+        return aSearchableFields.map((field) => {
+          const isNumericField = field === "Price" || field === "Rating";
+
+          return new sap.ui.model.Filter(
+            field,
+            isNumericField
+              ? sap.ui.model.FilterOperator.EQ
+              : sap.ui.model.FilterOperator.Contains,
+            isNumericField ? parseFloat(sQuery) : sQuery
+          );
+        });
+      },
+
+      // Product filter bar functionality
+      onSearch: function () {
+        const oTable = this.byId("productTable");
+        const oFilterBar = this.byId("filterbar");
+        const aFilters = [];
+
+        oFilterBar.getFilterGroupItems().forEach((oItem) => {
+          const sField = oItem.getName();
+          const oControl = oFilterBar.determineControlByFilterItem(oItem);
+
+          // Get value based on control type
+          const value = this._getFilterValueFromControl(oControl);
+
+          if (!value || (Array.isArray(value) && !value.length)) return;
+
+          // Create filter(s)
+          if (Array.isArray(value)) {
+            aFilters.push(
+              new sap.ui.model.Filter(
+                value.map((v) => new sap.ui.model.Filter(sField, "EQ", v)),
+                false
+              )
+            );
+          } else {
+            if (sField === "Search") {
+              const searchFilters = this._createSearchFilters(
+                aSearchableFields,
+                value
+              );
+              if (searchFilters.length) {
+                aFilters.push(new sap.ui.model.Filter(searchFilters, false)); // false = OR
+              }
+              return;
+            }
+
+            aFilters.push(
+              new sap.ui.model.Filter(
+                sField,
+                typeof value === "string" ? "Contains" : "EQ",
+                value
+              )
+            );
+          }
+        });
+
+        console.log("Applied Filters:", aFilters);
+
+        oTable
+          .getBinding("rows")
+          .filter(
+            aFilters.length ? new sap.ui.model.Filter(aFilters, true) : null
+          );
+      },
+
+      // get filter values from controls
+      _getFilterValueFromControl: function (oControl) {
+        return (
+          oControl.getSelectedKey?.() ||
+          oControl.getSelectedItems?.()?.map((oItem) => oItem.getKey()) ||
+          oControl.getDateValue?.() ||
+          oControl.getValue?.()
+        );
+      },
+
+      // Product selection
+      // onRowSelectionChange: function (oEvent) {
+      //   const oSelectedRow = oEvent.getParameter("rowContext");
+      //   console.log(
+      //     "Selected Product:",
+      //     oSelectedRow ? oSelectedRow.getObject() : "None"
+      //   );
+      // },
     });
   }
 );

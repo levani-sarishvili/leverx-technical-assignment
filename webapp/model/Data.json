@@ -1,60 +1,67 @@
 {
   "Products": [
     {
+      "Id": 1,
       "Name": "iPhone 15 Pro",
       "Price": 1000,
       "Category": "Smartphone",
       "Brand": "Apple",
       "SupplierName": "TechWorld Distributors",
-      "ReleaseDate": "2023-09-22",
-      "Rating": 4.8
+      "ReleaseDate": "2025-03-22",
+      "Rating": 5
     },
     {
+      "Id": 2,
       "Name": "Samsung Galaxy S24",
       "Price": 900,
       "Category": "Smartphone",
       "Brand": "Samsung",
       "SupplierName": "ElectroSupply Co.",
-      "ReleaseDate": "2024-01-17",
-      "Rating": 4.7
+      "ReleaseDate": "2025-01-01",
+      "Rating": 3
     },
     {
+      "Id": 3,
       "Name": "Dell XPS 13",
       "Price": 1199,
       "Category": "Laptop",
       "Brand": "Dell",
       "SupplierName": "Global IT Traders",
-      "ReleaseDate": "2023-06-15",
-      "Rating": 4.6
+      "ReleaseDate": "2025-05-28",
+      "Rating": 5
     },
     {
+      "Id": 4,
       "Name": "Sony WH-1000XM5",
       "Price": 348,
       "Category": "Headphones",
       "Brand": "Sony",
       "SupplierName": "SoundPro Electronics",
       "ReleaseDate": "2022-05-20",
-      "Rating": 4.9
+      "Rating": 3.5
     },
     {
+      "Id": 5,
       "Name": "Apple MacBook Air M3",
       "Price": 1299,
       "Category": "Laptop",
       "Brand": "Apple",
       "SupplierName": "TechWorld Distributors",
       "ReleaseDate": "2024-03-04",
-      "Rating": 4.8
+      "Rating": 1
     },
     {
+      "Id": 6,
       "Name": "Logitech MX Master 3S",
       "Price": 100,
       "Category": "Mouse",
       "Brand": "Logitech",
       "SupplierName": "Peripheral Partners",
       "ReleaseDate": "2022-05-24",
-      "Rating": 4.7
+      "Rating": 3.5
     },
     {
+      "Id": 7,
       "Name": "ASUS ROG Strix G16",
       "Price": 1500,
       "Category": "Laptop",
@@ -64,6 +71,7 @@
       "Rating": 4.6
     },
     {
+      "Id": 8,
       "Name": "Canon EOS R8",
       "Price": 1499,
       "Category": "Camera",
@@ -73,15 +81,17 @@
       "Rating": 4.5
     },
     {
+      "Id": 9,
       "Name": "Bose QuietComfort Ultra",
       "Price": 429,
       "Category": "Headphones",
       "Brand": "Bose",
       "SupplierName": "SoundPro Electronics",
       "ReleaseDate": "2023-10-12",
-      "Rating": 4.7
+      "Rating": 3.5
     },
     {
+      "Id": 10,
       "Name": "iPad Air 5th Gen",
       "Price": 599,
       "Category": "Tablet",
@@ -91,6 +101,7 @@
       "Rating": 4.6
     },
     {
+      "Id": 11,
       "Name": "Fitbit Charge 6",
       "Price": 160,
       "Category": "Fitness Tracker",
@@ -100,15 +111,17 @@
       "Rating": 4.4
     },
     {
+      "Id": 12,
       "Name": "Samsung QLED 65\" Smart TV",
       "Price": 1200,
       "Category": "Television",
       "Brand": "Samsung",
       "SupplierName": "ElectroSupply Co.",
       "ReleaseDate": "2023-08-15",
-      "Rating": 4.8
+      "Rating": 2.5
     },
     {
+      "Id": 13,
       "Name": "Kindle Paperwhite",
       "Price": 140,
       "Category": "E-Reader",
@@ -118,6 +131,7 @@
       "Rating": 4.7
     },
     {
+      "Id": 14,
       "Name": "GoPro HERO12 Black",
       "Price": 400,
       "Category": "Action Camera",
@@ -127,15 +141,17 @@
       "Rating": 4.6
     },
     {
+      "Id": 15,
       "Name": "Microsoft Surface Laptop 5",
       "Price": 1100,
       "Category": "Laptop",
       "Brand": "Microsoft",
       "SupplierName": "Global IT Traders",
       "ReleaseDate": "2022-10-25",
-      "Rating": 4.5
+      "Rating": 1
     },
     {
+      "Id": 16,
       "Name": "Anker PowerCore 20000",
       "Price": 50,
       "Category": "Power Bank",
@@ -145,6 +161,7 @@
       "Rating": 4.8
     },
     {
+      "Id": 17,
       "Name": "JBL Charge 5",
       "Price": 180,
       "Category": "Bluetooth Speaker",
@@ -154,15 +171,17 @@
       "Rating": 4.6
     },
     {
+      "Id": 18,
       "Name": "Razer DeathAdder V3",
       "Price": 70,
       "Category": "Gaming Mouse",
       "Brand": "Razer",
       "SupplierName": "Peripheral Partners",
       "ReleaseDate": "2022-08-11",
-      "Rating": 4.7
+      "Rating": 3.8
     },
     {
+      "Id": 19,
       "Name": "Acer Predator Helios 16",
       "Price": 1700,
       "Category": "Gaming Laptop",
@@ -172,15 +191,17 @@
       "Rating": 4.5
     },
     {
+      "Id": 20,
       "Name": "Nest Thermostat",
       "Price": 130,
       "Category": "Smart Home",
       "Brand": "Google",
       "SupplierName": "HomeTech Solutions",
       "ReleaseDate": "2020-10-12",
-      "Rating": 4.4
+      "Rating": 2.5
     },
     {
+      "Id": 21,
       "Name": "LG OLED evo C3 55”",
       "Price": 1400,
       "Category": "Television",
@@ -190,6 +211,7 @@
       "Rating": 4.9
     },
     {
+      "Id": 22,
       "Name": "Echo Dot (5th Gen)",
       "Price": 50,
       "Category": "Smart Speaker",
@@ -199,15 +221,17 @@
       "Rating": 4.6
     },
     {
+      "Id": 23,
       "Name": "HP Envy 6455e Printer",
       "Price": 180,
       "Category": "Printer",
       "Brand": "HP",
       "SupplierName": "PrintTech Distributors",
       "ReleaseDate": "2021-03-15",
-      "Rating": 4.3
+      "Rating": 3
     },
     {
+      "Id": 24,
       "Name": "DJI Mini 4 Pro Drone",
       "Price": 799,
       "Category": "Drone",
@@ -217,13 +241,55 @@
       "Rating": 4.7
     },
     {
+      "Id": 25,
       "Name": "Ring Video Doorbell Pro 2",
       "Price": 250,
       "Category": "Smart Home",
       "Brand": "Ring",
       "SupplierName": "HomeTech Solutions",
       "ReleaseDate": "2021-03-31",
-      "Rating": 4.5
+      "Rating": 5
     }
+  ],
+
+  "ProductCategories": [
+    { "Key": "Smartphone", "Name": "Smartphone" },
+    { "Key": "Laptop", "Name": "Laptop" },
+    { "Key": "Headphones", "Name": "Headphones" },
+    { "Key": "Mouse", "Name": "Mouse" },
+    { "Key": "Tablet", "Name": "Tablet" },
+    { "Key": "Fitness Tracker", "Name": "Fitness Tracker" },
+    { "Key": "Television", "Name": "Television" },
+    { "Key": "E-Reader", "Name": "E-Reader" },
+    { "Key": "Action Camera", "Name": "Action Camera" },
+    { "Key": "Gaming Laptop", "Name": "Gaming Laptop" },
+    { "Key": "Power Bank", "Name": "Power Bank" },
+    { "Key": "Bluetooth Speaker", "Name": "Bluetooth Speaker" },
+    { "Key": "Gaming Mouse", "Name": "Gaming Mouse" },
+    { "Key": "Smart Home", "Name": "Smart Home" },
+    { "Key": "Printer", "Name": "Printer" },
+    { "Key": "Drone", "Name": "Drone" }
+  ],
+
+  "ProductBrands": [
+    { "Key": "Apple", "Name": "Apple" },
+    { "Key": "Samsung", "Name": "Samsung" },
+    { "Key": "Dell", "Name": "Dell" },
+    { "Key": "Sony", "Name": "Sony" },
+    { "Key": "Logitech", "Name": "Logitech" },
+    { "Key": "ASUS", "Name": "ASUS" },
+    { "Key": "Canon", "Name": "Canon" },
+    { "Key": "Bose", "Name": "Bose" },
+    { "Key": "Microsoft", "Name": "Microsoft" },
+    { "Key": "Anker", "Name": "Anker" },
+    { "Key": "JBL", "Name": "JBL" },
+    { "Key": "Razer", "Name": "Razer" },
+    { "Key": "Acer", "Name": "Acer" },
+    { "Key": "Google", "Name": "Google" },
+    { "Key": "LG", "Name": "LG" },
+    { "Key": "Amazon", "Name": "Amazon" },
+    { "Key": "HP", "Name": "HP" },
+    { "Key": "DJI", "Name": "DJI" },
+    { "Key": "Ring", "Name": "Ring" }
   ]
 }
