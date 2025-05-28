@@ -94,6 +94,18 @@ sap.ui.define(
               return;
             }
 
+            // Format date if necessary
+            if (sField === "ReleaseDate") {
+              // Handle date formatting
+              const formattedDate = this._formatDate(value);
+              if (formattedDate) {
+                aFilters.push(
+                  new sap.ui.model.Filter(sField, "EQ", formattedDate)
+                );
+              }
+              return;
+            }
+
             aFilters.push(
               new sap.ui.model.Filter(
                 sField,
@@ -121,6 +133,15 @@ sap.ui.define(
           oControl.getDateValue?.() ||
           oControl.getValue?.()
         );
+      },
+
+      // Format date from data picker
+      _formatDate: function (oDate) {
+        if (!oDate) return "";
+        const oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
+          pattern: "yyyy-MM-dd",
+        });
+        return oDateFormat.format(oDate);
       },
 
       // Product selection
