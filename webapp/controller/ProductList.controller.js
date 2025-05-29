@@ -14,8 +14,10 @@ sap.ui.define(
     "levani/sarishvili/model/formatter",
     "sap/ui/core/Fragment",
     "sap/m/MessageBox",
+    "sap/m/MessageToast",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
+    "levani/sarishvili/utils/i18nUtils",
   ],
   function (
     Controller,
@@ -23,8 +25,10 @@ sap.ui.define(
     formatter,
     Fragment,
     MessageBox,
+    MessageToast,
     Filter,
-    FilterOperator
+    FilterOperator,
+    i18nUtils
   ) {
     "use strict";
 
@@ -33,11 +37,11 @@ sap.ui.define(
         this.onProductSearchPress = this.onProductSearchPress.bind(this);
         this._createSearchFilters = this._createSearchFilters.bind(this);
         this._resetProductForm = this._resetProductForm.bind(this);
-
-        sap.ui
-          .getCore()
-          .getMessageManager()
-          .registerObject(this.getView(), true);
+        this._buildFiltersFromFilterBar =
+          this._buildFiltersFromFilterBar.bind(this);
+        this._buildFilterForSpecificField =
+          this._buildFilterForSpecificField.bind(this);
+        this._deleteSelectedProducts = this._deleteSelectedProducts.bind(this);
 
         const oFormModel = new JSONModel({
           Name: "",
@@ -49,15 +53,13 @@ sap.ui.define(
           Rating: null,
         });
         this.getView().setModel(oFormModel, "productFormModel");
-      },
 
-      // Get i18n text
-      // _getTranslatedText: function (sKey, aArgs) {
-      //   return this.getView()
-      //     .getModel("i18n")
-      //     .getResourceBundle()
-      //     .getText(sKey, aArgs);
-      // },
+        // Create selection model for product selection
+        const oSelectionModel = new JSONModel({
+          selectedProductIds: [],
+        });
+        this.getView().setModel(oSelectionModel, "selectionModel");
+      },
 
       // Formatters
       formatter: formatter,
@@ -77,111 +79,18 @@ sap.ui.define(
         oBinding.filter(new Filter(aFilters, false));
       },
 
-      // Helper function to create search filters
-      _createSearchFilters: function (aSearchableFields, sQuery) {
-        if (!sQuery || !aSearchableFields?.length) {
-          return [];
-        }
-
-        return aSearchableFields.map((field) => {
-          const isNumericField = field === "Price" || field === "Rating";
-          return new Filter(
-            field,
-            isNumericField ? FilterOperator.EQ : FilterOperator.Contains,
-            isNumericField ? parseFloat(sQuery) : sQuery
-          );
-        });
-      },
-
       // Product filter bar functionality
       onSearch: function () {
         const oTable = this.byId("productTable");
         const oFilterBar = this.byId("filterbar");
-        const aFilters = [];
 
-        oFilterBar.getFilterGroupItems().forEach((oItem) => {
-          const sField = oItem.getName();
-          const oControl = oFilterBar.determineControlByFilterItem(oItem);
+        const aFilters = this._buildFiltersFromFilterBar(oFilterBar);
 
-          // Get value based on control type
-          const value = this._getFilterValueFromControl(oControl);
-
-          if (!value || (Array.isArray(value) && !value.length)) return;
-
-          // Create filter(s)
-          if (Array.isArray(value)) {
-            aFilters.push(
-              new Filter(
-                value.map((v) => new Filter(sField, "EQ", v)),
-                false
-              )
-            );
-          } else {
-            if (sField === "Search") {
-              const searchFilters = this._createSearchFilters(
-                aSearchableFields,
-                value
-              );
-              if (searchFilters.length) {
-                aFilters.push(new Filter(searchFilters, false));
-              }
-              return;
-            }
-
-            // Format date if necessary
-            if (sField === "ReleaseDate") {
-              // Handle date formatting
-              const formattedDate = this._formatDate(value);
-              if (formattedDate) {
-                aFilters.push(new Filter(sField, "EQ", formattedDate));
-              }
-              return;
-            }
-
-            aFilters.push(
-              new Filter(
-                sField,
-                typeof value === "string" ? "Contains" : "EQ",
-                value
-              )
-            );
-          }
-        });
-
-        console.log("Applied Filters:", aFilters);
-
+        // Apply filters to the table
         oTable
           .getBinding("rows")
           .filter(aFilters.length ? new Filter(aFilters, true) : null);
       },
-
-      // get filter values from controls
-      _getFilterValueFromControl: function (oControl) {
-        return (
-          oControl.getSelectedKey?.() ||
-          oControl.getSelectedItems?.()?.map((oItem) => oItem.getKey()) ||
-          oControl.getDateValue?.() ||
-          oControl.getValue?.()
-        );
-      },
-
-      // Format date from data picker
-      _formatDate: function (oDate) {
-        if (!oDate) return "";
-        const oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
-          pattern: "yyyy-MM-dd",
-        });
-        return oDateFormat.format(oDate);
-      },
-
-      // Product selection
-      // onRowSelectionChange: function (oEvent) {
-      //   const oSelectedRow = oEvent.getParameter("rowContext");
-      //   console.log(
-      //     "Selected Product:",
-      //     oSelectedRow ? oSelectedRow.getObject() : "None"
-      //   );
-      // },
 
       // Product addition
       onAddProductPress: function () {
@@ -217,7 +126,6 @@ sap.ui.define(
         const oDialog = oView.byId("addProductDialog");
         const oFormModel = oView.getModel("productFormModel");
         const oMainModel = oView.getModel();
-
         const aProducts = oMainModel.getProperty("/Products") || [];
         const oNewProduct = oFormModel.getData();
 
@@ -228,11 +136,13 @@ sap.ui.define(
         aProducts.push(oNewProduct);
         oMainModel.setProperty("/Products", aProducts);
 
+        MessageToast.show(
+          i18nUtils.getTranslatedText(oView, "productCreatedToast")
+        );
+
         // Reset and close
         this._resetProductForm();
         oDialog.close();
-
-        console.log("New product added:", oNewProduct);
       },
 
       // Close dialog
@@ -243,6 +153,164 @@ sap.ui.define(
           oDialog.close();
           this._resetProductForm();
         }
+      },
+
+      // Handle product selection
+      onRowSelectionChange: function () {
+        const oSelectionModel = this.getView().getModel("selectionModel");
+        const oTable = this.byId("productTable");
+        const aSelectedIndices = oTable.getSelectedIndices();
+        const aSelectedProductIds = [];
+
+        // Reset selected product IDs
+        oSelectionModel.setProperty("/selectedProductIds", []);
+
+        aSelectedIndices.forEach((iIndex) => {
+          const oContext = oTable.getContextByIndex(iIndex);
+          const oRowData = oContext.getObject();
+          aSelectedProductIds.push(oRowData.Id);
+        });
+        oSelectionModel.setProperty("/selectedProductIds", aSelectedProductIds);
+      },
+
+      // Handle product deletion
+      onDeleteProductPress: function () {
+        const oView = this.getView();
+        const oSelectionModel = oView.getModel("selectionModel");
+        const aSelectedProductIds = oSelectionModel.getProperty(
+          "/selectedProductIds"
+        );
+
+        MessageBox.confirm(
+          i18nUtils.getTranslatedText(oView, "confirmDeleteProducts"),
+          {
+            onClose: (sAction) => {
+              if (sAction === "OK") {
+                this._deleteSelectedProducts(aSelectedProductIds);
+              }
+            },
+          }
+        );
+      },
+
+      // Delete selected products
+      _deleteSelectedProducts: function (aSelectedProductIds) {
+        const oView = this.getView();
+        const oMainModel = oView.getModel();
+        const aProducts = oMainModel.getProperty("/Products") || [];
+
+        // Filter out selected products
+        const aUpdatedProducts = aProducts.filter(
+          (oProduct) => !aSelectedProductIds.includes(oProduct.Id)
+        );
+
+        // Update model with filtered products
+        oMainModel.setProperty("/Products", aUpdatedProducts);
+
+        MessageToast.show(
+          i18nUtils.getTranslatedText(oView, "productsDeletedToast")
+        );
+
+        // Reset selection model
+        oView.getModel("selectionModel").setProperty("/selectedProductIds", []);
+      },
+
+      // Handle delete button state
+      _handleDeleteButtonState: function () {
+        const oView = this.getView();
+        const oSelectionModel = oView.getModel("selectionModel");
+        const aSelectedProductIds = oSelectionModel.getProperty(
+          "/selectedProductIds"
+        );
+        const oDeleteButton = this.byId("deleteProductButton");
+
+        if (oDeleteButton) {
+          oDeleteButton.setEnabled(aSelectedProductIds.length > 0);
+        }
+      },
+
+      // Helper function to create search filters
+      _createSearchFilters: function (aSearchableFields, sQuery) {
+        if (!sQuery || !aSearchableFields?.length) {
+          return [];
+        }
+
+        return aSearchableFields.map((sField) => {
+          const isNumericField = sField === "Price" || sField === "Rating";
+          return new Filter(
+            sField,
+            isNumericField ? FilterOperator.EQ : FilterOperator.Contains,
+            isNumericField ? parseFloat(sQuery) : sQuery
+          );
+        });
+      },
+
+      // Build filters from filter bar
+      _buildFiltersFromFilterBar: function (oFilterBar) {
+        const aFilters = [];
+
+        oFilterBar.getFilterGroupItems().forEach((oItem) => {
+          const sField = oItem.getName();
+          const oControl = oFilterBar.determineControlByFilterItem(oItem);
+          const vValue = this._getFilterValueFromControl(oControl);
+
+          if (!vValue || (Array.isArray(vValue) && !vValue.length)) return;
+
+          const oFieldFilter = this._buildFilterForSpecificField(
+            sField,
+            vValue,
+            aSearchableFields
+          );
+          if (oFieldFilter) {
+            aFilters.push(oFieldFilter);
+          }
+        });
+
+        return aFilters;
+      },
+
+      _buildFilterForSpecificField: function (
+        sField,
+        vValue,
+        aSearchableFields
+      ) {
+        if (sField === "Search") {
+          const aSearchFilters = this._createSearchFilters(
+            aSearchableFields,
+            vValue
+          );
+          return aSearchFilters.length
+            ? new Filter(aSearchFilters, false)
+            : null;
+        }
+
+        if (sField === "ReleaseDate") {
+          const sFormattedDate = formatter._formatDate(vValue);
+          return sFormattedDate
+            ? new Filter(sField, "EQ", sFormattedDate)
+            : null;
+        }
+
+        if (Array.isArray(vValue)) {
+          const aMultiFilters = vValue.map((v) => new Filter(sField, "EQ", v));
+          return new Filter(aMultiFilters, false);
+        }
+
+        return new Filter(
+          sField,
+          typeof vValue === "string" ? "Contains" : "EQ",
+          vValue
+        );
+      },
+
+      // Get filter values from controls
+      _getFilterValueFromControl: function (oControl) {
+        return (
+          oControl.getSelectedKey?.() ||
+          oControl.getSelectedItems?.()?.map((oItem) => oItem.getKey()) ||
+          oControl.getDateValue?.() ||
+          oControl.getValue?.()
+        );
       },
 
       // Reset product creation form

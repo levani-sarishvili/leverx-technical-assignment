@@ -140,7 +140,7 @@
               <Button
                 id="deleteProductButton"
                 text="Delete"
-                enabled="false"
+                enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
                 press=".onDeleteProductPress" />
             </OverflowToolbar>
           </t:extension>
