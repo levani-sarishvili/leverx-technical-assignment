@@ -126,12 +126,22 @@
           selectionBehavior="Row"
           alternateRowColors="true"
         >
+          <!-- Rows config -->
           <t:rowMode>
             <rowmode:Auto minRowCount="25" />
           </t:rowMode>
+
+          <!-- Table toolbar -->
           <t:extension>
             <OverflowToolbar style="Standard">
-              <Title id="title" text="{= ${i18n>productTableTitle}}" />
+              <Title id="title"
+                text="{
+                  parts: [
+                    { path: 'i18n>productTableTitle' },
+                    { path: '/Products' }
+                  ],
+                  formatter: '.formatter.formatTableTitle'
+                }" />
               <ToolbarSpacer />
               <Button
                 id="addProductButton"
@@ -145,6 +155,7 @@
             </OverflowToolbar>
           </t:extension>
 
+          <!-- Columns aggregation -->
           <t:columns>
             <!-- Product name -->
             <t:Column

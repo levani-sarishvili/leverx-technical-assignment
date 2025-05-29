@@ -33,16 +33,26 @@ sap.ui.define(
     "use strict";
 
     return Controller.extend("levani.sarishvili.controller.ProductList", {
+      /**
+       * Initializes the ProductList controller.
+       *
+       * Binds the context of several functions to ensure correct 'this' usage.
+       * Sets up the product form model and selection model, binding them to the view.
+       * The product form model is used to handle product data input, while the selection model manages
+       * selected product IDs for operations like deletion or updates.
+       */
       onInit: function () {
         this.onProductSearchPress = this.onProductSearchPress.bind(this);
         this._createSearchFilters = this._createSearchFilters.bind(this);
-        this._resetProductForm = this._resetProductForm.bind(this);
+        this._resetProductFormModel = this._resetProductFormModel.bind(this);
         this._buildFiltersFromFilterBar =
           this._buildFiltersFromFilterBar.bind(this);
         this._buildFilterForSpecificField =
           this._buildFilterForSpecificField.bind(this);
         this._deleteSelectedProducts = this._deleteSelectedProducts.bind(this);
+        this._updateProductCount = this._updateProductCount.bind(this);
 
+        // Create product form model
         const oFormModel = new JSONModel({
           Name: "",
           Price: null,
@@ -64,35 +74,68 @@ sap.ui.define(
       // Formatters
       formatter: formatter,
 
-      // Product search
+      /**
+       * Handles product search form submission.
+       * @param {sap.ui.base.Event} oEvent - The event object.
+       * @private
+       */
       onProductSearchPress: function (oEvent) {
+        const oView = this.getView();
         const sQuery = oEvent.getParameter("query");
         const oTable = this.byId("productTable");
         const oBinding = oTable.getBinding("rows");
 
+        // Clear filter and update count if query is cleared
         if (!sQuery) {
           oBinding.filter([]);
+          this._updateProductCount(oView, oBinding);
           return;
         }
 
         const aFilters = this._createSearchFilters(aSearchableFields, sQuery);
         oBinding.filter(new Filter(aFilters, false));
+
+        // Update product count
+        this._updateProductCount(oView, oBinding);
       },
 
-      // Product filter bar functionality
+      /**
+       * Applies filters to the product table based on the values in the filter bar and updates the product count.
+       * @private
+       */
       onSearch: function () {
+        const oView = this.getView();
         const oTable = this.byId("productTable");
+        const oBinding = oTable.getBinding("rows");
         const oFilterBar = this.byId("filterbar");
-
         const aFilters = this._buildFiltersFromFilterBar(oFilterBar);
 
         // Apply filters to the table
-        oTable
-          .getBinding("rows")
-          .filter(aFilters.length ? new Filter(aFilters, true) : null);
+        oBinding.filter(aFilters.length ? new Filter(aFilters, true) : null);
+
+        // Update product count
+        this._updateProductCount(oView, oBinding);
       },
 
-      // Product addition
+      /**
+       * Updates the product count in the table title.
+       * @param {sap.ui.core.mvc.View} oView - The current view.
+       * @param {sap.ui.model.Binding} oBinding - The table's binding.
+       * @private
+       */
+      _updateProductCount: function (oView, oBinding) {
+        const iCount = oBinding.getLength();
+        const sTitle = i18nUtils.getTranslatedText(oView, "productTableTitle");
+        this.getView().byId("title").setText(`${sTitle} (${iCount})`);
+      },
+
+      /**
+       * Handles the add product button press.
+       * If the dialog doesn't already exist, it is loaded and opened.
+       * If the dialog already exists, it is opened without loading.
+       * The dialog is bound to the product form model to display the current product data.
+       * @private
+       */
       onAddProductPress: function () {
         const oView = this.getView();
         const oDialog = oView.byId("addProductDialog");
@@ -120,7 +163,13 @@ sap.ui.define(
         }
       },
 
-      // Submit product creation form
+      /**
+       * Handles the create product button press in the add product dialog.
+       * Gets the current product data from the product form model and adds it to the main model.
+       * Creates a new array with the new product added and sets the property in the main model with the new array reference.
+       * Resets the product form model and closes the add product dialog.
+       * @private
+       */
       onProductCreatePress: function () {
         const oView = this.getView();
         const oDialog = oView.byId("addProductDialog");
@@ -129,33 +178,40 @@ sap.ui.define(
         const aProducts = oMainModel.getProperty("/Products") || [];
         const oNewProduct = oFormModel.getData();
 
-        // Optionally assign an ID if needed
+        // Add new product
         oNewProduct.ProductId = Date.now().toString();
+        const aUpdatedProducts = [...aProducts, oNewProduct];
+        oMainModel.setProperty("/Products", aUpdatedProducts);
 
-        // Add to array and update model
-        aProducts.push(oNewProduct);
-        oMainModel.setProperty("/Products", aProducts);
-
+        // Show success message
         MessageToast.show(
           i18nUtils.getTranslatedText(oView, "productCreatedToast")
         );
 
-        // Reset and close
-        this._resetProductForm();
+        // Reset product form
+        this._resetProductFormModel();
         oDialog.close();
       },
 
-      // Close dialog
+      /**
+       * Handles the cancel button press in the add product dialog.
+       * Closes the dialog and resets the product form model.
+       * @private
+       */
       onProductCancelPress: function () {
         const oView = this.getView();
         const oDialog = oView.byId("addProductDialog");
         if (oDialog) {
           oDialog.close();
-          this._resetProductForm();
+          this._resetProductFormModel();
         }
       },
 
-      // Handle product selection
+      /**
+       * Handles the selection change event of the product table.
+       * Resets the selected product IDs property in the selection model and sets the new IDs based on the selected rows.
+       * @private
+       */
       onRowSelectionChange: function () {
         const oSelectionModel = this.getView().getModel("selectionModel");
         const oTable = this.byId("productTable");
@@ -173,7 +229,12 @@ sap.ui.define(
         oSelectionModel.setProperty("/selectedProductIds", aSelectedProductIds);
       },
 
-      // Handle product deletion
+      /**
+       * Handles the delete button press in the product table toolbar.
+       * Shows a confirmation dialog asking to confirm the deletion of the selected products.
+       * If confirmed, calls the _deleteSelectedProducts function to delete the products.
+       * @private
+       */
       onDeleteProductPress: function () {
         const oView = this.getView();
         const oSelectionModel = oView.getModel("selectionModel");
@@ -181,6 +242,7 @@ sap.ui.define(
           "/selectedProductIds"
         );
 
+        // Show confirmation dialog
         MessageBox.confirm(
           i18nUtils.getTranslatedText(oView, "confirmDeleteProducts"),
           {
@@ -193,7 +255,11 @@ sap.ui.define(
         );
       },
 
-      // Delete selected products
+      /**
+       * Deletes the selected products from the main model.
+       * @param {number[]} aSelectedProductIds - The IDs of the products to delete.
+       * @private
+       */
       _deleteSelectedProducts: function (aSelectedProductIds) {
         const oView = this.getView();
         const oMainModel = oView.getModel();
@@ -206,7 +272,6 @@ sap.ui.define(
 
         // Update model with filtered products
         oMainModel.setProperty("/Products", aUpdatedProducts);
-
         MessageToast.show(
           i18nUtils.getTranslatedText(oView, "productsDeletedToast")
         );
@@ -215,7 +280,15 @@ sap.ui.define(
         oView.getModel("selectionModel").setProperty("/selectedProductIds", []);
       },
 
-      // Handle delete button state
+      /**
+       * Updates the state of the delete button based on the current selection.
+       *
+       * Retrieves the selected product IDs from the selection model and enables
+       * the delete button if there are any products selected. Disables the button
+       * otherwise.
+       *
+       * @private
+       */
       _handleDeleteButtonState: function () {
         const oView = this.getView();
         const oSelectionModel = oView.getModel("selectionModel");
@@ -229,7 +302,15 @@ sap.ui.define(
         }
       },
 
-      // Helper function to create search filters
+      /**
+       * Creates an array of filters for the given searchable fields and query.
+       * If a numeric field is found, uses the EQ operator and parses the query as a float.
+       * For non-numeric fields, uses the Contains operator and passes the query as a string.
+       * @param {string[]} aSearchableFields - The fields to search in.
+       * @param {string} sQuery - The query to search for.
+       * @returns {sap.ui.model.Filter[]} - An array of filters to apply to the table's binding.
+       * @private
+       */
       _createSearchFilters: function (aSearchableFields, sQuery) {
         if (!sQuery || !aSearchableFields?.length) {
           return [];
@@ -245,7 +326,16 @@ sap.ui.define(
         });
       },
 
-      // Build filters from filter bar
+      /**
+       * Builds an array of filters from the values in the given filter bar.
+       * Iterates over the filter group items of the filter bar, determines the
+       * control for each item, and retrieves the current value from the control.
+       * If a value is found, calls the _buildFilterForSpecificField function
+       * to create a filter for the field and adds it to the array.
+       * @param {sap.ui.comp.filterbar.FilterBar} oFilterBar - The filter bar to build filters from.
+       * @returns {sap.ui.model.Filter[]} - An array of filters to apply to the table's binding.
+       * @private
+       */
       _buildFiltersFromFilterBar: function (oFilterBar) {
         const aFilters = [];
 
@@ -269,6 +359,14 @@ sap.ui.define(
         return aFilters;
       },
 
+      /**
+       * Creates a filter for the given field and value, based on the field type.
+       * @param {string} sField - The name of the field to filter on.
+       * @param {any} vValue - The value to filter on.
+       * @param {string[]} aSearchableFields - The fields that can be searched on.
+       * @returns {sap.ui.model.Filter} - The filter to apply to the table's binding.
+       * @private
+       */
       _buildFilterForSpecificField: function (
         sField,
         vValue,
@@ -285,7 +383,7 @@ sap.ui.define(
         }
 
         if (sField === "ReleaseDate") {
-          const sFormattedDate = formatter._formatDate(vValue);
+          const sFormattedDate = formatter.formatDate(vValue);
           return sFormattedDate
             ? new Filter(sField, "EQ", sFormattedDate)
             : null;
@@ -303,7 +401,15 @@ sap.ui.define(
         );
       },
 
-      // Get filter values from controls
+      /**
+       * Retrieves the current filter value from the given control.
+       * For a <code>MultiComboBox</code>, it will return an array of selected keys.
+       * For a <code>DatePicker</code>, it will return the selected date as a Date object.
+       * For any other control, it will return the current value as a string.
+       * @param {sap.ui.core.Control} oControl - The control to retrieve the filter value from.
+       * @returns {string|string[]|Date|null} - The current filter value or null if no value is set.
+       * @private
+       */
       _getFilterValueFromControl: function (oControl) {
         return (
           oControl.getSelectedKey?.() ||
@@ -313,8 +419,11 @@ sap.ui.define(
         );
       },
 
-      // Reset product creation form
-      _resetProductForm: function () {
+      /**
+       * Resets the product form model to its initial state.
+       * @private
+       */
+      _resetProductFormModel: function () {
         const oView = this.getView();
         const oFormModel = oView.getModel("productFormModel");
 
