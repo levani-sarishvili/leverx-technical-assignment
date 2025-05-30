@@ -1,16 +1,6 @@
-const aSearchableFields = [
-  "Name",
-  "Price",
-  "Category",
-  "Brand",
-  "SupplierName",
-  "Rating",
-];
-
 sap.ui.define(
   [
     "sap/ui/core/mvc/Controller",
-    "sap/ui/model/json/JSONModel",
     "levani/sarishvili/model/formatter",
     "sap/ui/core/Fragment",
     "sap/m/MessageBox",
@@ -19,10 +9,11 @@ sap.ui.define(
     "sap/ui/model/FilterOperator",
     "levani/sarishvili/utils/i18nUtils",
     "levani/sarishvili/model/models",
+    "levani/sarishvili/model/Validation",
+    "levani/sarishvili/constants/Constants",
   ],
   function (
     Controller,
-    JSONModel,
     formatter,
     Fragment,
     MessageBox,
@@ -30,11 +21,17 @@ sap.ui.define(
     Filter,
     FilterOperator,
     i18nUtils,
-    models
+    models,
+    Validation,
+    Constants
   ) {
     "use strict";
 
     return Controller.extend("levani.sarishvili.controller.ProductList", {
+      aSearchFilters: [],
+      aFilterBarFilters: [],
+      aCombinedFilters: [],
+
       /**
        * Initializes the ProductList controller.
        *
@@ -53,7 +50,9 @@ sap.ui.define(
           this._buildFilterForSpecificField.bind(this);
         this._deleteSelectedProducts = this._deleteSelectedProducts.bind(this);
         this._updateProductCount = this._updateProductCount.bind(this);
-        this._validateProductForm = this._validateProductForm.bind(this);
+
+        this._oProductTableColumns = Constants.oProductTableColumns;
+        this._oFilterOperators = Constants.oFilterOperators;
 
         // Create product form model
         this.getView().setModel(
@@ -74,79 +73,64 @@ sap.ui.define(
         );
       },
 
-      // Validation
-      _validateProductForm: function () {
-        const oProductForm = this.getView()
-          .getModel("productFormModel")
-          .getData();
-        const oValidationModel = this.getView().getModel(
-          "productFormValidationModel"
-        );
-
-        // Check mandatory fields
-        oValidationModel.setProperty("/Name", !!oProductForm.Name);
-        oValidationModel.setProperty("/Price", !!oProductForm.Price);
-        oValidationModel.setProperty("/Category", !!oProductForm.Category);
-        oValidationModel.setProperty("/Brand", !!oProductForm.Brand);
-        oValidationModel.setProperty(
-          "/SupplierName",
-          !!oProductForm.SupplierName
-        );
-        oValidationModel.setProperty(
-          "/ReleaseDate",
-          !!oProductForm.ReleaseDate
-        );
-        oValidationModel.setProperty("/Rating", !!oProductForm.Rating);
-
-        // Return validation result
-        return !Object.values(oValidationModel.getData()).includes(false);
-      },
-
       // Formatters
       formatter: formatter,
 
       /**
-       * Handles product search form submission.
-       * @param {sap.ui.base.Event} oEvent - The event object.
-       * @private
+       * Handles the product search input and updates the table filters.
+       * Applies OR filters across searchable fields if a query exists.
+       *
+       * @param {sap.ui.base.Event} oEvent The search event containing the query parameter.
        */
       onProductSearchPress: function (oEvent) {
-        const oView = this.getView();
         const sQuery = oEvent.getParameter("query");
         const oTable = this.byId("productTable");
         const oBinding = oTable.getBinding("rows");
 
-        // Clear filter and update count if query is cleared
-        if (!sQuery) {
-          oBinding.filter([]);
-          this._updateProductCount(oView, oBinding);
-          return;
-        }
+        // Reset search filters and create new ones if query exists
+        this.oSearchFilterGroup = sQuery
+          ? new Filter(
+              this._createSearchFilters(Constants.aSearchableFields, sQuery),
+              false
+            )
+          : null;
 
-        const aFilters = this._createSearchFilters(aSearchableFields, sQuery);
-        console.log("Filters created from search query:", aFilters);
-        oBinding.filter(new Filter(aFilters, false));
-
-        // Update product count
-        this._updateProductCount(oView, oBinding);
+        this._applyCombinedFilters(oBinding);
+        this._updateProductCount(this.getView(), oBinding);
       },
 
       /**
-       * Applies filters to the product table based on the values in the filter bar and updates the product count.
-       * @private
+       * Handles the filter bar search action and updates the table filters.
+       * Applies AND filters based on the selected filter bar fields.
        */
       onSearch: function () {
-        const oView = this.getView();
         const oTable = this.byId("productTable");
         const oBinding = oTable.getBinding("rows");
         const oFilterBar = this.byId("filterbar");
-        const aFilters = this._buildFiltersFromFilterBar(oFilterBar);
 
-        // Apply filters to the table
-        oBinding.filter(aFilters.length ? new Filter(aFilters, true) : null);
+        // Get filters from filter bar
+        this.aFilterBarFilters = this._buildFiltersFromFilterBar(oFilterBar);
 
-        // Update product count
-        this._updateProductCount(oView, oBinding);
+        this._applyCombinedFilters(oBinding);
+        this._updateProductCount(this.getView(), oBinding);
+      },
+
+      /**
+       * Helper method to apply combined filters
+       * @private
+       */
+      _applyCombinedFilters: function (oBinding) {
+        const aCombinedFilters = [];
+        if (this.oSearchFilterGroup) {
+          aCombinedFilters.push(this.oSearchFilterGroup);
+        }
+
+        if (this.aFilterBarFilters?.length) {
+          aCombinedFilters.push(...this.aFilterBarFilters);
+        }
+        oBinding.filter(
+          aCombinedFilters.length ? new Filter(aCombinedFilters, true) : []
+        );
       },
 
       /**
@@ -209,9 +193,18 @@ sap.ui.define(
         const oMainModel = oView.getModel();
         const aProducts = oMainModel.getProperty("/Products") || [];
         const oNewProduct = oFormModel.getData();
+        const oProductForm = this.getView()
+          .getModel("productFormModel")
+          .getData();
+        const oValidationModel = this.getView().getModel(
+          "productFormValidationModel"
+        );
 
         // Validate product form inputs
-        const bIsFormValid = this._validateProductForm();
+        const bIsFormValid = Validation.validateProductForm(
+          oProductForm,
+          oValidationModel
+        );
         if (!bIsFormValid) {
           MessageBox.error(
             i18nUtils.getTranslatedText(oView, "productFormValidationError")
@@ -328,11 +321,8 @@ sap.ui.define(
       },
 
       /**
-       * Updates the state of the delete button based on the current selection.
-       *
-       * Retrieves the selected product IDs from the selection model and enables
-       * the delete button if there are any products selected. Disables the button
-       * otherwise.
+       * Enables or disables the delete button based on whether any products are selected.
+       * Checks the `selectionModel` for selected product IDs and updates the delete button state accordingly.
        *
        * @private
        */
@@ -350,21 +340,22 @@ sap.ui.define(
       },
 
       /**
-       * Creates an array of filters for the given searchable fields and query.
-       * If a numeric field is found, uses the EQ operator and parses the query as a float.
-       * For non-numeric fields, uses the Contains operator and passes the query as a string.
-       * @param {string[]} aSearchableFields - The fields to search in.
-       * @param {string} sQuery - The query to search for.
-       * @returns {sap.ui.model.Filter[]} - An array of filters to apply to the table's binding.
-       * @private
+       * Creates an array of search filters for the specified searchable fields and query.
+       * Uses `Contains` for string fields and `EQ` for numeric fields like Price or Rating.
+       *
+       * @param {string[]} aSearchableFields - List of field names to be searched.
+       * @param {string} sQuery - The search query input by the user.
+       * @returns {sap.ui.model.Filter[]} An array of filters based on the query and searchable fields.
        */
       _createSearchFilters: function (aSearchableFields, sQuery) {
-        if (!sQuery || !aSearchableFields?.length) {
+        if (!sQuery || !Constants.aSearchableFields?.length) {
           return [];
         }
 
-        return aSearchableFields.map((sField) => {
-          const isNumericField = sField === "Price" || sField === "Rating";
+        return Constants.aSearchableFields.map((sField) => {
+          const isNumericField =
+            sField === this._oProductTableColumns.PRICE_FIELD ||
+            sField === this._oProductTableColumns.RATING_FIELD;
           return new Filter(
             sField,
             isNumericField ? FilterOperator.EQ : FilterOperator.Contains,
@@ -374,14 +365,11 @@ sap.ui.define(
       },
 
       /**
-       * Builds an array of filters from the values in the given filter bar.
-       * Iterates over the filter group items of the filter bar, determines the
-       * control for each item, and retrieves the current value from the control.
-       * If a value is found, calls the _buildFilterForSpecificField function
-       * to create a filter for the field and adds it to the array.
-       * @param {sap.ui.comp.filterbar.FilterBar} oFilterBar - The filter bar to build filters from.
-       * @returns {sap.ui.model.Filter[]} - An array of filters to apply to the table's binding.
-       * @private
+       * Builds an array of filters based on the user inputs in the filter bar controls.
+       * Each control's value is extracted and converted into a corresponding filter.
+       *
+       * @param {sap.ui.comp.filterbar.FilterBar} oFilterBar - The filter bar containing filter group items.
+       * @returns {sap.ui.model.Filter[]} An array of Filter objects based on filled controls.
        */
       _buildFiltersFromFilterBar: function (oFilterBar) {
         const aFilters = [];
@@ -389,14 +377,18 @@ sap.ui.define(
         oFilterBar.getFilterGroupItems().forEach((oItem) => {
           const sField = oItem.getName();
           const oControl = oFilterBar.determineControlByFilterItem(oItem);
-          const vValue = this._getFilterValueFromControl(oControl);
+          const vFilterValue = this._getFilterValueFromControl(oControl);
 
-          if (!vValue || (Array.isArray(vValue) && !vValue.length)) return;
+          if (
+            !vFilterValue ||
+            (Array.isArray(vFilterValue) && !vFilterValue.length)
+          )
+            return;
 
           const oFieldFilter = this._buildFilterForSpecificField(
             sField,
-            vValue,
-            aSearchableFields
+            vFilterValue,
+            Constants.aSearchableFields
           );
           if (oFieldFilter) {
             aFilters.push(oFieldFilter);
@@ -409,53 +401,56 @@ sap.ui.define(
       /**
        * Creates a filter for the given field and value, based on the field type.
        * @param {string} sField - The name of the field to filter on.
-       * @param {any} vValue - The value to filter on.
+       * @param {any} vFilterValue - The value to filter on.
        * @param {string[]} aSearchableFields - The fields that can be searched on.
        * @returns {sap.ui.model.Filter} - The filter to apply to the table's binding.
        * @private
        */
       _buildFilterForSpecificField: function (
         sField,
-        vValue,
+        vFilterValue,
         aSearchableFields
       ) {
         if (sField === "Search") {
           const aSearchFilters = this._createSearchFilters(
-            aSearchableFields,
-            vValue
+            Constants.aSearchableFields,
+            vFilterValue
           );
           return aSearchFilters.length
             ? new Filter(aSearchFilters, false)
             : null;
         }
 
-        if (sField === "ReleaseDate") {
-          const sFormattedDate = formatter.formatDate(vValue);
+        if (sField === this._oProductTableColumns.RELEASE_DATE_FIELD) {
+          const sFormattedDate = formatter.formatDate(vFilterValue);
           return sFormattedDate
             ? new Filter(sField, "EQ", sFormattedDate)
             : null;
         }
 
-        if (Array.isArray(vValue)) {
-          const aMultiFilters = vValue.map((v) => new Filter(sField, "EQ", v));
+        if (Array.isArray(vFilterValue)) {
+          const aMultiFilters = vFilterValue.map(
+            (filterValue) =>
+              new Filter(sField, this._oFilterOperators.EQUAL, filterValue)
+          );
           return new Filter(aMultiFilters, false);
         }
 
         return new Filter(
           sField,
-          typeof vValue === "string" ? "Contains" : "EQ",
-          vValue
+          typeof vFilterValue === "string"
+            ? this._oFilterOperators.CONTAINS
+            : this._oFilterOperators.EQUAL,
+          vFilterValue
         );
       },
 
       /**
-       * Retrieves the current filter value from the given control.
-       * For a <code>MultiComboBox</code>, it will return an array of selected keys.
-       * For a <code>DatePicker</code>, it will return the selected date as a Date object.
-       * For any other control, it will return the current value as a string.
-       * @param {sap.ui.core.Control} oControl - The control to retrieve the filter value from.
-       * @returns {string|string[]|Date|null} - The current filter value or null if no value is set.
-       * @private
+       * Extracts the filter value from a given control.
+       * Handles different control types like Select, MultiSelect, DatePicker, and Input.
+       *
+       * @param {sap.ui.core.Control} oControl - The control to extract the value from.
+       * @returns {string|string[]|Date|undefined} The extracted filter value.
        */
       _getFilterValueFromControl: function (oControl) {
         return (
