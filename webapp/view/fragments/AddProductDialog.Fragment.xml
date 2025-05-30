@@ -26,11 +26,14 @@
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
-              maxLength: 100
+              maxLength: 100,
+              required: true
              } 
             }"
+          valueState="{= ${productFormValidationModel>/Name} ? 'None' : 'Error'}"
           placeholder="{i18n>productNameInputPlaceholder}"
           type="Text"
+          fieldGroupIds="productFormGroup"
           required="true" />
 
         <!-- Price -->
@@ -42,10 +45,14 @@
             type: 'sap.ui.model.type.Integer',
             constraints: {
               minimum: 1,
-              maximum: 100000
+              maximum: 100000,
+              required: true
               }
             }"
+          valueState="{= ${productFormValidationModel>/Price} ? 'None' : 'Error'}"
           placeholder="{i18n>productPriceInputPlaceholder}"
+          fieldGroupIds="productFormGroup"
+          type="Number"
           required="true" />
 
         <!-- Category -->
@@ -54,14 +61,15 @@
           id="category"
           forceSelection="false"
           required="true"
+          fieldGroupIds="productFormGroup"
           selectedKey="{
             path: 'productFormModel>Category',
             type: 'sap.ui.model.type.String',
             constraints: {
-              minLength: 3,
-              maxLength: 100
+              required: true
              } 
             }"
+          valueState="{= ${productFormValidationModel>/Category} ? 'None' : 'Error'}"
           items="{
 							path: '/ProductCategories',
 							sorter: { path: 'Name' }
@@ -75,12 +83,13 @@
           id="brand"
           forceSelection="false"
           required="true"
+          fieldGroupIds="productFormGroup"
+          valueState="{= ${productFormValidationModel>/Brand} ? 'None' : 'Error'}"
           selectedKey="{
             path: 'productFormModel>Brand',
             type: 'sap.ui.model.type.String',
             constraints: {
-              minLength: 2,
-              maxLength: 100
+              required: true
              } 
             }"
           items="{
@@ -91,15 +100,18 @@
         </Select>
 
         <!-- SupplierName -->
-        <Label text="{i18n>productSupplierLabel}" labelFor="price" />
+        <Label text="{i18n>productSupplierLabel}" labelFor="supplierName" />
         <Input
           id="supplierName"
+          fieldGroupIds="productFormGroup"
+          valueState="{= ${productFormValidationModel>/SupplierName} ? 'None' : 'Error'}"
           value="{
             path: 'productFormModel>SupplierName',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
-              maxLength: 100
+              maxLength: 100,
+              required: true
              } 
             }"
           placeholder="{i18n>productSupplierInputPlaceholder}"
@@ -112,9 +124,11 @@
           id="DP1"
           placeholder="{i18n>productReleaseDateInputPlaceholder}"
           displayFormat="dd/MM/yyyy"
+          valueState="{= ${productFormValidationModel>/ReleaseDate} ? 'None' : 'Error'}"
           valueFormat="yyyy-MM-dd"
           value="{productFormModel>ReleaseDate}"
           class="sapUiSmallMarginBottom"
+          fieldGroupIds="productFormGroup"
           required="true" />
 
         <!-- Rating -->
@@ -124,10 +138,16 @@
           value="{
             path: 'productFormModel>Rating', 
             type: 'sap.ui.model.type.Float', 
-            constraints: { minimum: 1, maximum: 5 }
+            constraints: { 
+              minimum: 1, 
+              maximum: 5,
+              required: true 
+              }
             }"
+          valueState="{= ${productFormValidationModel>/Rating} ? 'None' : 'Error'}"
           placeholder="{i18n>productRatingInputPlaceholder}"
           type="Number"
+          fieldGroupIds="productFormGroup"
           required="true" />
       </f:content>
     </f:SimpleForm>

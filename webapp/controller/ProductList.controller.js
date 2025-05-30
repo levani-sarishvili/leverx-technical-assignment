@@ -18,6 +18,7 @@ sap.ui.define(
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "levani/sarishvili/utils/i18nUtils",
+    "levani/sarishvili/model/models",
   ],
   function (
     Controller,
@@ -28,7 +29,8 @@ sap.ui.define(
     MessageToast,
     Filter,
     FilterOperator,
-    i18nUtils
+    i18nUtils,
+    models
   ) {
     "use strict";
 
@@ -51,24 +53,53 @@ sap.ui.define(
           this._buildFilterForSpecificField.bind(this);
         this._deleteSelectedProducts = this._deleteSelectedProducts.bind(this);
         this._updateProductCount = this._updateProductCount.bind(this);
+        this._validateProductForm = this._validateProductForm.bind(this);
 
         // Create product form model
-        const oFormModel = new JSONModel({
-          Name: "",
-          Price: null,
-          Category: "",
-          Brand: "",
-          SupplierName: "",
-          ReleaseDate: "",
-          Rating: null,
-        });
-        this.getView().setModel(oFormModel, "productFormModel");
+        this.getView().setModel(
+          models.createProductFormModel(),
+          "productFormModel"
+        );
+
+        // Create product form validation model
+        this.getView().setModel(
+          models.createProductFormValidationModel(),
+          "productFormValidationModel"
+        );
 
         // Create selection model for product selection
-        const oSelectionModel = new JSONModel({
-          selectedProductIds: [],
-        });
-        this.getView().setModel(oSelectionModel, "selectionModel");
+        this.getView().setModel(
+          models.createProductSelectionModel(),
+          "selectionModel"
+        );
+      },
+
+      // Validation
+      _validateProductForm: function () {
+        const oProductForm = this.getView()
+          .getModel("productFormModel")
+          .getData();
+        const oValidationModel = this.getView().getModel(
+          "productFormValidationModel"
+        );
+
+        // Check mandatory fields
+        oValidationModel.setProperty("/Name", !!oProductForm.Name);
+        oValidationModel.setProperty("/Price", !!oProductForm.Price);
+        oValidationModel.setProperty("/Category", !!oProductForm.Category);
+        oValidationModel.setProperty("/Brand", !!oProductForm.Brand);
+        oValidationModel.setProperty(
+          "/SupplierName",
+          !!oProductForm.SupplierName
+        );
+        oValidationModel.setProperty(
+          "/ReleaseDate",
+          !!oProductForm.ReleaseDate
+        );
+        oValidationModel.setProperty("/Rating", !!oProductForm.Rating);
+
+        // Return validation result
+        return !Object.values(oValidationModel.getData()).includes(false);
       },
 
       // Formatters
@@ -93,6 +124,7 @@ sap.ui.define(
         }
 
         const aFilters = this._createSearchFilters(aSearchableFields, sQuery);
+        console.log("Filters created from search query:", aFilters);
         oBinding.filter(new Filter(aFilters, false));
 
         // Update product count
@@ -178,6 +210,15 @@ sap.ui.define(
         const aProducts = oMainModel.getProperty("/Products") || [];
         const oNewProduct = oFormModel.getData();
 
+        // Validate product form inputs
+        const bIsFormValid = this._validateProductForm();
+        if (!bIsFormValid) {
+          MessageBox.error(
+            i18nUtils.getTranslatedText(oView, "productFormValidationError")
+          );
+          return;
+        }
+
         // Add new product
         oNewProduct.ProductId = Date.now().toString();
         const aUpdatedProducts = [...aProducts, oNewProduct];
@@ -204,6 +245,12 @@ sap.ui.define(
         if (oDialog) {
           oDialog.close();
           this._resetProductFormModel();
+
+          // Create product form validation model
+          this.getView().setModel(
+            models.createProductFormValidationModel(),
+            "productFormValidationModel"
+          );
         }
       },
 
