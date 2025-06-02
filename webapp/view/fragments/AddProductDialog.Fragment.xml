@@ -153,8 +153,8 @@
     </f:SimpleForm>
 
     <buttons>
-      <Button type="Accept" text="{i18n>createButton}" press="onProductCreatePress" />
-      <Button type="Reject" text="{i18n>cancelButton}" press="onProductCancelPress" />
+      <Button type="Accept" text="{i18n>createButtonText}" press="onProductCreatePress" />
+      <Button type="Reject" text="{i18n>cancelButtonText}" press="onProductCancelPress" />
     </buttons>
   </Dialog>
 </core:FragmentDefinition>

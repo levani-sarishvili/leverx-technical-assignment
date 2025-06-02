@@ -73,12 +73,21 @@
           "pattern": "",
           "name": "ProductList",
           "target": ["ProductList"]
+        },
+        {
+          "pattern": "ProductDetails/{productId}",
+          "name": "ProductDetails",
+          "target": ["ProductDetails"]
         }
       ],
       "targets": {
         "ProductList": {
           "viewId": "ProductList",
           "viewName": "ProductList"
+        },
+        "ProductDetails": {
+          "viewId": "ProductDetails",
+          "viewName": "ProductDetails"
         }
       }
     }

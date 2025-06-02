@@ -149,11 +149,11 @@
               <ToolbarSpacer />
               <Button
                 id="addProductButton"
-                text="{i18n>addProductButtonText}"
+                text="{i18n>addButtonText}"
                 press=".onAddProductPress" />
               <Button
                 id="deleteProductButton"
-                text="{i18n>deleteProductButtonText}"
+                text="{i18n>deleteButtonText}"
                 enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
                 press=".onDeleteProductPress" />
             </OverflowToolbar>
@@ -251,7 +251,7 @@
               <t:RowActionItem
                 icon="sap-icon://feeder-arrow"
                 type="Custom"
-                press=".onEditRowPress" />
+                press=".onProductPress" />
             </t:RowAction>
           </t:rowActionTemplate>
         </t:Table>

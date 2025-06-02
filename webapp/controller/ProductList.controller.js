@@ -73,6 +73,18 @@ sap.ui.define(
         );
       },
 
+      // Navigate to product detail page when a product is pressed
+      onProductPress: function (oEvent) {
+        const oSelectedItem = oEvent.getSource();
+        const oContext = oSelectedItem.getBindingContext();
+        const sProductId = oContext.getProperty("Id");
+
+        // Navigate to the product detail page with the selected product ID
+        this.getOwnerComponent().getRouter().navTo("ProductDetails", {
+          productId: sProductId,
+        });
+      },
+
       // Formatters
       formatter: formatter,
 
