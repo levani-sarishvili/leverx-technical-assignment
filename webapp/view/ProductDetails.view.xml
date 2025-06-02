@@ -4,9 +4,9 @@
   xmlns="sap.m"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:f="sap.f"
+  xmlns:form="sap.ui.layout.form"
   xmlns:fb="sap.ui.comp.filterbar"
   xmlns:t="sap.ui.table"
-  xmlns:rowmode="sap.ui.table.rowmodes"
   xmlns:core="sap.ui.core"
   xmlns:layout="sap.ui.layout">
 
@@ -21,35 +21,46 @@
     <f:title>
       <f:DynamicPageTitle>
         <f:snappedContent>
-          <Breadcrumbs separatorStyle="{/selected}">
-            <Link text="{i18n>breadcrumbHome}" />
-            <Link text="{i18n>breadcrumbProductDetails}" />
-          </Breadcrumbs>
-        </f:snappedContent>
-        <f:heading>
-          <Title text="{i18n>pageTitleProductDetails}" level="H1" />
-        </f:heading>
-        <f:expandedContent>
           <HBox alignItems="Center" justifyContent="SpaceBetween">
             <Breadcrumbs separatorStyle="{/selected}">
-              <Link text="{i18n>pageTitleProductList}" />
+              <Link text="{i18n>pageTitleProductList}" press=".onNavHome" />
               <Link text="{i18n>breadcrumbProductDetails}" />
             </Breadcrumbs>
 
             <HBox justifyContent="End">
               <Button
-                id="addOrderButton"
-                text="{i18n>addButtonText}"
+                text="{i18n>editButtonText}"
                 press=".onAddOrderPress"
                 class="sapUiSmallMarginEnd" />
               <Button
-                id="deleteOrderButton"
                 text="{i18n>deleteButtonText}"
                 enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
                 press=".onDeleteOrderPress" />
             </HBox>
           </HBox>
+        </f:snappedContent>
+        <f:heading>
+          <Title text="{Name}" level="H1" />
+        </f:heading>
+        <f:expandedContent>
+          <HBox alignItems="Center" justifyContent="SpaceBetween">
+            <Breadcrumbs separatorStyle="{/selected}">
+              <Link text="{i18n>pageTitleProductList}" press=".onNavHome" />
+              <Link text="{i18n>breadcrumbProductDetails}" />
+            </Breadcrumbs>
 
+            <HBox justifyContent="End">
+              <Button
+                text="{i18n>editButtonText}"
+                press=".onAddOrderPress"
+                type="Emphasized"
+                class="sapUiSmallMarginEnd" />
+              <Button
+                text="{i18n>deleteButtonText}"
+                enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
+                press=".onDeleteOrderPress" />
+            </HBox>
+          </HBox>
         </f:expandedContent>
       </f:DynamicPageTitle>
     </f:title>
@@ -57,7 +68,42 @@
     <!-- DynamicPage Header -->
     <f:header>
       <f:DynamicPageHeader pinnable="true">
-        <SearchField></SearchField>
+        <VBox class="sapUiSmallMargin">
+          <form:SimpleForm id="SimpleFormDisplayColumn_threeGroups346"
+            editable="false"
+            layout="ColumnLayout"
+            columnsM="3"
+            columnsL="4"
+            columnsXL="6"
+          >
+            <form:content>
+              <Label text="Name" />
+              <Text id="nameText" text="{SupplierName}" />
+              <Label text="Street/No." />
+              <Text text="{Street} {HouseNumber}" />
+              <Label text="ZIP Code/City" />
+              <Text text="{ZIPCode} {City}" />
+              <Label text="Country" />
+              <Text id="countryText" text="{Country}" />
+              <Label text="Web" />
+              <Link text="Url" href="{Url}" />
+              <Label text="Twitter" />
+              <Text text="{Twitter}" />
+              <Label text="Email" />
+              <Text text="{Email}" />
+              <Label text="Tel." />
+              <Text text="{Tel}" />
+              <Label text="SMS" />
+              <Text text="{Sms}" />
+              <Label text="Mobile" />
+              <Text text="{Mobile}" />
+              <Label text="Pager" />
+              <Text text="{Pager}" />
+              <Label text="Fax" />
+              <Text text="{Fax}" />
+            </form:content>
+          </form:SimpleForm>
+        </VBox>
       </f:DynamicPageHeader>
     </f:header>
 
@@ -82,6 +128,8 @@
               <Title
                 text="Orders" />
               <ToolbarSpacer />
+
+              <SearchField width="20rem" placeholder="Search order"></SearchField>
             </OverflowToolbar>
           </t:extension>
 

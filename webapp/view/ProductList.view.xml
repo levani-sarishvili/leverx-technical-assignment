@@ -176,10 +176,12 @@
             <t:Column
               hAlign="Begin"
               sortProperty="Price"
+              tooltip="{Description}"
             >
               <Label text="{i18n>productTablePriceColumn}" />
               <t:template>
-                <Text text="{path: 'Price', formatter: '.formatter.formatPrice'}" />
+                <Text text="{path: 'Price', formatter: '.formatter.formatPrice'}"
+                />
               </t:template>
             </t:Column>
 

@@ -50,5 +50,11 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
     formatTableRowCount: function (aProducts) {
       return Array.isArray(aProducts) ? aProducts.length : 0;
     },
+
+    // Shortens a given text
+    shortenText: function (sText) {
+      if (!sText) return "";
+      return sText.length > 20 ? sText.substring(0, 20) + "..." : sText;
+    },
   };
 });
