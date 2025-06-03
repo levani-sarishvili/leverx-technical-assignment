@@ -41,19 +41,6 @@ sap.ui.define(
        * selected product IDs for operations like deletion or updates.
        */
       onInit: function () {
-        this.onProductSearchPress = this.onProductSearchPress.bind(this);
-        this._createSearchFilters = this._createSearchFilters.bind(this);
-        this._resetProductFormModel = this._resetProductFormModel.bind(this);
-        this._buildFiltersFromFilterBar =
-          this._buildFiltersFromFilterBar.bind(this);
-        this._buildFilterForSpecificField =
-          this._buildFilterForSpecificField.bind(this);
-        this._deleteSelectedProducts = this._deleteSelectedProducts.bind(this);
-        this._updateProductCount = this._updateProductCount.bind(this);
-
-        this._oProductTableColumns = Constants.oProductTableColumns;
-        this._oFilterOperators = Constants.oFilterOperators;
-
         // Create product form model
         this.getView().setModel(
           models.createProductFormModel(),
@@ -154,7 +141,9 @@ sap.ui.define(
       _updateProductCount: function (oView, oBinding) {
         const iCount = oBinding.getLength();
         const sTitle = i18nUtils.getTranslatedText(oView, "productTableTitle");
-        this.getView().byId("title").setText(`${sTitle} (${iCount})`);
+        this.getView()
+          .byId("productTableTitle")
+          .setText(`${sTitle} (${iCount})`);
       },
 
       /**
@@ -218,9 +207,6 @@ sap.ui.define(
           oValidationModel
         );
         if (!bIsFormValid) {
-          MessageBox.error(
-            i18nUtils.getTranslatedText(oView, "productFormValidationError")
-          );
           return;
         }
 
@@ -366,8 +352,8 @@ sap.ui.define(
 
         return Constants.aSearchableFields.map((sField) => {
           const isNumericField =
-            sField === this._oProductTableColumns.PRICE_FIELD ||
-            sField === this._oProductTableColumns.RATING_FIELD;
+            sField === Constants.oProductTableColumns.PRICE_FIELD ||
+            sField === Constants.oProductTableColumns.RATING_FIELD;
           return new Filter(
             sField,
             isNumericField ? FilterOperator.EQ : FilterOperator.Contains,
@@ -433,7 +419,7 @@ sap.ui.define(
             : null;
         }
 
-        if (sField === this._oProductTableColumns.RELEASE_DATE_FIELD) {
+        if (sField === Constants.oProductTableColumns.RELEASE_DATE_FIELD) {
           const sFormattedDate = formatter.formatDate(vFilterValue);
           return sFormattedDate
             ? new Filter(sField, "EQ", sFormattedDate)
@@ -442,8 +428,7 @@ sap.ui.define(
 
         if (Array.isArray(vFilterValue)) {
           const aMultiFilters = vFilterValue.map(
-            (filterValue) =>
-              new Filter(sField, this._oFilterOperators.EQUAL, filterValue)
+            (filterValue) => new Filter(sField, FilterOperator.EQ, filterValue)
           );
           return new Filter(aMultiFilters, false);
         }
@@ -451,8 +436,8 @@ sap.ui.define(
         return new Filter(
           sField,
           typeof vFilterValue === "string"
-            ? this._oFilterOperators.CONTAINS
-            : this._oFilterOperators.EQUAL,
+            ? FilterOperator.Contains
+            : FilterOperator.EQ,
           vFilterValue
         );
       },

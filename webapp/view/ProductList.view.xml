@@ -7,43 +7,33 @@
   xmlns:fb="sap.ui.comp.filterbar"
   xmlns:t="sap.ui.table"
   xmlns:rowmode="sap.ui.table.rowmodes"
-  xmlns:core="sap.ui.core"
-  xmlns:layout="sap.ui.layout">
+  xmlns:core="sap.ui.core">
 
   <f:DynamicPage
-    id="productListPage"
-    headerExpanded="true"
     toggleHeaderOnTitleClick="true"
     preserveHeaderStateOnScroll="false"
     class="sapUiNoContentPadding">
 
-    <!-- Title -->
     <f:title>
       <f:DynamicPageTitle>
-        <f:snappedContent>
-          <Breadcrumbs separatorStyle="{/selected}">
-            <Link text="{i18n>breadcrumbHome}" />
-          </Breadcrumbs>
-        </f:snappedContent>
         <f:heading>
           <Title text="{i18n>pageTitleProductList}" level="H1" />
         </f:heading>
+
         <f:expandedContent>
-          <Breadcrumbs separatorStyle="{/selected}">
-            <Link text="{i18n>pageTitleProductList}" />
-          </Breadcrumbs>
+          <Label id="expandedLabel" text="No filters active" />
         </f:expandedContent>
+        <f:snappedContent>
+          <Label id="snappedLabel" text="No filters active" />
+        </f:snappedContent>
 
       </f:DynamicPageTitle>
     </f:title>
 
-    <!-- DynamicPage Header -->
     <f:header>
       <f:DynamicPageHeader pinnable="true">
-        <!-- Filter bar -->
         <fb:FilterBar
           id="filterbar"
-          persistencyKey="myPersKey"
           useToolbar="false"
           search=".onSearch"
           filterChange=".onFilterChange"
@@ -52,9 +42,7 @@
             <fb:FilterGroupItem name="Search" groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
-                <!-- Search field -->
                 <SearchField
-                  id="productSearchField"
                   placeholder="{i18n>searchFilterPlaceholder}"
                   search="onProductSearchPress"
                 />
@@ -65,13 +53,11 @@
               groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
-                <!-- Combobox -->
                 <ComboBox
-                  id="categoryFilter"
                   items="{
                     path: '/ProductCategories',
                     sorter: { path: 'Name' }
-                    }">
+                  }">
                   <core:Item key="{Key}" text="{Name}" />
                 </ComboBox>
               </fb:control>
@@ -81,15 +67,13 @@
               groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
-                <!-- Multi combobox -->
                 <MultiComboBox
-                  id="brandFilter"
                   selectionChange="handleSelectionChange"
                   selectionFinish="handleSelectionFinish"
                   items="{
                     path: '/ProductBrands',
                     sorter: { path: 'Name' }
-                    }">
+                  }">
                   <core:Item key="{Key}" text="{Name}" />
                 </MultiComboBox>
               </fb:control>
@@ -99,10 +83,8 @@
               groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
-                <!-- Data picker -->
                 <DatePicker
-                  id="releaseDateFilter"
-                  change="handleChange"
+                  placeholder="{i18n>releaseDateFilterPlaceholder}"
                 />
               </fb:control>
             </fb:FilterGroupItem>
@@ -111,153 +93,160 @@
       </f:DynamicPageHeader>
     </f:header>
 
-    <!-- Content wrapped in a VBox -->
     <f:content>
-      <FlexBox width="100%">
-        <!-- Products Table -->
-        <t:Table
-          class="sapUiResponsiveMargin"
-          rows="{/Products}"
-          rowSelectionChange="onRowSelectionChange"
-          ariaLabelledBy="title"
-          id="productTable"
-          selectionMode="MultiToggle"
-          rowActionCount="1"
-          selectionBehavior="Row"
-          alternateRowColors="true"
-        >
-          <!-- Rows config -->
-          <t:rowMode>
-            <rowmode:Auto
-              minRowCount="{
-                path: '/Products' ,
-                formatter: '.formatter.formatTableRowCount'
-              }" />
-          </t:rowMode>
+      <t:Table
+        class="sapUiResponsiveMargin"
+        rows="{/Products}"
+        rowSelectionChange="onRowSelectionChange"
+        ariaLabelledBy="title"
+        id="productTable"
+        selectionMode="MultiToggle"
+        rowActionCount="1"
+        selectionBehavior="Row"
+        alternateRowColors="true"
+      >
+        <t:rowMode>
+          <rowmode:Auto
+            minRowCount="{= ${/Products} ? ${/Products}.length : 0 }" />
+        </t:rowMode>
 
-          <!-- Table toolbar -->
-          <t:extension>
-            <OverflowToolbar style="Standard">
-              <Title id="title"
-                text="{
+        <t:noData>
+          <IllustratedMessage enableVerticalResponsiveness="true"
+            illustrationType="sapIllus-NoData">
+          </IllustratedMessage>
+        </t:noData>
+
+        <t:extension>
+          <OverflowToolbar style="Standard">
+            <Title id="productTableTitle"
+              text="{
                   parts: [
                     { path: 'i18n>productTableTitle' },
                     { path: '/Products' }
                   ],
                   formatter: '.formatter.formatTableTitle'
-                }" />
-              <ToolbarSpacer />
-              <Button
-                id="addProductButton"
-                text="{i18n>addButtonText}"
-                press=".onAddProductPress" />
-              <Button
-                id="deleteProductButton"
-                text="{i18n>deleteButtonText}"
-                enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
-                press=".onDeleteProductPress" />
-            </OverflowToolbar>
-          </t:extension>
+            }" />
+            <ToolbarSpacer />
+            <Button
+              text="{i18n>createButtonText}"
+              type="Transparent"
+              press=".onAddProductPress" />
+            <Button
+              id="deleteProductButton"
+              text="{i18n>deleteButtonText}"
+              type="Transparent"
+              enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
+              press=".onDeleteProductPress" />
+          </OverflowToolbar>
+        </t:extension>
 
-          <!-- Columns aggregation -->
-          <t:columns>
-            <!-- Product name -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="Name"
-            >
-              <Label text="{i18n>productTableNameColumn}" />
-              <t:template>
-                <Text text="{Name}" />
-              </t:template>
-            </t:Column>
+        <t:columns>
+          <!-- Product name -->
+          <t:Column
+            hAlign="Begin"
+            sortProperty="Name"
+            width="25%"
+          >
+            <Label text="{i18n>productTableNameColumn}" />
+            <t:template>
+              <Text text="{Name}" />
+            </t:template>
+          </t:Column>
 
-            <!-- Price -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="Price"
-              tooltip="{Description}"
-            >
-              <Label text="{i18n>productTablePriceColumn}" />
-              <t:template>
-                <Text text="{path: 'Price', formatter: '.formatter.formatPrice'}"
-                />
-              </t:template>
-            </t:Column>
+          <!-- Price -->
+          <t:Column
+            hAlign="End"
+            sortProperty="Price"
+            width="15%"
+          >
+            <Label text="{i18n>productTablePriceColumn}" />
+            <t:template>
+              <ObjectNumber
+                number="{path: 'Price'}"
+                unit="USD"
+                emphasized="false"
+                textAlign="End"
+              />
+            </t:template>
+          </t:Column>
 
-            <!-- Category -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="Category"
-            >
-              <Label text="{i18n>productTableCategoryColumn}" />
-              <t:template>
-                <Text text="{Category}" />
-              </t:template>
-            </t:Column>
+          <!-- Category -->
+          <t:Column
+            hAlign="Begin"
+            sortProperty="Category"
+            width="15%"
+          >
+            <Label text="{i18n>productTableCategoryColumn}" />
+            <t:template>
+              <Text text="{Category}" />
+            </t:template>
+          </t:Column>
 
-            <!-- Brand -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="Brand"
-            >
-              <Label text="{i18n>productTableBrandColumn}" />
-              <t:template>
-                <Text text="{Brand}" />
-              </t:template>
-            </t:Column>
+          <!-- Brand -->
+          <t:Column
+            hAlign="Begin"
+            sortProperty="Brand"
+            width="10%"
+          >
+            <Label text="{i18n>productTableBrandColumn}" />
+            <t:template>
+              <Text text="{Brand}" />
+            </t:template>
+          </t:Column>
 
-            <!-- SupplierName -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="SupplierName"
-            >
-              <Label text="{i18n>productTableSupplierNameColumn}" />
-              <t:template>
-                <Text text="{SupplierName}" />
-              </t:template>
-            </t:Column>
+          <!-- SupplierName -->
+          <t:Column
+            hAlign="Begin"
+            sortProperty="SupplierName"
+            width="20%"
+          >
+            <Label text="{i18n>productTableSupplierNameColumn}" />
+            <t:template>
+              <Text text="{SupplierName}" />
+            </t:template>
+          </t:Column>
 
-            <!-- ReleaseDate -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="ReleaseDate"
-            >
-              <Label text="{i18n>productTableReleaseDateColumn}" />
-              <t:template>
-                <Text text="{ReleaseDate}" />
-              </t:template>
-            </t:Column>
+          <!-- ReleaseDate -->
+          <t:Column
+            hAlign="End"
+            sortProperty="ReleaseDate"
+            width="15%"
+          >
+            <Label text="{i18n>productTableReleaseDateColumn}" />
+            <t:template>
+              <Text text="{ReleaseDate}" />
+            </t:template>
+          </t:Column>
 
-            <!-- Rating -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="Rating"
-            >
-              <Label text="{i18n>productTableRatingColumn}" />
-              <t:template>
-                <RatingIndicator
-                  id="RI_display_only"
-                  iconSize="1rem"
-                  maxValue="5"
-                  class="sapUiSmallMarginBottom"
-                  value="{Rating}"
-                  displayOnly="true" />
-              </t:template>
-            </t:Column>
-          </t:columns>
+          <!-- Rating -->
+          <t:Column
+            hAlign="Center"
+            sortProperty="Rating"
+            width="15%"
+          >
+            <Label text="{i18n>productTableRatingColumn}" />
+            <t:template>
+              <RatingIndicator
+                id="RI_display_only"
+                iconSize="0.8rem"
+                maxValue="5"
+                class="sapUiSmallMarginBottom"
+                value="{Rating}"
+                displayOnly="true" />
+            </t:template>
+          </t:Column>
+        </t:columns>
 
-          <!-- Row Actions -->
-          <t:rowActionTemplate>
-            <t:RowAction>
-              <t:RowActionItem
-                icon="sap-icon://feeder-arrow"
-                type="Custom"
-                press=".onProductPress" />
-            </t:RowAction>
-          </t:rowActionTemplate>
-        </t:Table>
-      </FlexBox>
+        <!-- Row Actions -->
+        <t:rowActionTemplate>
+          <t:RowAction>
+            <t:RowActionItem
+              icon="sap-icon://feeder-arrow"
+              type="Navigation"
+              press=".onProductPress" />
+          </t:RowAction>
+        </t:rowActionTemplate>
+      </t:Table>
     </f:content>
   </f:DynamicPage>
 </mvc:View>

@@ -7,33 +7,28 @@
   xmlns:form="sap.ui.layout.form"
   xmlns:fb="sap.ui.comp.filterbar"
   xmlns:t="sap.ui.table"
+  xmlns:rowmode="sap.ui.table.rowmodes"
   xmlns:core="sap.ui.core"
   xmlns:layout="sap.ui.layout">
 
   <f:DynamicPage
-    id="productDetailsPage"
-    headerExpanded="true"
     toggleHeaderOnTitleClick="true"
     preserveHeaderStateOnScroll="false"
     class="sapUiNoContentPadding">
 
-    <!-- Title -->
     <f:title>
       <f:DynamicPageTitle>
         <f:snappedContent>
-          <HBox alignItems="Center" justifyContent="SpaceBetween">
-            <Breadcrumbs separatorStyle="{/selected}">
-              <Link text="{i18n>pageTitleProductList}" press=".onNavHome" />
-              <Link text="{i18n>breadcrumbProductDetails}" />
-            </Breadcrumbs>
-
+          <HBox width="100%" alignItems="End" justifyContent="End">
             <HBox justifyContent="End">
               <Button
                 text="{i18n>editButtonText}"
                 press=".onAddOrderPress"
+                type="Emphasized"
                 class="sapUiSmallMarginEnd" />
               <Button
                 text="{i18n>deleteButtonText}"
+                type="Ghost"
                 enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
                 press=".onDeleteOrderPress" />
             </HBox>
@@ -44,11 +39,6 @@
         </f:heading>
         <f:expandedContent>
           <HBox alignItems="Center" justifyContent="SpaceBetween">
-            <Breadcrumbs separatorStyle="{/selected}">
-              <Link text="{i18n>pageTitleProductList}" press=".onNavHome" />
-              <Link text="{i18n>breadcrumbProductDetails}" />
-            </Breadcrumbs>
-
             <HBox justifyContent="End">
               <Button
                 text="{i18n>editButtonText}"
@@ -57,6 +47,7 @@
                 class="sapUiSmallMarginEnd" />
               <Button
                 text="{i18n>deleteButtonText}"
+                type="Ghost"
                 enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
                 press=".onDeleteOrderPress" />
             </HBox>
@@ -65,52 +56,45 @@
       </f:DynamicPageTitle>
     </f:title>
 
-    <!-- DynamicPage Header -->
     <f:header>
       <f:DynamicPageHeader pinnable="true">
         <VBox class="sapUiSmallMargin">
           <form:SimpleForm id="SimpleFormDisplayColumn_threeGroups346"
-            editable="false"
+            editable="true"
             layout="ColumnLayout"
             columnsM="3"
             columnsL="4"
-            columnsXL="6"
+            columnsXL="5"
           >
             <form:content>
               <Label text="Name" />
-              <Text id="nameText" text="{SupplierName}" />
-              <Label text="Street/No." />
-              <Text text="{Street} {HouseNumber}" />
-              <Label text="ZIP Code/City" />
-              <Text text="{ZIPCode} {City}" />
-              <Label text="Country" />
-              <Text id="countryText" text="{Country}" />
-              <Label text="Web" />
-              <Link text="Url" href="{Url}" />
-              <Label text="Twitter" />
-              <Text text="{Twitter}" />
-              <Label text="Email" />
-              <Text text="{Email}" />
-              <Label text="Tel." />
-              <Text text="{Tel}" />
-              <Label text="SMS" />
-              <Text text="{Sms}" />
-              <Label text="Mobile" />
-              <Text text="{Mobile}" />
-              <Label text="Pager" />
-              <Text text="{Pager}" />
-              <Label text="Fax" />
-              <Text text="{Fax}" />
+              <Text text="{Name}" />
+
+              <Label text="Price" />
+              <Text text="{Price}" />
+
+              <Label text="Category" />
+              <Text text="{Category}" />
+
+              <Label text="Brand" />
+              <Text text="{Brand}" />
+
+              <Label text="SupplierName" />
+              <Text text="{SupplierName}" />
+
+              <Label text="ReleaseDate" />
+              <Text text="{ReleaseDate}" />
+
+              <Label text="Rating" />
+              <RatingIndicator value="{Rating}" />
             </form:content>
           </form:SimpleForm>
         </VBox>
       </f:DynamicPageHeader>
     </f:header>
 
-    <!-- Content wrapped in a VBox -->
     <f:content>
       <FlexBox width="100%">
-        <!-- Products Table -->
         <t:Table
           class="sapUiResponsiveMargin"
           rows="{/SalesOrders}"
@@ -122,7 +106,12 @@
           selectionBehavior="Row"
           alternateRowColors="true"
         >
-          <!-- Table toolbar -->
+
+          <t:rowMode>
+            <rowmode:Auto
+              minRowCount="20" />
+          </t:rowMode>
+
           <t:extension>
             <OverflowToolbar style="Standard">
               <Title
@@ -133,7 +122,6 @@
             </OverflowToolbar>
           </t:extension>
 
-          <!-- Columns aggregation -->
           <t:columns>
             <!-- OrderId -->
             <t:Column

@@ -47,11 +47,6 @@ sap.ui.define(
           console.error("Product not found:", sProductId);
         }
       },
-
-      // Navigate back to the product list
-      onNavHome: function () {
-        this.getOwnerComponent().getRouter().navTo("ProductList", {}, true);
-      },
     });
   }
 );

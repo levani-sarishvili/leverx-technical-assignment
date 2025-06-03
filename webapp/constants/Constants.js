@@ -20,10 +20,5 @@ sap.ui.define([], function () {
     RATING_FIELD: "Rating",
   };
 
-  const oFilterOperators = {
-    EQUAL: "EQ",
-    CONTAINS: "Contains",
-  };
-
-  return { aSearchableFields, oProductTableColumns, oFilterOperators };
+  return { aSearchableFields, oProductTableColumns };
 });

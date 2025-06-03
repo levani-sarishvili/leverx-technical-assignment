@@ -40,21 +40,5 @@ sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
       const sTotalProducts = Array.isArray(aProducts) ? aProducts.length : 0;
       return `${sTitle} (${sTotalProducts})`;
     },
-
-    /**
-     * Returns the count of products in a given array.
-     *
-     * @param {sap.ui.model.json.JSONList} aProducts - The list of products.
-     * @returns {number} The number of products in the list.
-     */
-    formatTableRowCount: function (aProducts) {
-      return Array.isArray(aProducts) ? aProducts.length : 0;
-    },
-
-    // Shortens a given text
-    shortenText: function (sText) {
-      if (!sText) return "";
-      return sText.length > 20 ? sText.substring(0, 20) + "..." : sText;
-    },
   };
 });
