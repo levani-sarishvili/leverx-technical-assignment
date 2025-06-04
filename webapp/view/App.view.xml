@@ -1,5 +1,4 @@
 <mvc:View
-  controllerName="levani.sarishvili.controller.App"
   xmlns="sap.m"
   displayBlock="true"
   xmlns:mvc="sap.ui.core.mvc">

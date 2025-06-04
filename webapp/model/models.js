@@ -35,34 +35,13 @@ sap.ui.define(
       createProductFormValidationModel: function () {
         return new JSONModel(
           {
-            Name: {
-              valid: true,
-              errorMessage: "Product name is mandatory.",
-            },
-            Price: {
-              valid: true,
-              errorMessage: "Product price is mandatory.",
-            },
-            Category: {
-              valid: true,
-              errorMessage: "Product category is mandatory.",
-            },
-            Brand: {
-              valid: true,
-              errorMessage: "Product brand is mandatory.",
-            },
-            SupplierName: {
-              valid: true,
-              errorMessage: "Supplier name is mandatory.",
-            },
-            ReleaseDate: {
-              valid: true,
-              errorMessage: "Release date is mandatory.",
-            },
-            Rating: {
-              valid: true,
-              errorMessage: "Product rating is mandatory.",
-            },
+            Name: true,
+            Price: true,
+            Category: true,
+            Brand: true,
+            SupplierName: true,
+            ReleaseDate: true,
+            Rating: true,
           },
 
           {

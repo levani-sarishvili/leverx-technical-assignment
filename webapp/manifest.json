@@ -33,8 +33,7 @@
 
     "rootView": {
       "viewName": "levani.sarishvili.view.App",
-      "type": "XML",
-      "id": "app"
+      "type": "XML"
     },
 
     "contentDensities": {

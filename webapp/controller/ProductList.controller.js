@@ -35,10 +35,13 @@ sap.ui.define(
       /**
        * Initializes the ProductList controller.
        *
-       * Binds the context of several functions to ensure correct 'this' usage.
-       * Sets up the product form model and selection model, binding them to the view.
-       * The product form model is used to handle product data input, while the selection model manages
-       * selected product IDs for operations like deletion or updates.
+       * This method sets up the initial models required for the view:
+       *
+       * - **productFormModel**: Holds the product form data input by the user.
+       * - **productFormValidationModel**: Manages validation states and messages for the product form fields.
+       * - **selectionModel**: Tracks the IDs of selected products, used for operations like deletion or editing.
+       *
+       * These models are attached to the view under named model references to enable data binding.
        */
       onInit: function () {
         // Create product form model
@@ -60,7 +63,13 @@ sap.ui.define(
         );
       },
 
-      // Navigate to product detail page when a product is pressed
+      /**
+       * Handles the press event on a product item in the list.
+       *
+       * Retrieves the selected product's ID from the binding context and navigates to the ProductDetails page.
+       *
+       * @param {sap.ui.base.Event} oEvent - The press event triggered when a product item is selected.
+       */
       onProductPress: function (oEvent) {
         const oSelectedItem = oEvent.getSource();
         const oContext = oSelectedItem.getBindingContext();
@@ -88,10 +97,7 @@ sap.ui.define(
 
         // Reset search filters and create new ones if query exists
         this.oSearchFilterGroup = sQuery
-          ? new Filter(
-              this._createSearchFilters(Constants.aSearchableFields, sQuery),
-              false
-            )
+          ? new Filter(this._createSearchFilters(sQuery), false)
           : null;
 
         this._applyCombinedFilters(oBinding);
@@ -153,12 +159,11 @@ sap.ui.define(
        * The dialog is bound to the product form model to display the current product data.
        * @private
        */
-      onAddProductPress: function () {
+      onCreateProductPress: async function () {
         const oView = this.getView();
-        const oDialog = oView.byId("addProductDialog");
 
-        if (!oDialog) {
-          Fragment.load({
+        if (!this.oDialog) {
+          this.oDialog = await Fragment.load({
             id: oView.getId(),
             name: "levani.sarishvili.view.fragments.AddProductDialog",
             controller: this,
@@ -194,7 +199,7 @@ sap.ui.define(
         const oMainModel = oView.getModel();
         const aProducts = oMainModel.getProperty("/Products") || [];
         const oNewProduct = oFormModel.getData();
-        const oProductForm = this.getView()
+        const oProductFormData = this.getView()
           .getModel("productFormModel")
           .getData();
         const oValidationModel = this.getView().getModel(
@@ -203,7 +208,7 @@ sap.ui.define(
 
         // Validate product form inputs
         const bIsFormValid = Validation.validateProductForm(
-          oProductForm,
+          oProductFormData,
           oValidationModel
         );
         if (!bIsFormValid) {
@@ -261,8 +266,8 @@ sap.ui.define(
 
         aSelectedIndices.forEach((iIndex) => {
           const oContext = oTable.getContextByIndex(iIndex);
-          const oRowData = oContext.getObject();
-          aSelectedProductIds.push(oRowData.Id);
+          const iProductId = oContext.getProperty("Id");
+          aSelectedProductIds.push(iProductId);
         });
         oSelectionModel.setProperty("/selectedProductIds", aSelectedProductIds);
       },
@@ -284,8 +289,9 @@ sap.ui.define(
         MessageBox.confirm(
           i18nUtils.getTranslatedText(oView, "confirmDeleteProducts"),
           {
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             onClose: (sAction) => {
-              if (sAction === "OK") {
+              if (sAction === MessageBox.Action.OK) {
                 this._deleteSelectedProducts(aSelectedProductIds);
               }
             },
@@ -341,23 +347,22 @@ sap.ui.define(
        * Creates an array of search filters for the specified searchable fields and query.
        * Uses `Contains` for string fields and `EQ` for numeric fields like Price or Rating.
        *
-       * @param {string[]} aSearchableFields - List of field names to be searched.
        * @param {string} sQuery - The search query input by the user.
        * @returns {sap.ui.model.Filter[]} An array of filters based on the query and searchable fields.
        */
-      _createSearchFilters: function (aSearchableFields, sQuery) {
+      _createSearchFilters: function (sQuery) {
         if (!sQuery || !Constants.aSearchableFields?.length) {
           return [];
         }
 
         return Constants.aSearchableFields.map((sField) => {
-          const isNumericField =
+          const bIsNumericField =
             sField === Constants.oProductTableColumns.PRICE_FIELD ||
             sField === Constants.oProductTableColumns.RATING_FIELD;
           return new Filter(
             sField,
-            isNumericField ? FilterOperator.EQ : FilterOperator.Contains,
-            isNumericField ? parseFloat(sQuery) : sQuery
+            bIsNumericField ? FilterOperator.EQ : FilterOperator.Contains,
+            bIsNumericField ? parseFloat(sQuery) : sQuery
           );
         });
       },
@@ -400,16 +405,11 @@ sap.ui.define(
        * Creates a filter for the given field and value, based on the field type.
        * @param {string} sField - The name of the field to filter on.
        * @param {any} vFilterValue - The value to filter on.
-       * @param {string[]} aSearchableFields - The fields that can be searched on.
        * @returns {sap.ui.model.Filter} - The filter to apply to the table's binding.
        * @private
        */
-      _buildFilterForSpecificField: function (
-        sField,
-        vFilterValue,
-        aSearchableFields
-      ) {
-        if (sField === "Search") {
+      _buildFilterForSpecificField: function (sField, vFilterValue) {
+        if (sField === Constants.sSearchFilterGroupName) {
           const aSearchFilters = this._createSearchFilters(
             Constants.aSearchableFields,
             vFilterValue
@@ -422,7 +422,7 @@ sap.ui.define(
         if (sField === Constants.oProductTableColumns.RELEASE_DATE_FIELD) {
           const sFormattedDate = formatter.formatDate(vFilterValue);
           return sFormattedDate
-            ? new Filter(sField, "EQ", sFormattedDate)
+            ? new Filter(sField, FilterOperator.EQ, sFormattedDate)
             : null;
         }
 

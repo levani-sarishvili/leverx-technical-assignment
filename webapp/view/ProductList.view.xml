@@ -130,7 +130,7 @@
             <Button
               text="{i18n>createButtonText}"
               type="Transparent"
-              press=".onAddProductPress" />
+              press=".onCreateProductPress" />
             <Button
               id="deleteProductButton"
               text="{i18n>deleteButtonText}"

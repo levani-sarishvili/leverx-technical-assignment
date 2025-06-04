@@ -1,6 +1,8 @@
 sap.ui.define([], function () {
   "use strict";
 
+  const sSearchFilterGroupName = "Search";
+
   const aSearchableFields = [
     "Name",
     "Price",
@@ -20,5 +22,5 @@ sap.ui.define([], function () {
     RATING_FIELD: "Rating",
   };
 
-  return { aSearchableFields, oProductTableColumns };
+  return { aSearchableFields, oProductTableColumns, sSearchFilterGroupName };
 });
