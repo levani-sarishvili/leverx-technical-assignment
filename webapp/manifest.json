@@ -21,6 +21,7 @@
   },
 
   "sap.ui5": {
+    "handleValidation": true,
     "dependencies": {
       "minUI5Version": "1.135.0",
       "libs": {
@@ -36,8 +37,6 @@
       "id": "app"
     },
 
-    "handleValidation": true,
-
     "contentDensities": {
       "compact": true,
       "cozy": true
@@ -52,9 +51,12 @@
         }
       },
 
-      "ui": {
+      "": {
         "type": "sap.ui.model.json.JSONModel",
-        "uri": "./model/ui.json"
+        "uri": "model/data.json",
+        "settings": {
+          "bindRequest": true
+        }
       }
     },
 
@@ -69,14 +71,14 @@
       "routes": [
         {
           "pattern": "",
-          "name": "StoreOverview",
-          "target": ["StoreOverview"]
+          "name": "ProductList",
+          "target": ["ProductList"]
         }
       ],
       "targets": {
-        "StoreOverview": {
-          "viewId": "StoreOverview",
-          "viewName": "StoreOverview"
+        "ProductList": {
+          "viewId": "ProductList",
+          "viewName": "ProductList"
         }
       }
     }
