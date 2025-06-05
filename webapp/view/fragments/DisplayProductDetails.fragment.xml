@@ -1,0 +1,43 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:form="sap.ui.layout.form"
+  xmlns:core="sap.ui.core">
+  <VBox>
+    <form:SimpleForm
+      layout="ColumnLayout"
+      columnsM="3"
+      columnsL="4"
+      columnsXL="5"
+    >
+      <form:content>
+        <Label text="Name" />
+        <Text text="{Name}" />
+
+        <Label text="Price" />
+        <ObjectNumber
+          number="{path: 'Price'}"
+          unit="USD"
+          emphasized="false"
+        />
+
+        <Label text="Category" />
+        <Text text="{Category}" />
+
+        <Label text="Brand" />
+        <Text text="{Brand}" />
+
+        <Label text="SupplierName" />
+        <Text text="{SupplierName}" />
+
+        <Label text="ReleaseDate" />
+        <Text text="{ReleaseDate}" />
+
+        <Label text="Rating" />
+        <RatingIndicator
+          displayOnly="true"
+          iconSize="1.2rem"
+          value="{Rating}" />
+      </form:content>
+    </form:SimpleForm>
+  </VBox>
+</core:FragmentDefinition>

@@ -1,260 +1,280 @@
 <mvc:View
   controllerName="levani.sarishvili.controller.ProductDetails"
-  displayBlock="true"
-  xmlns="sap.m"
+  xmlns:m="sap.m"
+  xmlns="sap.uxap"
+  xmlns:uxap="sap.uxap"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:f="sap.f"
-  xmlns:form="sap.ui.layout.form"
-  xmlns:fb="sap.ui.comp.filterbar"
   xmlns:t="sap.ui.table"
   xmlns:rowmode="sap.ui.table.rowmodes"
-  xmlns:core="sap.ui.core"
   xmlns:layout="sap.ui.layout">
 
-  <f:DynamicPage
-    toggleHeaderOnTitleClick="true"
-    preserveHeaderStateOnScroll="false"
-    class="sapUiNoContentPadding">
+  <ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+    <headerTitle>
+      <ObjectPageDynamicHeaderTitle>
+        <breadcrumbs>
+          <m:Breadcrumbs separatorStyle="{/selected}"
+            currentLocationText="{i18n>breadcrumbProductDetails}">
+            <m:Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
+          </m:Breadcrumbs>
+        </breadcrumbs>
 
-    <f:title>
-      <f:DynamicPageTitle>
-        <f:snappedContent>
-          <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
-            <Breadcrumbs separatorStyle="{/selected}"
-              currentLocationText="{i18n>breadcrumbProductDetails}">
-              <Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
-            </Breadcrumbs>
+        <expandedHeading>
+          <m:Title text="{Name}" level="H1" />
+        </expandedHeading>
 
-            <HBox justifyContent="End">
-              <Button
-                text="{i18n>editButtonText}"
-                press=".onAddOrderPress"
-                type="Emphasized"
-                class="sapUiSmallMarginEnd" />
-              <Button
-                text="{i18n>deleteButtonText}"
-                type="Ghost"
-                enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
-                press=".onDeleteOrderPress" />
-            </HBox>
-          </HBox>
-        </f:snappedContent>
+        <snappedHeading>
+          <m:HBox>
+            <m:VBox>
+              <m:Title text="{Name}" level="H1" />
+              <m:Label text="{Id}" />
+            </m:VBox>
+          </m:HBox>
+        </snappedHeading>
 
-        <f:expandedContent>
-          <HBox alignItems="Center" justifyContent="SpaceBetween">
-            <Breadcrumbs separatorStyle="{/selected}"
-              currentLocationText="{i18n>breadcrumbProductDetails}">
-              <Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
-            </Breadcrumbs>
+        <expandedContent>
+          <m:Label text="{Id}" />
+        </expandedContent>
 
-            <HBox justifyContent="End">
-              <Button
-                text="{i18n>editButtonText}"
-                press=".onAddOrderPress"
-                type="Emphasized"
-                class="sapUiSmallMarginEnd" />
-              <Button
-                text="{i18n>deleteButtonText}"
-                type="Ghost"
-                enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
-                press=".onDeleteOrderPress" />
-            </HBox>
-          </HBox>
-        </f:expandedContent>
+        <snappedTitleOnMobile>
+          <m:Title text="{Name}" />
+        </snappedTitleOnMobile>
 
-        <f:heading>
-          <VBox>
-            <Title text="{Name}" level="H1" />
-            <Label text="{Id}" />
-          </VBox>
-        </f:heading>
-      </f:DynamicPageTitle>
-    </f:title>
+        <actions>
+          <m:Button
+            id="productEditButton"
+            text="{i18n>editButtonText}"
+            press=".onEditProductPress"
+            type="Emphasized"
+            class="sapUiSmallMarginEnd" />
+          <m:Button
+            id="productDeleteButton"
+            text="{i18n>deleteButtonText}"
+            type="Default"
+            enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
+            press=".onDeleteProductPress" />
 
-    <f:header>
-      <f:DynamicPageHeader pinnable="true">
-        <VBox>
-          <form:SimpleForm
-            layout="ColumnLayout"
-            columnsM="3"
-            columnsL="4"
-            columnsXL="5"
-          >
-            <form:content>
-              <Label text="Name" />
-              <Text text="{Name}" />
+          <m:Button
+            id="productSaveButton"
+            text="{i18n>saveButtonText}"
+            press=".onSaveChangesPress"
+            type="Emphasized"
+            visible="false"
+            class="sapUiSmallMarginEnd" />
+          <m:Button
+            id="productCancelButton"
+            text="{i18n>cancelButtonText}"
+            type="Default"
+            visible="false"
+            enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
+            press=".onCancelChangesPress" />
+        </actions>
+      </ObjectPageDynamicHeaderTitle>
+    </headerTitle>
 
-              <Label text="Price" />
-              <ObjectNumber
-                number="{path: 'Price'}"
-                unit="USD"
-                emphasized="false"
-              />
+    <headerContent>
+      <m:FlexBox wrap="Wrap" fitContainer="true">
+        <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+          <m:HBox>
+            <m:Label text="{i18n>productCategoryLabel}" showColon="true" class="sapUiTinyMarginEnd" />
+            <m:Text text="{Category}" />
+          </m:HBox>
 
-              <Label text="Category" />
-              <Text text="{Category}" />
+          <m:HBox>
+            <m:Label text="{i18n>productBrandLabel}" showColon="true" class="sapUiTinyMarginEnd" />
+            <m:Text text="{Brand}" />
+          </m:HBox>
 
-              <Label text="Brand" />
-              <Text text="{Brand}" />
+          <m:HBox>
+            <m:Label text="{i18n>productSupplierLabel}" showColon="true"
+              class="sapUiTinyMarginEnd" />
+            <m:Text text="{SupplierName}" />
+          </m:HBox>
+        </m:VBox>
 
-              <Label text="SupplierName" />
-              <Text text="{SupplierName}" />
+        <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+          <m:Title text="Status" class="sapUiTinyMarginBottom" />
+          <m:ObjectStatus text="Delivery"
+            state="Success"
+            class="sapMObjectStatusLarge" />
+        </m:VBox>
 
-              <Label text="ReleaseDate" />
-              <Text text="{ReleaseDate}" />
+        <m:VBox class="sapUiLargeMarginEnd">
+          <m:Title text="{i18n>productPriceLabel}" class="sapUiTinyMarginBottom" />
+          <m:ObjectNumber number="{Price}"
+            unit="USD"
+            emphasized="false"
+            class="sapMObjectNumberLarge" />
+        </m:VBox>
+      </m:FlexBox>
+    </headerContent>
 
-              <Label text="Rating" />
-              <RatingIndicator
-                displayOnly="true"
-                iconSize="1.2rem"
-                value="{Rating}" />
-            </form:content>
-          </form:SimpleForm>
-        </VBox>
-      </f:DynamicPageHeader>
-    </f:header>
+    <sections>
+      <ObjectPageSection titleUppercase="false" title="General Information">
+        <subSections>
+          <ObjectPageSubSection title="Order Details" showTitle="false">
+            <blocks>
+              <m:VBox id="productDetailsContainer">
+              </m:VBox>
+            </blocks>
+          </ObjectPageSubSection>
 
-    <f:content>
-      <FlexBox width="100%">
-        <t:Table
-          class="sapUiResponsiveMargin"
-          rows="{/SalesOrders}"
-          rowSelectionChange="onRowSelectionChange"
-          ariaLabelledBy="title"
-          id="productDetailsTable"
-          selectionMode="MultiToggle"
-          rowActionCount="1"
-          selectionBehavior="Row"
-          alternateRowColors="true"
-        >
+          <ObjectPageSubSection title="Orders" showTitle="false">
+            <blocks>
+              <!-- Order Table -->
+              <t:Table
+                class="sapUiResponsiveMargin"
+                rows="{/SalesOrders}"
+                rowSelectionChange="onRowSelectionChange"
+                ariaLabelledBy="title"
+                id="productDetailsTable"
+                selectionMode="MultiToggle"
+                rowActionCount="1"
+                selectionBehavior="Row"
+                alternateRowColors="true"
+              >
 
-          <t:rowMode>
-            <rowmode:Auto
-              minRowCount="20" />
-          </t:rowMode>
+                <t:rowMode>
+                  <rowmode:Auto
+                    minRowCount="20" />
+                </t:rowMode>
 
-          <t:extension>
-            <OverflowToolbar style="Standard">
-              <Title
-                text="Orders" />
-              <ToolbarSpacer />
+                <t:extension>
+                  <m:OverflowToolbar style="Standard">
+                    <m:Title
+                      text="Orders" />
+                    <m:ToolbarSpacer />
 
-              <SearchField width="20rem" placeholder="Search order"></SearchField>
-            </OverflowToolbar>
-          </t:extension>
+                    <m:SearchField width="20rem" placeholder="Search order"></m:SearchField>
+                  </m:OverflowToolbar>
+                </t:extension>
 
-          <t:columns>
-            <!-- OrderId -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="OrderId"
-              width="10%"
-            >
-              <Label text="{i18n>orderTableIdColumn}" />
-              <t:template>
-                <Text text="{OrderId}" />
-              </t:template>
-            </t:Column>
+                <t:columns>
+                  <!-- OrderId -->
+                  <t:Column
+                    hAlign="Begin"
+                    sortProperty="OrderId"
+                    width="10%"
+                  >
+                    <m:Label text="{i18n>orderTableIdColumn}" />
+                    <t:template>
+                      <m:Text text="{OrderId}" />
+                    </t:template>
+                  </t:Column>
 
-            <!-- Customer -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="Customer"
-              width="20%"
-            >
-              <Label text="{i18n>orderTableCustomerColumn}" />
-              <t:template>
-                <Text text="{Customer}" />
-              </t:template>
-            </t:Column>
+                  <!-- Customer -->
+                  <t:Column
+                    hAlign="Begin"
+                    sortProperty="Customer"
+                    width="20%"
+                  >
+                    <m:Label text="{i18n>orderTableCustomerColumn}" />
+                    <t:template>
+                      <m:Text text="{Customer}" />
+                    </t:template>
+                  </t:Column>
 
-            <!-- Quantity -->
-            <t:Column
-              hAlign="End"
-              sortProperty="Quantity"
-              width="10%"
-            >
-              <Label text="{i18n>orderTableQuantityColumn}" />
-              <t:template>
-                <Text text="{Quantity}" />
-              </t:template>
-            </t:Column>
+                  <!-- Quantity -->
+                  <t:Column
+                    hAlign="End"
+                    sortProperty="Quantity"
+                    width="10%"
+                  >
+                    <m:Label text="{i18n>orderTableQuantityColumn}" />
+                    <t:template>
+                      <m:Text text="{Quantity}" />
+                    </t:template>
+                  </t:Column>
 
-            <!-- OrderDate -->
-            <t:Column
-              hAlign="End"
-              sortProperty="OrderDate"
-              width="15%"
-            >
-              <Label text="{i18n>orderTableOrderDateColumn}" />
-              <t:template>
-                <Text text="{OrderDate}" />
-              </t:template>
-            </t:Column>
+                  <!-- OrderDate -->
+                  <t:Column
+                    hAlign="End"
+                    sortProperty="OrderDate"
+                    width="15%"
+                  >
+                    <m:Label text="{i18n>orderTableOrderDateColumn}" />
+                    <t:template>
+                      <m:Text text="{OrderDate}" />
+                    </t:template>
+                  </t:Column>
 
-            <!-- Status -->
-            <t:Column
-              hAlign="Begin"
-              sortProperty="Status"
-              width="15%"
-            >
-              <Label text="{i18n>orderTableStatusColumn}" />
-              <t:template>
-                <ObjectStatus
-                  text="{Status}"
-                  state="{
+                  <!-- Status -->
+                  <t:Column
+                    hAlign="Begin"
+                    sortProperty="Status"
+                    width="15%"
+                  >
+                    <m:Label text="{i18n>orderTableStatusColumn}" />
+                    <t:template>
+                      <m:ObjectStatus
+                        text="{Status}"
+                        state="{
                     path: 'Status',
                     formatter: '.formatter.formatOrderStatus'
                 }" />
-              </t:template>
-            </t:Column>
+                    </t:template>
+                  </t:Column>
 
-            <!-- ShippingCost -->
-            <t:Column
-              hAlign="End"
-              sortProperty="ShippingCost"
-              width="15%"
-            >
-              <Label text="{i18n>orderTableShippingCostColumn}" />
-              <t:template>
-                <ObjectNumber
-                  number="{path: 'ShippingCost'}"
-                  unit="USD"
-                  emphasized="false"
-                  textAlign="End"
-                />
-              </t:template>
-            </t:Column>
-          </t:columns>
+                  <!-- ShippingCost -->
+                  <t:Column
+                    hAlign="End"
+                    sortProperty="ShippingCost"
+                    width="15%"
+                  >
+                    <m:Label text="{i18n>orderTableShippingCostColumn}" />
+                    <t:template>
+                      <m:ObjectNumber
+                        number="{path: 'ShippingCost'}"
+                        unit="USD"
+                        emphasized="false"
+                        textAlign="End"
+                      />
+                    </t:template>
+                  </t:Column>
+                </t:columns>
 
-          <!-- TotalPrice -->
-          <t:Column
-            hAlign="End"
-            sortProperty="TotalPrice"
-            width="15%"
-          >
-            <Label text="{i18n>orderTableTotalPriceColumn}" />
-            <t:template>
-              <ObjectNumber
-                number="{path: 'TotalPrice'}"
-                unit="USD"
-                emphasized="false"
-                textAlign="End"
-              />
-            </t:template>
-          </t:Column>
+                <!-- TotalPrice -->
+                <t:Column
+                  hAlign="End"
+                  sortProperty="TotalPrice"
+                  width="15%"
+                >
+                  <m:Label text="{i18n>orderTableTotalPriceColumn}" />
+                  <t:template>
+                    <m:ObjectNumber
+                      number="{path: 'TotalPrice'}"
+                      unit="USD"
+                      emphasized="false"
+                      textAlign="End"
+                    />
+                  </t:template>
+                </t:Column>
 
-          <!-- Row Actions -->
-          <t:rowActionTemplate>
-            <t:RowAction>
-              <t:RowActionItem
-                icon="sap-icon://feeder-arrow"
-                type="Custom"
-                press=".onEditRowPress" />
-            </t:RowAction>
-          </t:rowActionTemplate>
-        </t:Table>
-      </FlexBox>
-    </f:content>
-  </f:DynamicPage>
+                <!-- Row Actions -->
+                <t:rowActionTemplate>
+                  <t:RowAction>
+                    <t:RowActionItem
+                      icon="sap-icon://feeder-arrow"
+                      type="Custom"
+                      press=".onEditRowPress" />
+                  </t:RowAction>
+                </t:rowActionTemplate>
+              </t:Table>
+            </blocks>
+          </ObjectPageSubSection>
+        </subSections>
+      </ObjectPageSection>
+
+      <ObjectPageSection titleUppercase="false" title="Contact Information">
+        <subSections>
+          <ObjectPageSubSection title="Contact Information">
+            <blocks>
+
+            </blocks>
+          </ObjectPageSubSection>
+        </subSections>
+      </ObjectPageSection>
+    </sections>
+  </ObjectPageLayout>
+
 </mvc:View>

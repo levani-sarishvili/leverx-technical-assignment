@@ -4,8 +4,9 @@ sap.ui.define(
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "levani/sarishvili/model/formatter",
+    "sap/ui/core/Fragment",
   ],
-  function (Controller, Filter, FilterOperator, formatter) {
+  function (Controller, Filter, FilterOperator, formatter, Fragment) {
     "use strict";
 
     return Controller.extend("webapp.controller.ProductDetails", {
@@ -16,10 +17,74 @@ sap.ui.define(
        * and binds the onPatternMatched method as the event handler.
        */
       onInit: function () {
+        this._formFragments = {};
+
         this.getOwnerComponent()
           .getRouter()
           .getRoute("ProductDetails")
           .attachPatternMatched(this.onPatternMatched.bind(this));
+
+        // Set the initial form to be the display one
+        this._showFormFragment("DisplayProductDetails");
+      },
+
+      // Displays the specified form fragment
+      _showFormFragment: function (sFragmentName) {
+        let oVBoxContainer = this.byId("productDetailsContainer");
+
+        oVBoxContainer.removeAllItems();
+
+        this._getFormFragment(sFragmentName).then(function (oFragment) {
+          oVBoxContainer.addItem(oFragment);
+        });
+      },
+
+      // Loads the form fragment if it hasn't been loaded yet
+      _getFormFragment: function (sFragmentName) {
+        let pFormFragment = this._formFragments[sFragmentName],
+          oView = this.getView();
+
+        if (!pFormFragment) {
+          pFormFragment = Fragment.load({
+            id: oView.getId(),
+            name: "levani.sarishvili.view.fragments." + sFragmentName,
+          });
+          this._formFragments[sFragmentName] = pFormFragment;
+        }
+
+        return pFormFragment;
+      },
+
+      onEditProductPress: function () {
+        this._toggleButtonsAndView(true);
+      },
+
+      onSaveChangesPress: function () {
+        const oView = this.getView();
+        const oModel = oView.getModel("productFormModel");
+
+        oModel.updateBindings(true);
+        this._toggleButtonsAndView(false);
+      },
+
+      onCancelChangesPress: function () {
+        this._toggleButtonsAndView(false);
+      },
+
+      // Toggles between the display and edit forms
+      _toggleButtonsAndView: function (bEdit) {
+        const oView = this.getView();
+
+        // Show the appropriate action buttons
+        oView.byId("productEditButton").setVisible(!bEdit);
+        oView.byId("productDeleteButton").setVisible(!bEdit);
+        oView.byId("productSaveButton").setVisible(bEdit);
+        oView.byId("productCancelButton").setVisible(bEdit);
+
+        // Set the right form type
+        this._showFormFragment(
+          bEdit ? "EditProductDetails" : "DisplayProductDetails"
+        );
       },
 
       // Formatters
