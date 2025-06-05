@@ -65,6 +65,11 @@ sap.ui.define(
         }
       },
 
+      /**
+       * Maps a stock status to a semantic color.
+       * @param {string} sStatus - The stock status to map.
+       * @returns {string} A semantic color as a string (e.g., "Success", "Warning", "Error", or "None").
+       */
       formatStockStatus: function (sStatus) {
         if (!sStatus) return;
         switch (sStatus) {

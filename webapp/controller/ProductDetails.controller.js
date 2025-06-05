@@ -5,11 +5,26 @@ sap.ui.define(
     "sap/ui/model/FilterOperator",
     "levani/sarishvili/model/formatter",
     "sap/ui/core/Fragment",
+    "sap/m/MessageToast",
+    "sap/m/MessageBox",
+    "levani/sarishvili/utils/i18nUtils",
   ],
-  function (Controller, Filter, FilterOperator, formatter, Fragment) {
+  function (
+    Controller,
+    Filter,
+    FilterOperator,
+    formatter,
+    Fragment,
+    MessageToast,
+    MessageBox,
+    i18nUtils
+  ) {
     "use strict";
 
     return Controller.extend("webapp.controller.ProductDetails", {
+      // Formatters
+      formatter: formatter,
+
       /**
        * Initializes the ProductDetails controller.
        *
@@ -61,14 +76,55 @@ sap.ui.define(
 
       onSaveChangesPress: function () {
         const oView = this.getView();
-        const oModel = oView.getModel("productFormModel");
-
-        oModel.updateBindings(true);
         this._toggleButtonsAndView(false);
+        // Show success message
+        MessageToast.show(
+          i18nUtils.getTranslatedText(oView, "productUpdatedToast")
+        );
       },
 
       onCancelChangesPress: function () {
         this._toggleButtonsAndView(false);
+      },
+
+      onDeleteProductPress: function (oEvent) {
+        const oView = this.getView();
+        const oProductModel = oView.getModel();
+        const sProductId = oEvent
+          .getSource()
+          .getBindingContext()
+          .getProperty("Id");
+
+        // Show confirmation dialog
+        MessageBox.confirm(
+          i18nUtils.getTranslatedText(oView, "confirmDeleteProduct"),
+          {
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+            onClose: (sAction) => {
+              if (sAction === MessageBox.Action.OK) {
+                const aProducts = oProductModel.getProperty("/Products");
+                const aSalesOrders = oProductModel.getProperty("/SalesOrders");
+
+                const aUpdatedProducts = aProducts.filter(
+                  (oProduct) => oProduct.Id !== sProductId
+                );
+                console.log(aUpdatedProducts);
+                const aUpdatedSalesOrders = aSalesOrders.filter(
+                  (oSalesOrder) => oSalesOrder.ProductId !== sProductId
+                );
+                oProductModel.setProperty("/Products", aUpdatedProducts);
+                oProductModel.setProperty("/SalesOrders", aUpdatedSalesOrders);
+                // Show success message
+                MessageToast.show(
+                  i18nUtils.getTranslatedText(oView, "productDeletedToast")
+                );
+
+                // Navigate back to the product list
+                this.getOwnerComponent().getRouter().navTo("ProductList");
+              }
+            },
+          }
+        );
       },
 
       // Toggles between the display and edit forms
@@ -86,9 +142,6 @@ sap.ui.define(
           bEdit ? "EditProductDetails" : "DisplayProductDetails"
         );
       },
-
-      // Formatters
-      formatter: formatter,
 
       /**
        * Handles the "ProductDetails" route pattern match event.

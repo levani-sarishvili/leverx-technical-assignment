@@ -2,14 +2,11 @@
   controllerName="levani.sarishvili.controller.ProductDetails"
   xmlns:m="sap.m"
   xmlns="sap.uxap"
-  xmlns:uxap="sap.uxap"
   xmlns:mvc="sap.ui.core.mvc"
-  xmlns:f="sap.f"
   xmlns:t="sap.ui.table"
-  xmlns:rowmode="sap.ui.table.rowmodes"
-  xmlns:layout="sap.ui.layout">
+  xmlns:rowmode="sap.ui.table.rowmodes">
 
-  <ObjectPageLayout id="ObjectPageLayout" upperCaseAnchorBar="false">
+  <ObjectPageLayout upperCaseAnchorBar="false">
     <headerTitle>
       <ObjectPageDynamicHeaderTitle>
         <breadcrumbs>
@@ -51,7 +48,6 @@
             id="productDeleteButton"
             text="{i18n>deleteButtonText}"
             type="Default"
-            enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
             press=".onDeleteProductPress" />
 
           <m:Button
@@ -66,7 +62,6 @@
             text="{i18n>cancelButtonText}"
             type="Default"
             visible="false"
-            enabled="{= ${selectionModel>/selectedProductIds}.length > 0 }"
             press=".onCancelChangesPress" />
         </actions>
       </ObjectPageDynamicHeaderTitle>
@@ -76,12 +71,14 @@
       <m:FlexBox wrap="Wrap" fitContainer="true">
         <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
           <m:HBox>
-            <m:Label text="{i18n>productCategoryLabel}" showColon="true" class="sapUiTinyMarginEnd" />
+            <m:Label text="{i18n>productCategoryLabel}" showColon="true"
+              class="sapUiTinyMarginEnd" />
             <m:Text text="{Category}" />
           </m:HBox>
 
           <m:HBox>
-            <m:Label text="{i18n>productBrandLabel}" showColon="true" class="sapUiTinyMarginEnd" />
+            <m:Label text="{i18n>productBrandLabel}" showColon="true"
+              class="sapUiTinyMarginEnd" />
             <m:Text text="{Brand}" />
           </m:HBox>
 
@@ -93,10 +90,11 @@
         </m:VBox>
 
         <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-          <m:Title text="Status" class="sapUiTinyMarginBottom" />
-          <m:ObjectStatus text="Delivery"
-            state="Success"
-            class="sapMObjectStatusLarge" />
+          <m:Title text="{i18n>productStockStatusLabel}" class="sapUiTinyMarginBottom" />
+          <m:ObjectStatus text="{StockStatus}"
+            state="{path: 'StockStatus', formatter: '.formatter.formatStockStatus'}"
+            class="sapMObjectStatusLarge"
+          />
         </m:VBox>
 
         <m:VBox class="sapUiLargeMarginEnd">
@@ -110,7 +108,7 @@
     </headerContent>
 
     <sections>
-      <ObjectPageSection titleUppercase="false" title="General Information">
+      <ObjectPageSection titleUppercase="false" title="{i18n>productInfoSectionTitle}">
         <subSections>
           <ObjectPageSubSection title="Order Details" showTitle="false">
             <blocks>

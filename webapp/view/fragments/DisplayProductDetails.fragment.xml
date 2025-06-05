@@ -32,6 +32,11 @@
         <Label text="ReleaseDate" />
         <Text text="{ReleaseDate}" />
 
+        <Label text="StockStatus" />
+        <ObjectStatus text="{StockStatus}"
+          state="{path: 'Products>StockStatus', formatter: '.formatter.formatStockStatus'}"
+        />
+
         <Label text="Rating" />
         <RatingIndicator
           displayOnly="true"
