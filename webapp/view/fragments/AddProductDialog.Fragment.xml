@@ -3,11 +3,11 @@
   xmlns:f="sap.ui.layout.form"
   xmlns:core="sap.ui.core">
   <Dialog
-    id="addProductDialog"
+    id="createProductDialog"
     title="{i18n>productDialogTitle}"
     afterClose="onAfterClose">
     <f:SimpleForm
-      id="storeDialogForm"
+      id="productDialogForm"
       maxContainerCols="1"
       layout="ResponsiveGridLayout"
       labelSpanL="12"

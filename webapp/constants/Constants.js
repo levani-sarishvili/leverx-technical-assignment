@@ -22,5 +22,17 @@ sap.ui.define([], function () {
     RATING_FIELD: "Rating",
   };
 
-  return { aSearchableFields, oProductTableColumns, sSearchFilterGroupName };
+  const oOrderStatuses = {
+    PROCESSING: "Processing",
+    SHIPPED: "Shipped",
+    DELIVERED: "Delivered",
+    CANCELLED: "Cancelled",
+  };
+
+  return {
+    aSearchableFields,
+    oProductTableColumns,
+    sSearchFilterGroupName,
+    oOrderStatuses,
+  };
 });

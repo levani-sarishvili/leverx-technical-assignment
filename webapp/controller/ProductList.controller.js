@@ -167,22 +167,22 @@ sap.ui.define(
             id: oView.getId(),
             name: "levani.sarishvili.view.fragments.AddProductDialog",
             controller: this,
-          }).then((oDialog) => {
-            oView.addDependent(oDialog);
-            this.oDialog = oDialog;
-            this.oDialog.bindElement({
-              path: "/",
-              model: "productFormModel",
-            });
-            oDialog.open();
+          });
+
+          oView.addDependent(this.oDialog);
+
+          this.oDialog.bindElement({
+            path: "/",
+            model: "productFormModel",
           });
         } else {
           this.oDialog.bindElement({
             path: "/",
             model: "productFormModel",
           });
-          oDialog.open();
         }
+
+        this.oDialog.open();
       },
 
       /**
@@ -194,7 +194,7 @@ sap.ui.define(
        */
       onProductCreatePress: function () {
         const oView = this.getView();
-        const oDialog = oView.byId("addProductDialog");
+        const oDialog = oView.byId("createProductDialog");
         const oFormModel = oView.getModel("productFormModel");
         const oMainModel = oView.getModel();
         const aProducts = oMainModel.getProperty("/Products") || [];
@@ -237,7 +237,7 @@ sap.ui.define(
        */
       onProductCancelPress: function () {
         const oView = this.getView();
-        const oDialog = oView.byId("addProductDialog");
+        const oDialog = oView.byId("createProductDialog");
         if (oDialog) {
           oDialog.close();
           this._resetProductFormModel();

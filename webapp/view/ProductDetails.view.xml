@@ -19,7 +19,12 @@
     <f:title>
       <f:DynamicPageTitle>
         <f:snappedContent>
-          <HBox width="100%" alignItems="End" justifyContent="End">
+          <HBox width="100%" alignItems="Center" justifyContent="SpaceBetween">
+            <Breadcrumbs separatorStyle="{/selected}"
+              currentLocationText="{i18n>breadcrumbProductDetails}">
+              <Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
+            </Breadcrumbs>
+
             <HBox justifyContent="End">
               <Button
                 text="{i18n>editButtonText}"
@@ -34,11 +39,14 @@
             </HBox>
           </HBox>
         </f:snappedContent>
-        <f:heading>
-          <Title text="{Name}" level="H1" />
-        </f:heading>
+
         <f:expandedContent>
           <HBox alignItems="Center" justifyContent="SpaceBetween">
+            <Breadcrumbs separatorStyle="{/selected}"
+              currentLocationText="{i18n>breadcrumbProductDetails}">
+              <Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
+            </Breadcrumbs>
+
             <HBox justifyContent="End">
               <Button
                 text="{i18n>editButtonText}"
@@ -53,14 +61,20 @@
             </HBox>
           </HBox>
         </f:expandedContent>
+
+        <f:heading>
+          <VBox>
+            <Title text="{Name}" level="H1" />
+            <Label text="{Id}" />
+          </VBox>
+        </f:heading>
       </f:DynamicPageTitle>
     </f:title>
 
     <f:header>
       <f:DynamicPageHeader pinnable="true">
-        <VBox class="sapUiSmallMargin">
-          <form:SimpleForm id="SimpleFormDisplayColumn_threeGroups346"
-            editable="true"
+        <VBox>
+          <form:SimpleForm
             layout="ColumnLayout"
             columnsM="3"
             columnsL="4"
@@ -71,7 +85,11 @@
               <Text text="{Name}" />
 
               <Label text="Price" />
-              <Text text="{Price}" />
+              <ObjectNumber
+                number="{path: 'Price'}"
+                unit="USD"
+                emphasized="false"
+              />
 
               <Label text="Category" />
               <Text text="{Category}" />
@@ -86,7 +104,10 @@
               <Text text="{ReleaseDate}" />
 
               <Label text="Rating" />
-              <RatingIndicator value="{Rating}" />
+              <RatingIndicator
+                displayOnly="true"
+                iconSize="1.2rem"
+                value="{Rating}" />
             </form:content>
           </form:SimpleForm>
         </VBox>
@@ -127,6 +148,7 @@
             <t:Column
               hAlign="Begin"
               sortProperty="OrderId"
+              width="10%"
             >
               <Label text="{i18n>orderTableIdColumn}" />
               <t:template>
@@ -138,6 +160,7 @@
             <t:Column
               hAlign="Begin"
               sortProperty="Customer"
+              width="20%"
             >
               <Label text="{i18n>orderTableCustomerColumn}" />
               <t:template>
@@ -147,8 +170,9 @@
 
             <!-- Quantity -->
             <t:Column
-              hAlign="Begin"
+              hAlign="End"
               sortProperty="Quantity"
+              width="10%"
             >
               <Label text="{i18n>orderTableQuantityColumn}" />
               <t:template>
@@ -158,8 +182,9 @@
 
             <!-- OrderDate -->
             <t:Column
-              hAlign="Begin"
+              hAlign="End"
               sortProperty="OrderDate"
+              width="15%"
             >
               <Label text="{i18n>orderTableOrderDateColumn}" />
               <t:template>
@@ -171,33 +196,51 @@
             <t:Column
               hAlign="Begin"
               sortProperty="Status"
+              width="15%"
             >
               <Label text="{i18n>orderTableStatusColumn}" />
               <t:template>
-                <Text text="{Status}" />
+                <ObjectStatus
+                  text="{Status}"
+                  state="{
+                    path: 'Status',
+                    formatter: '.formatter.formatOrderStatus'
+                }" />
               </t:template>
             </t:Column>
 
             <!-- ShippingCost -->
             <t:Column
-              hAlign="Begin"
+              hAlign="End"
               sortProperty="ShippingCost"
+              width="15%"
             >
               <Label text="{i18n>orderTableShippingCostColumn}" />
               <t:template>
-                <Text text="{ShippingCost}" />
+                <ObjectNumber
+                  number="{path: 'ShippingCost'}"
+                  unit="USD"
+                  emphasized="false"
+                  textAlign="End"
+                />
               </t:template>
             </t:Column>
           </t:columns>
 
           <!-- TotalPrice -->
           <t:Column
-            hAlign="Begin"
+            hAlign="End"
             sortProperty="TotalPrice"
+            width="15%"
           >
             <Label text="{i18n>orderTableTotalPriceColumn}" />
             <t:template>
-              <Text text="{TotalPrice}" />
+              <ObjectNumber
+                number="{path: 'TotalPrice'}"
+                unit="USD"
+                emphasized="false"
+                textAlign="End"
+              />
             </t:template>
           </t:Column>
 
