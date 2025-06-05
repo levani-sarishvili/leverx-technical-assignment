@@ -17,6 +17,7 @@ sap.ui.define(
             Brand: "",
             SupplierName: "",
             ReleaseDate: "",
+            StockStatus: "In Stock",
             Rating: null,
           },
           {
@@ -41,11 +42,12 @@ sap.ui.define(
             Brand: true,
             SupplierName: true,
             ReleaseDate: true,
+            StockStatus: true,
             Rating: true,
           },
 
           {
-            bindingMode: BindingMode.OneWay,
+            bindingMode: BindingMode.TwoWay,
           }
         );
       },

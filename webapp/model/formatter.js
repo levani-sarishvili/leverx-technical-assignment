@@ -61,7 +61,21 @@ sap.ui.define(
           case Constants.oOrderStatuses.CANCELLED:
             return "Error";
           default:
+            return "None";
+        }
+      },
+
+      formatStockStatus: function (sStatus) {
+        if (!sStatus) return;
+        switch (sStatus) {
+          case Constants.oStockStatuses.IN_STOCK:
             return "Success";
+          case Constants.oStockStatuses.LESS_THAN_10_LEFT:
+            return "Warning";
+          case Constants.oStockStatuses.OUT_OF_STOCK:
+            return "Error";
+          default:
+            return "None";
         }
       },
     };

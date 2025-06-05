@@ -145,7 +145,7 @@
           <t:Column
             hAlign="Begin"
             sortProperty="Name"
-            width="25%"
+            width="20%"
           >
             <Label text="{i18n>productTableNameColumn}" />
             <t:template>
@@ -157,7 +157,7 @@
           <t:Column
             hAlign="End"
             sortProperty="Price"
-            width="15%"
+            width="10%"
           >
             <Label text="{i18n>productTablePriceColumn}" />
             <t:template>
@@ -210,11 +210,25 @@
           <t:Column
             hAlign="End"
             sortProperty="ReleaseDate"
-            width="15%"
+            width="10%"
           >
             <Label text="{i18n>productTableReleaseDateColumn}" />
             <t:template>
               <Text text="{ReleaseDate}" />
+            </t:template>
+          </t:Column>
+
+          <!-- StockStatus -->
+          <t:Column
+            hAlign="Begin"
+            sortProperty="StockStatus"
+            width="15%"
+          >
+            <Label text="{i18n>productTableStockStatusColumn}" />
+            <t:template>
+              <ObjectStatus text="{StockStatus}"
+                state="{path: 'StockStatus', formatter: '.formatter.formatStockStatus'}"
+              />
             </t:template>
           </t:Column>
 

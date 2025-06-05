@@ -18,6 +18,7 @@ sap.ui.define([], function () {
         !!oProductForm.SupplierName
       );
       oValidationModel.setProperty("/ReleaseDate", !!oProductForm.ReleaseDate);
+      oValidationModel.setProperty("/StockStatus", !!oProductForm.StockStatus);
       oValidationModel.setProperty("/Rating", !!oProductForm.Rating);
 
       // Return validation result

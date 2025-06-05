@@ -77,6 +77,28 @@
           <core:Item key="{Key}" text="{Name}" />
         </Select>
 
+        <!-- StockStatus -->
+        <Label text="{i18n>productStockStatusLabel}" labelFor="stockStatus" />
+        <Select
+          id="stockStatus"
+          forceSelection="false"
+          required="true"
+          fieldGroupIds="productFormGroup"
+          selectedKey="{
+            path: 'productFormModel>StockStatus',
+            type: 'sap.ui.model.type.String',
+            constraints: {
+              required: true
+             } 
+            }"
+          valueState="{= ${productFormValidationModel>/StockStatus} ? 'None' : 'Error'}"
+          items="{
+							path: '/ProductStockStatuses',
+							sorter: { path: 'Name' }
+						}">
+          <core:Item key="{Key}" text="{Name}" />
+        </Select>
+
         <!-- Brand -->
         <Label text="{i18n>productBrandLabel}" labelFor="brand" />
         <Select

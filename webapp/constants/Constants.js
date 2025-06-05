@@ -29,10 +29,17 @@ sap.ui.define([], function () {
     CANCELLED: "Cancelled",
   };
 
+  const oStockStatuses = {
+    IN_STOCK: "In Stock",
+    OUT_OF_STOCK: "Out of Stock",
+    LESS_THAN_10_LEFT: "Less Than 10 Left",
+  };
+
   return {
     aSearchableFields,
     oProductTableColumns,
     sSearchFilterGroupName,
     oOrderStatuses,
+    oStockStatuses,
   };
 });

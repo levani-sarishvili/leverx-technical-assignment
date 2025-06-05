@@ -123,7 +123,6 @@
             <blocks>
               <!-- Order Table -->
               <t:Table
-                class="sapUiResponsiveMargin"
                 rows="{/SalesOrders}"
                 rowSelectionChange="onRowSelectionChange"
                 ariaLabelledBy="title"
@@ -145,7 +144,7 @@
                       text="Orders" />
                     <m:ToolbarSpacer />
 
-                    <m:SearchField width="20rem" placeholder="Search order"></m:SearchField>
+                    <m:SearchField width="17.5rem" placeholder="Search order"></m:SearchField>
                   </m:OverflowToolbar>
                 </t:extension>
 

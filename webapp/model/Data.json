@@ -8,7 +8,8 @@
       "Brand": "Apple",
       "SupplierName": "TechWorld Distributors",
       "ReleaseDate": "2025-03-22",
-      "Rating": 5
+      "Rating": 5,
+      "StockStatus": "In Stock"
     },
     {
       "Id": "PO-4501",
@@ -18,7 +19,8 @@
       "Brand": "Samsung",
       "SupplierName": "ElectroSupply Co.",
       "ReleaseDate": "2025-06-01",
-      "Rating": 3
+      "Rating": 3,
+      "StockStatus": "Less Than 10 Left"
     },
     {
       "Id": "PO-4502",
@@ -28,7 +30,8 @@
       "Brand": "Sony",
       "SupplierName": "SoundPro Electronics",
       "ReleaseDate": "2025-05-20",
-      "Rating": 3.5
+      "Rating": 3.5,
+      "StockStatus": "In Stock"
     },
     {
       "Id": "PO-4503",
@@ -38,7 +41,8 @@
       "Brand": "Logitech",
       "SupplierName": "Peripheral Partners",
       "ReleaseDate": "2025-05-24",
-      "Rating": 3.5
+      "Rating": 3.5,
+      "StockStatus": "Out of Stock"
     },
     {
       "Id": "PO-4504",
@@ -48,7 +52,8 @@
       "Brand": "Canon",
       "SupplierName": "PhotoGear Supply",
       "ReleaseDate": "2025-03-23",
-      "Rating": 4.5
+      "Rating": 4.5,
+      "StockStatus": "Less Than 10 Left"
     },
     {
       "Id": "PO-4505",
@@ -58,7 +63,8 @@
       "Brand": "Apple",
       "SupplierName": "TechWorld Distributors",
       "ReleaseDate": "2025-05-29",
-      "Rating": 4.6
+      "Rating": 4.6,
+      "StockStatus": "In Stock"
     },
     {
       "Id": "PO-4506",
@@ -68,7 +74,8 @@
       "Brand": "Samsung",
       "SupplierName": "ElectroSupply Co.",
       "ReleaseDate": "2023-08-15",
-      "Rating": 2.5
+      "Rating": 2.5,
+      "StockStatus": "Out of Stock"
     },
     {
       "Id": "PO-4507",
@@ -78,7 +85,8 @@
       "Brand": "Amazon",
       "SupplierName": "BookTech Distributors",
       "ReleaseDate": "2021-10-27",
-      "Rating": 4.7
+      "Rating": 4.7,
+      "StockStatus": "In Stock"
     },
     {
       "Id": "PO-4508",
@@ -88,7 +96,8 @@
       "Brand": "Microsoft",
       "SupplierName": "Global IT Traders",
       "ReleaseDate": "2022-10-25",
-      "Rating": 1
+      "Rating": 1,
+      "StockStatus": "Out of Stock"
     },
     {
       "Id": "PO-4509",
@@ -98,7 +107,8 @@
       "Brand": "Anker",
       "SupplierName": "Peripheral Partners",
       "ReleaseDate": "2021-12-05",
-      "Rating": 4.8
+      "Rating": 4.8,
+      "StockStatus": "In Stock"
     },
     {
       "Id": "PO-4510",
@@ -108,7 +118,8 @@
       "Brand": "Razer",
       "SupplierName": "Peripheral Partners",
       "ReleaseDate": "2022-08-11",
-      "Rating": 3.8
+      "Rating": 3.8,
+      "StockStatus": "Less Than 10 Left"
     },
     {
       "Id": "PO-4511",
@@ -118,7 +129,8 @@
       "Brand": "Acer",
       "SupplierName": "Global IT Traders",
       "ReleaseDate": "2023-01-15",
-      "Rating": 4.5
+      "Rating": 4.5,
+      "StockStatus": "In Stock"
     },
     {
       "Id": "PO-4512",
@@ -128,7 +140,8 @@
       "Brand": "LG",
       "SupplierName": "ElectroSupply Co.",
       "ReleaseDate": "2023-03-01",
-      "Rating": 4.9
+      "Rating": 4.9,
+      "StockStatus": "In Stock"
     },
     {
       "Id": "PO-4513",
@@ -138,7 +151,8 @@
       "Brand": "Amazon",
       "SupplierName": "HomeTech Solutions",
       "ReleaseDate": "2022-10-20",
-      "Rating": 4.6
+      "Rating": 4.6,
+      "StockStatus": "Less Than 10 Left"
     },
     {
       "Id": "PO-4514",
@@ -148,9 +162,11 @@
       "Brand": "DJI",
       "SupplierName": "Aerial Innovations Inc.",
       "ReleaseDate": "2023-09-25",
-      "Rating": 4.7
+      "Rating": 4.7,
+      "StockStatus": "In Stock"
     }
   ],
+
   "ProductCategories": [
     { "Key": "Smartphone", "Name": "Smartphone" },
     { "Key": "Headphones", "Name": "Headphones" },
@@ -180,6 +196,12 @@
     { "Key": "Acer", "Name": "Acer" },
     { "Key": "LG", "Name": "LG" },
     { "Key": "DJI", "Name": "DJI" }
+  ],
+
+  "ProductStockStatuses": [
+    { "Key": "In Stock", "Name": "In Stock" },
+    { "Key": "Less Than 10 Left", "Name": "Less Than 10 Left" },
+    { "Key": "Out of Stock", "Name": "Out of Stock" }
   ],
 
   "SalesOrders": [
