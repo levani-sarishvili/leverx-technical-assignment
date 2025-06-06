@@ -25,12 +25,19 @@ sap.ui.define(
        */
       formatDate: function (oDate) {
         if (!oDate) return "";
-        const oDateFormat = DateFormat.getDateInstance({
+
+        // Convert to Date object if it's a string
+        if (typeof oDate === "string") {
+          oDate = new Date(oDate);
+        }
+
+        // Format the date as "yyyy-MM-dd"
+        const oDateFormat = sap.ui.core.format.DateFormat.getDateInstance({
           pattern: "yyyy-MM-dd",
         });
+
         return oDateFormat.format(oDate);
       },
-
       /**
        * Formats the title of a table by appending the total number of products it contains.
        *

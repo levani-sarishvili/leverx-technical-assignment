@@ -85,6 +85,8 @@
               <fb:control>
                 <DatePicker
                   placeholder="{i18n>releaseDateFilterPlaceholder}"
+                  displayFormat="yyyy-MM-dd"
+                  valueFormat="yyyy-MM-dd"
                 />
               </fb:control>
             </fb:FilterGroupItem>
@@ -214,7 +216,7 @@
           >
             <Label text="{i18n>productTableReleaseDateColumn}" />
             <t:template>
-              <Text text="{ReleaseDate}" />
+              <Text text="{path: 'ReleaseDate', formatter: '.formatter.formatDate'}" />
             </t:template>
           </t:Column>
 

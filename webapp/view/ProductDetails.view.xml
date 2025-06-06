@@ -216,9 +216,9 @@
                       <m:ObjectStatus
                         text="{Status}"
                         state="{
-                    path: 'Status',
-                    formatter: '.formatter.formatOrderStatus'
-                }" />
+                          path: 'Status',
+                          formatter: '.formatter.formatOrderStatus'
+                        }" />
                     </t:template>
                   </t:Column>
 

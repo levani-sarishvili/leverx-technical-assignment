@@ -64,6 +64,28 @@ sap.ui.define(
       },
 
       /**
+       * Called before the view is rendered.
+       *
+       * This hook is used to convert the release date from a string to a Date object
+       * so that it can be bound to the table using the sap.ui.model.type.Date type.
+       *
+       * @private
+       */
+      onBeforeRendering: function () {
+        const oView = this.getView();
+        const oModel = oView.getModel();
+        const oProductsData = oModel.getData().Products;
+
+        oProductsData.forEach((oProduct) => {
+          oProduct.ReleaseDate = formatter.formatDate(
+            new Date(oProduct.ReleaseDate)
+          );
+
+          console.log(oProduct.ReleaseDate);
+        });
+      },
+
+      /**
        * Handles the press event on a product item in the list.
        *
        * Retrieves the selected product's ID from the binding context and navigates to the ProductDetails page.
@@ -217,6 +239,7 @@ sap.ui.define(
 
         // Add new product
         oNewProduct.Id = this._createNewProductId(aProducts);
+        oNewProduct.ReleaseDate = formatter.formatDate(oNewProduct.ReleaseDate);
         const aUpdatedProducts = [...aProducts, oNewProduct];
         oMainModel.setProperty("/Products", aUpdatedProducts);
 
@@ -225,6 +248,7 @@ sap.ui.define(
           i18nUtils.getTranslatedText(oView, "productCreatedToast")
         );
 
+        console.log(aUpdatedProducts);
         // Reset product form
         this._resetProductFormModel();
         oDialog.close();
@@ -413,6 +437,7 @@ sap.ui.define(
             aFilters.push(oFieldFilter);
           }
         });
+        console.log(aFilters);
 
         return aFilters;
       },
@@ -437,7 +462,7 @@ sap.ui.define(
 
         if (sField === Constants.oProductTableColumns.RELEASE_DATE_FIELD) {
           const sFormattedDate = formatter.formatDate(vFilterValue);
-          return sFormattedDate
+          return vFilterValue
             ? new Filter(sField, FilterOperator.EQ, sFormattedDate)
             : null;
         }

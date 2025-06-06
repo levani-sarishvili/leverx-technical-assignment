@@ -16,6 +16,7 @@
           value="{
             path: 'Name',
             type: 'sap.ui.model.type.String',
+            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               minLength: 3,
               maxLength: 100,
@@ -33,6 +34,7 @@
           value="{
             path: 'Price',
             type: 'sap.ui.model.type.Integer',
+            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               minimum: 1,
               maximum: 100000,
@@ -53,6 +55,7 @@
           selectedKey="{
             path: 'Category',
             type: 'sap.ui.model.type.String',
+            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               required: true
              } 
@@ -74,6 +77,7 @@
           selectedKey="{
             path: 'Brand',
             type: 'sap.ui.model.type.String',
+            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               required: true
              } 
@@ -93,6 +97,7 @@
           value="{
             path: 'SupplierName',
             type: 'sap.ui.model.type.String',
+            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               minLength: 3,
               maxLength: 100,
@@ -110,7 +115,14 @@
           placeholder="{i18n>productReleaseDateInputPlaceholder}"
           displayFormat="dd/MM/yyyy"
           valueFormat="yyyy-MM-dd"
-          value="{ReleaseDate}"
+          value="{
+            path: 'ReleaseDate',
+            formatOptions: {
+              pattern: 'dd/MM/yyyy'
+            },
+            type: 'sap.ui.model.type.Date',
+            mode: 'sap.ui.model.BindingMode.OneWay'
+          }"
           class="sapUiSmallMarginBottom"
           fieldGroupIds="productFormGroup"
           required="true" />
@@ -125,6 +137,7 @@
           selectedKey="{
             path: 'StockStatus',
             type: 'sap.ui.model.type.String',
+            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               required: true
              } 
@@ -143,6 +156,7 @@
           value="{
             path: 'Rating', 
             type: 'sap.ui.model.type.Float', 
+            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: { 
               minimum: 1, 
               maximum: 5,

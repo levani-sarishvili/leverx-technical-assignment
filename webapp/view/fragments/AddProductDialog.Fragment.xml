@@ -152,7 +152,13 @@
           displayFormat="dd/MM/yyyy"
           valueState="{= ${productFormValidationModel>/ReleaseDate} ? 'None' : 'Error'}"
           valueFormat="yyyy-MM-dd"
-          value="{productFormModel>ReleaseDate}"
+          value="{
+            path: 'productFormModel>ReleaseDate',
+            type: 'sap.ui.model.type.Date',
+            formatOptions: {
+              pattern: 'yyyy-MM-dd'
+            }
+          }"
           fieldGroupIds="productFormGroup"
           required="true" />
 

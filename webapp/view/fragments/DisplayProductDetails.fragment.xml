@@ -30,7 +30,7 @@
         <Text text="{SupplierName}" />
 
         <Label text="ReleaseDate" />
-        <Text text="{ReleaseDate}" />
+        <Text text="{path: 'ReleaseDate', formatter: '.formatter.formatDate'}" />
 
         <Label text="StockStatus" />
         <ObjectStatus text="{StockStatus}"
