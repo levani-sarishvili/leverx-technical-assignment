@@ -126,10 +126,10 @@
             <blocks>
               <!-- Order Table -->
               <t:Table
+                id="productOrdersTable"
                 rows="{/SalesOrders}"
                 rowSelectionChange="onRowSelectionChange"
                 ariaLabelledBy="title"
-                id="productDetailsTable"
                 selectionMode="MultiToggle"
                 rowActionCount="1"
                 selectionBehavior="Row"
@@ -153,7 +153,12 @@
                       text="Orders" />
                     <m:ToolbarSpacer />
 
-                    <m:SearchField width="17.5rem" placeholder="Search order"></m:SearchField>
+                    <m:SearchField
+                      width="17.5rem"
+                      search=".onOrderSearchPress"
+                      placeholder="Search order">
+
+                    </m:SearchField>
                   </m:OverflowToolbar>
                 </t:extension>
 

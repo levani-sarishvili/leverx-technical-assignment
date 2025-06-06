@@ -41,6 +41,7 @@ sap.ui.define(
         );
 
         this._formFragments = {};
+        this._sProductId = "";
 
         this.getOwnerComponent()
           .getRouter()
@@ -83,6 +84,7 @@ sap.ui.define(
         const oView = this.getView();
         const oModel = oView.getModel();
         const sProductId = oEvent.getParameter("arguments").productId;
+        this._sProductId = sProductId;
 
         // Helper to wait for data if not loaded yet
         const aProducts = oModel.getProperty("/Products");
@@ -94,7 +96,7 @@ sap.ui.define(
 
         const aFinalProducts = oModel.getProperty("/Products");
         // Filter the table
-        const oTable = this.byId("productDetailsTable");
+        const oTable = this.byId("productOrdersTable");
         const oBinding = oTable.getBinding("rows");
         const oFilter = new Filter("ProductId", FilterOperator.EQ, sProductId);
         oBinding.filter([oFilter]);
@@ -298,6 +300,45 @@ sap.ui.define(
         );
       },
 
+      /**
+       * Handles the search input in the orders table filter bar.
+       *
+       * Applies a filter to the orders table binding based on the search query.
+       * If the query is empty, filters only by the current product ID.
+       * Otherwise, filters by the product ID and the search query.
+       * Uses OR filter logic to apply the search query to the order status, customer name, and order ID.
+       *
+       * @param {sap.ui.base.Event} oEvent - The search event containing the query parameter.
+       */
+      onOrderSearchPress: function (oEvent) {
+        const sQuery = oEvent.getSource().getValue();
+        const oTable = this.byId("productOrdersTable");
+        const oBinding = oTable.getBinding("rows");
+
+        if (!sQuery) {
+          oBinding.filter(
+            new Filter("ProductId", FilterOperator.EQ, this._sProductId)
+          );
+          return;
+        }
+
+        // Search filters
+        const aSearchFilters = [
+          new Filter("Status", FilterOperator.Contains, sQuery),
+          new Filter("Customer", FilterOperator.Contains, sQuery),
+          new Filter("OrderId", FilterOperator.Contains, sQuery),
+        ];
+
+        const oFinalFilter = new Filter({
+          filters: [
+            new Filter("ProductId", FilterOperator.EQ, this._sProductId),
+            new Filter({ filters: aSearchFilters, and: false }),
+          ],
+          and: true,
+        });
+
+        oBinding.filter(oFinalFilter);
+      },
       /**
        * Toggles the visibility of the action buttons and form type based on whether the user is in edit mode or not.
        *
