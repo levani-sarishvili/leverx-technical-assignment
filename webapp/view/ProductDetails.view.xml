@@ -110,14 +110,18 @@
     <sections>
       <ObjectPageSection titleUppercase="false" title="{i18n>productInfoSectionTitle}">
         <subSections>
-          <ObjectPageSubSection title="Order Details" showTitle="false">
+          <ObjectPageSubSection title="{i18n>productInfoSectionTitle}" showTitle="false">
             <blocks>
               <m:VBox id="productDetailsContainer">
               </m:VBox>
             </blocks>
           </ObjectPageSubSection>
+        </subSections>
+      </ObjectPageSection>
 
-          <ObjectPageSubSection title="Orders" showTitle="false">
+      <ObjectPageSection titleUppercase="false" title="{i18n>salesOrdersSectionTitle}">
+        <subSections>
+          <ObjectPageSubSection title="{i18n>salesOrdersSectionTitle}" showTitle="false">
             <blocks>
               <!-- Order Table -->
               <t:Table
@@ -135,6 +139,12 @@
                   <rowmode:Auto
                     minRowCount="20" />
                 </t:rowMode>
+
+                <t:noData>
+                  <m:IllustratedMessage enableVerticalResponsiveness="true"
+                    illustrationType="sapIllus-NoData">
+                  </m:IllustratedMessage>
+                </t:noData>
 
                 <t:extension>
                   <m:OverflowToolbar style="Standard">
@@ -261,17 +271,6 @@
           </ObjectPageSubSection>
         </subSections>
       </ObjectPageSection>
-
-      <ObjectPageSection titleUppercase="false" title="Contact Information">
-        <subSections>
-          <ObjectPageSubSection title="Contact Information">
-            <blocks>
-
-            </blocks>
-          </ObjectPageSubSection>
-        </subSections>
-      </ObjectPageSection>
     </sections>
   </ObjectPageLayout>
-
 </mvc:View>

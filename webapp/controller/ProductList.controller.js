@@ -216,7 +216,7 @@ sap.ui.define(
         }
 
         // Add new product
-        oNewProduct.ProductId = Date.now().toString();
+        oNewProduct.Id = this._createNewProductId(aProducts);
         const aUpdatedProducts = [...aProducts, oNewProduct];
         oMainModel.setProperty("/Products", aUpdatedProducts);
 
@@ -228,6 +228,22 @@ sap.ui.define(
         // Reset product form
         this._resetProductFormModel();
         oDialog.close();
+      },
+
+      /**
+       * Creates a new product ID based on the last product ID in the product list.
+       * The new ID is created by incrementing the numeric part of the last product ID.
+       * @param {object[]} aProducts - The list of products.
+       * @returns {string} The new product ID.
+       * @private
+       */
+      _createNewProductId: function (aProducts) {
+        if (aProducts.length === 0) {
+          return 0;
+        }
+        const sLastProductId = aProducts[aProducts.length - 1].Id;
+        const iNumericPart = Number(sLastProductId.replace(/[^0-9]/g, ""));
+        return `PO-${String(iNumericPart + 1)}`;
       },
 
       /**

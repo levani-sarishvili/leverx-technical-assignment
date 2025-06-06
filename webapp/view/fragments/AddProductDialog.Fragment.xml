@@ -5,17 +5,18 @@
   <Dialog
     id="createProductDialog"
     title="{i18n>productDialogTitle}"
+    resizable="true"
+    contentWidth="28rem"
   >
     <f:SimpleForm
       id="productDialogForm"
-      maxContainerCols="1"
       layout="ResponsiveGridLayout"
-      labelSpanL="12"
+      editable="true"
+      labelSpanL="4"
       labelSpanM="12"
-      emptySpanL="0"
-      emptySpanM="0"
-      columnsL="1"
-      columnsM="1">
+      columnsL="2"
+      columnsM="1"
+    >
       <f:content>
         <!-- Name -->
         <Label text="{i18n>productNameLabel}" labelFor="name" />
@@ -58,6 +59,7 @@
         <!-- Category -->
         <Label text="{i18n>productCategoryLabel}" labelFor="category" />
         <Select
+          width="100%"
           id="category"
           forceSelection="false"
           required="true"
@@ -80,6 +82,7 @@
         <!-- StockStatus -->
         <Label text="{i18n>productStockStatusLabel}" labelFor="stockStatus" />
         <Select
+          width="100%"
           id="stockStatus"
           forceSelection="false"
           required="true"
@@ -103,6 +106,7 @@
         <Label text="{i18n>productBrandLabel}" labelFor="brand" />
         <Select
           id="brand"
+          width="100%"
           forceSelection="false"
           required="true"
           fieldGroupIds="productFormGroup"
@@ -149,7 +153,6 @@
           valueState="{= ${productFormValidationModel>/ReleaseDate} ? 'None' : 'Error'}"
           valueFormat="yyyy-MM-dd"
           value="{productFormModel>ReleaseDate}"
-          class="sapUiSmallMarginBottom"
           fieldGroupIds="productFormGroup"
           required="true" />
 
