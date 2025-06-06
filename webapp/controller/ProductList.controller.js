@@ -80,8 +80,6 @@ sap.ui.define(
           oProduct.ReleaseDate = formatter.formatDate(
             new Date(oProduct.ReleaseDate)
           );
-
-          console.log(oProduct.ReleaseDate);
         });
       },
 
@@ -239,7 +237,7 @@ sap.ui.define(
 
         // Add new product
         oNewProduct.Id = this._createNewProductId(aProducts);
-        oNewProduct.ReleaseDate = formatter.formatDate(oNewProduct.ReleaseDate);
+        oNewProduct.ReleaseDate = new Date(oNewProduct.ReleaseDate);
         const aUpdatedProducts = [...aProducts, oNewProduct];
         oMainModel.setProperty("/Products", aUpdatedProducts);
 
@@ -248,7 +246,6 @@ sap.ui.define(
           i18nUtils.getTranslatedText(oView, "productCreatedToast")
         );
 
-        console.log(aUpdatedProducts);
         // Reset product form
         this._resetProductFormModel();
         oDialog.close();
@@ -437,7 +434,6 @@ sap.ui.define(
             aFilters.push(oFieldFilter);
           }
         });
-        console.log(aFilters);
 
         return aFilters;
       },

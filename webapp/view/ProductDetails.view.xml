@@ -113,6 +113,7 @@
           <ObjectPageSubSection title="{i18n>productInfoSectionTitle}" showTitle="false">
             <blocks>
               <m:VBox id="productDetailsContainer">
+
               </m:VBox>
             </blocks>
           </ObjectPageSubSection>

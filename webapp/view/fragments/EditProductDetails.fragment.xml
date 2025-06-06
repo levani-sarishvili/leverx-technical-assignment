@@ -4,9 +4,11 @@
   xmlns:core="sap.ui.core">
   <VBox>
     <form:SimpleForm
+      id="productDetailsEditForm"
       layout="ColumnLayout"
       columnsM="3"
       columnsL="4"
+      binding="{productFormModel>/}"
     >
       <form:content>
         <!-- Name -->
@@ -14,9 +16,8 @@
         <Input
           id="name"
           value="{
-            path: 'Name',
+            path: 'productFormModel>Name',
             type: 'sap.ui.model.type.String',
-            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               minLength: 3,
               maxLength: 100,
@@ -32,9 +33,8 @@
         <Input
           id="price"
           value="{
-            path: 'Price',
+            path: 'productFormModel>Price',
             type: 'sap.ui.model.type.Integer',
-            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               minimum: 1,
               maximum: 100000,
@@ -46,6 +46,7 @@
           type="Number"
           required="true" />
 
+        <!-- Category -->
         <Label text="{i18n>productCategoryLabel}" labelFor="category" />
         <Select
           id="category"
@@ -53,9 +54,8 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'Category',
+            path: 'productFormModel>Category',
             type: 'sap.ui.model.type.String',
-            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               required: true
              } 
@@ -75,9 +75,8 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'Brand',
+            path: 'productFormModel>Brand',
             type: 'sap.ui.model.type.String',
-            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               required: true
              } 
@@ -95,9 +94,8 @@
           id="supplierName"
           fieldGroupIds="productFormGroup"
           value="{
-            path: 'SupplierName',
+            path: 'productFormModel>SupplierName',
             type: 'sap.ui.model.type.String',
-            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               minLength: 3,
               maxLength: 100,
@@ -116,12 +114,11 @@
           displayFormat="dd/MM/yyyy"
           valueFormat="yyyy-MM-dd"
           value="{
-            path: 'ReleaseDate',
+            path: 'productFormModel>ReleaseDate',
             formatOptions: {
-              pattern: 'dd/MM/yyyy'
+              pattern: 'yyyy/MM/dd'
             },
-            type: 'sap.ui.model.type.Date',
-            mode: 'sap.ui.model.BindingMode.OneWay'
+            type: 'sap.ui.model.type.Date'
           }"
           class="sapUiSmallMarginBottom"
           fieldGroupIds="productFormGroup"
@@ -135,9 +132,8 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'StockStatus',
+            path: 'productFormModel>StockStatus',
             type: 'sap.ui.model.type.String',
-            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: {
               required: true
              } 
@@ -154,9 +150,8 @@
         <Input
           id="rating"
           value="{
-            path: 'Rating', 
+            path: 'productFormModel>Rating', 
             type: 'sap.ui.model.type.Float', 
-            mode: 'sap.ui.model.BindingMode.OneWay',
             constraints: { 
               minimum: 1, 
               maximum: 5,

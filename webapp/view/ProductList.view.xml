@@ -87,6 +87,7 @@
                   placeholder="{i18n>releaseDateFilterPlaceholder}"
                   displayFormat="yyyy-MM-dd"
                   valueFormat="yyyy-MM-dd"
+                  value="{Products>ReleaseDate}"
                 />
               </fb:control>
             </fb:FilterGroupItem>
@@ -106,6 +107,7 @@
         rowActionCount="1"
         selectionBehavior="Row"
         alternateRowColors="true"
+        sort=".onTableSort"
       >
         <t:rowMode>
           <rowmode:Auto

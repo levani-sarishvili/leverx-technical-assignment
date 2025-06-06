@@ -16,7 +16,7 @@ sap.ui.define(
             Category: "",
             Brand: "",
             SupplierName: "",
-            ReleaseDate: "",
+            ReleaseDate: null,
             StockStatus: "In Stock",
             Rating: null,
           },

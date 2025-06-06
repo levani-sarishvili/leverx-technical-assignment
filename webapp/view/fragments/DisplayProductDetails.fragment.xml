@@ -10,34 +10,34 @@
       columnsXL="5"
     >
       <form:content>
-        <Label text="Name" />
+        <Label text="{i18n>productNameLabel}" />
         <Text text="{Name}" />
 
-        <Label text="Price" />
+        <Label text="{i18n>productPriceLabel}" />
         <ObjectNumber
           number="{path: 'Price'}"
           unit="USD"
           emphasized="false"
         />
 
-        <Label text="Category" />
+        <Label text="{i18n>productCategoryLabel}" />
         <Text text="{Category}" />
 
-        <Label text="Brand" />
+        <Label text="{i18n>productBrandLabel}" />
         <Text text="{Brand}" />
 
-        <Label text="SupplierName" />
+        <Label text="{i18n>productSupplierLabel}" />
         <Text text="{SupplierName}" />
 
-        <Label text="ReleaseDate" />
+        <Label text="{i18n>productReleaseDateLabel}" />
         <Text text="{path: 'ReleaseDate', formatter: '.formatter.formatDate'}" />
 
-        <Label text="StockStatus" />
+        <Label text="{i18n>productStockStatusLabel}" />
         <ObjectStatus text="{StockStatus}"
           state="{path: 'Products>StockStatus', formatter: '.formatter.formatStockStatus'}"
         />
 
-        <Label text="Rating" />
+        <Label text="{i18n>productRatingLabel}" />
         <RatingIndicator
           displayOnly="true"
           iconSize="1.2rem"

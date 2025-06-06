@@ -8,6 +8,7 @@ sap.ui.define(
     "sap/m/MessageToast",
     "sap/m/MessageBox",
     "levani/sarishvili/utils/i18nUtils",
+    "levani/sarishvili/model/models",
   ],
   function (
     Controller,
@@ -17,7 +18,8 @@ sap.ui.define(
     Fragment,
     MessageToast,
     MessageBox,
-    i18nUtils
+    i18nUtils,
+    models
   ) {
     "use strict";
 
@@ -32,6 +34,12 @@ sap.ui.define(
        * and binds the onPatternMatched method as the event handler.
        */
       onInit: function () {
+        // Create product form model
+        this.getView().setModel(
+          models.createProductFormModel(),
+          "productFormModel"
+        );
+
         this._formFragments = {};
 
         this.getOwnerComponent()
@@ -99,7 +107,6 @@ sap.ui.define(
         // If the product is found, bind it to the view
         if (oSelectedProduct) {
           const iIndex = aFinalProducts.indexOf(oSelectedProduct);
-          console.log(iIndex);
           oView.bindObject({
             path: "/Products/" + iIndex,
           });
@@ -150,6 +157,7 @@ sap.ui.define(
           pFormFragment = Fragment.load({
             id: oView.getId(),
             name: "levani.sarishvili.view.fragments." + sFragmentName,
+            controller: this,
           });
           this._formFragments[sFragmentName] = pFormFragment;
         }
@@ -163,20 +171,50 @@ sap.ui.define(
        * Toggles the buttons and the view to the edit form.
        * @private
        */
-      onEditProductPress: function () {
+      onEditProductPress: function (oEvent) {
+        const oProduct = oEvent.getSource().getBindingContext().getObject();
+
+        // Deep copy to avoid reference to original object
+        const oClonedProduct = JSON.parse(JSON.stringify(oProduct));
+
+        // Convert ReleaseDate from string to Date object
+        if (oClonedProduct.ReleaseDate) {
+          oClonedProduct.ReleaseDate = new Date(oClonedProduct.ReleaseDate);
+        }
+
+        console.log(typeof oClonedProduct.ReleaseDate);
+
+        this.getView()
+          .getModel("productFormModel")
+          .setProperty("/", oClonedProduct);
         this._toggleButtonsAndView(true);
       },
-
       /**
        * Handles the save changes button press event.
        *
-       * Saves the product changes and goes back to the product details view.
-       * Shows a success message to the user to indicate that the changes have been saved.
+       * Updates the product with the new data in the model and toggles the buttons and view back to the display mode.
+       * Shows a success message after the update.
        * @private
        */
       onSaveChangesPress: function () {
         const oView = this.getView();
+        const oUpdatedProductData = oView
+          .getModel("productFormModel")
+          .getData();
+        const oProductModel = oView.getModel();
+        const aProductsData = oProductModel.getProperty("/Products");
+        const oUpdatedProductsData = aProductsData.map((oProduct) => {
+          if (oProduct.Id === oUpdatedProductData.Id) {
+            return oUpdatedProductData;
+          }
+          return oProduct;
+        });
+
+        // Update the product in the model
+        oProductModel.setProperty("/Products", oUpdatedProductsData);
+
         this._toggleButtonsAndView(false);
+
         // Show success message
         MessageToast.show(
           i18nUtils.getTranslatedText(oView, "productUpdatedToast")
@@ -189,7 +227,22 @@ sap.ui.define(
        * Cancels the editing and goes back to the product details view.
        * @private
        */
-      onCancelChangesPress: function () {
+      onCancelChangesPress: function (oEvent) {
+        const sProductId = oEvent
+          .getSource()
+          .getBindingContext()
+          .getProperty("Id");
+
+        const aProductsData = this.getView()
+          .getModel()
+          .getProperty("/Products");
+
+        const oProduct = aProductsData.find(
+          (oProduct) => oProduct.Id === sProductId
+        );
+
+        console.log(aProductsData);
+        this.getView().getModel("productFormModel").setProperty("/", oProduct);
         this._toggleButtonsAndView(false);
       },
 
@@ -225,7 +278,6 @@ sap.ui.define(
                 const aUpdatedProducts = aProducts.filter(
                   (oProduct) => oProduct.Id !== sProductId
                 );
-                console.log(aUpdatedProducts);
                 const aUpdatedSalesOrders = aSalesOrders.filter(
                   (oSalesOrder) => oSalesOrder.ProductId !== sProductId
                 );
