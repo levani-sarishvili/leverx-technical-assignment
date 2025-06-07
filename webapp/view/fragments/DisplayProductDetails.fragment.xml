@@ -30,7 +30,11 @@
         <Text text="{SupplierName}" />
 
         <Label text="{i18n>productReleaseDateLabel}" />
-        <Text text="{path: 'ReleaseDate', formatter: '.formatter.formatDate'}" />
+        <Text
+          text="{ 
+            path: 'ReleaseDate', 
+            type: 'sap.ui.model.type.Date', 
+            formatOptions: { pattern: 'yyyy-MM-dd' } }" />
 
         <Label text="{i18n>productStockStatusLabel}" />
         <ObjectStatus text="{StockStatus}"

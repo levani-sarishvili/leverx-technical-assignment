@@ -48,12 +48,6 @@ sap.ui.define(
           "productFormModel"
         );
 
-        // Create product form validation model
-        this.getView().setModel(
-          models.createProductFormValidationModel(),
-          "productFormValidationModel"
-        );
-
         // Create selection model for product selection
         this.getView().setModel(
           models.createProductSelectionModel(),
@@ -75,9 +69,8 @@ sap.ui.define(
         const oProductsData = oModel.getData().Products;
 
         oProductsData.forEach((oProduct) => {
-          oProduct.ReleaseDate = formatter.formatDate(
-            new Date(oProduct.ReleaseDate)
-          );
+          oProduct.ReleaseDate = new Date(oProduct.ReleaseDate);
+          console.log(oProduct.ReleaseDate);
         });
       },
 
@@ -118,7 +111,7 @@ sap.ui.define(
           ? new Filter(
               this.createTableSearchFilters(
                 sQuery,
-                Constants.aSearchableFields
+                Constants.aProductTableSearchableFields
               ),
               false
             )
@@ -223,18 +216,10 @@ sap.ui.define(
         const oMainModel = oView.getModel();
         const aProducts = oMainModel.getProperty("/Products") || [];
         const oNewProduct = oFormModel.getData();
-        const oProductFormData = this.getView()
-          .getModel("productFormModel")
-          .getData();
-        const oValidationModel = this.getView().getModel(
-          "productFormValidationModel"
-        );
+        const oAddProductForm = oView.byId("productDialogForm");
 
         // Validate product form inputs
-        const bIsFormValid = Validation.validateProductForm(
-          oProductFormData,
-          oValidationModel
-        );
+        const bIsFormValid = Validation.validateForm(oAddProductForm);
         if (!bIsFormValid) {
           return;
         }
@@ -280,12 +265,7 @@ sap.ui.define(
         if (oDialog) {
           oDialog.close();
           this._resetProductFormModel();
-
-          // Create product form validation model
-          this.getView().setModel(
-            models.createProductFormValidationModel(),
-            "productFormValidationModel"
-          );
+          this.resetFormValidations(oView.byId("productDialogForm"));
         }
       },
 
@@ -406,12 +386,14 @@ sap.ui.define(
           const oFieldFilter = this._buildFilterForSpecificField(
             sField,
             vFilterValue,
-            Constants.aSearchableFields
+            Constants.aProductTableSearchableFields
           );
           if (oFieldFilter) {
             aFilters.push(oFieldFilter);
           }
         });
+
+        console.log(aFilters);
 
         return aFilters;
       },
@@ -427,20 +409,25 @@ sap.ui.define(
         if (sField === Constants.sSearchFilterGroupName) {
           const aSearchFilters = this.createTableSearchFilters(
             vFilterValue,
-            Constants.aSearchableFields
+            Constants.aProductTableSearchableFields
           );
           return aSearchFilters.length
             ? new Filter(aSearchFilters, false)
             : null;
         }
 
+        // For release date
         if (sField === Constants.oProductTableColumns.RELEASE_DATE_FIELD) {
-          const sFormattedDate = formatter.formatDate(vFilterValue);
-          return vFilterValue
-            ? new Filter(sField, FilterOperator.EQ, sFormattedDate)
-            : null;
+          const oStartDate = new Date(vFilterValue);
+          oStartDate.setHours(0, 0, 0, 0);
+
+          const oEndDate = new Date(vFilterValue);
+          oEndDate.setHours(23, 59, 59, 999);
+
+          return new Filter(sField, FilterOperator.BT, oStartDate, oEndDate);
         }
 
+        // For other fields
         if (Array.isArray(vFilterValue)) {
           const aMultiFilters = vFilterValue.map(
             (filterValue) => new Filter(sField, FilterOperator.EQ, filterValue)
@@ -487,7 +474,8 @@ sap.ui.define(
           Category: "",
           Brand: "",
           SupplierName: "",
-          ReleaseDate: null,
+          ReleaseDate: new Date(),
+          StockStatus: Constants.oStockStatuses.IN_STOCK,
           Rating: null,
         });
       },

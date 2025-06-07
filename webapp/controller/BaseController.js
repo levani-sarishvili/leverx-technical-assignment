@@ -45,6 +45,26 @@ sap.ui.define(
           );
         });
       },
+
+      /**
+       * Resets the validation state and message of all controls in the form.
+       * Each control in the form is checked if it has the setValueState and setValueStateText methods.
+       * If a control has these methods, its validation state is reset to "None" and its validation message is cleared.
+       * @param {sap.ui.core.Control} oForm - The form to reset the validations for.
+       * @private
+       */
+      resetFormValidations: function (oForm) {
+        const aControls = oForm.getContent();
+
+        aControls.forEach(function (oControl) {
+          if (oControl.setValueState) {
+            oControl.setValueState("None");
+          }
+          if (oControl.setValueStateText) {
+            oControl.setValueStateText("");
+          }
+        });
+      },
     });
   }
 );

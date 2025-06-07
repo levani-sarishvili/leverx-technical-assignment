@@ -87,7 +87,11 @@
                   placeholder="{i18n>releaseDateFilterPlaceholder}"
                   displayFormat="yyyy-MM-dd"
                   valueFormat="yyyy-MM-dd"
-                  value="{Products>ReleaseDate}"
+                  value="{
+                    path: 'Products>ReleaseDate',
+                    type: 'sap.ui.model.type.Date',
+                    formatOptions: { pattern: 'yyyy-MM-dd' } 
+                  }"
                 />
               </fb:control>
             </fb:FilterGroupItem>
@@ -218,7 +222,11 @@
           >
             <Label text="{i18n>productTableReleaseDateColumn}" />
             <t:template>
-              <Text text="{path: 'ReleaseDate', formatter: '.formatter.formatDate'}" />
+              <Text
+                text="{ 
+                  path: 'ReleaseDate', 
+                  type: 'sap.ui.model.type.Date', 
+                  formatOptions: { pattern: 'yyyy-MM-dd' } }" />
             </t:template>
           </t:Column>
 

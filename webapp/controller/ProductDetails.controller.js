@@ -9,6 +9,7 @@ sap.ui.define(
     "levani/sarishvili/model/models",
     "levani/sarishvili/controller/BaseController",
     "levani/sarishvili/constants/Constants",
+    "levani/sarishvili/model/Validation",
   ],
   function (
     Filter,
@@ -19,7 +20,8 @@ sap.ui.define(
     MessageBox,
     models,
     BaseController,
-    Constants
+    Constants,
+    Validation
   ) {
     "use strict";
 
@@ -63,10 +65,10 @@ sap.ui.define(
       onBeforeRendering: function () {
         const oView = this.getView();
         const oModel = oView.getModel();
-        const oProductsData = oModel.getData().Products;
+        const oSalesOrdersData = oModel.getData().SalesOrders;
 
-        oProductsData.forEach((oProduct) => {
-          oProduct.ReleaseDate = new Date(oProduct.ReleaseDate);
+        oSalesOrdersData.forEach((oSalesOrder) => {
+          oSalesOrder.OrderDate = new Date(oSalesOrder.OrderDate);
         });
       },
 
@@ -105,6 +107,8 @@ sap.ui.define(
         const oSelectedProduct = aFinalProducts.find(
           (oProduct) => String(oProduct.Id) === String(sProductId)
         );
+
+        oSelectedProduct.ReleaseDate = new Date(oSelectedProduct.ReleaseDate);
 
         // If the product is found, bind it to the view
         if (oSelectedProduct) {
@@ -204,7 +208,15 @@ sap.ui.define(
           .getModel("productFormModel")
           .getData();
         const oProductModel = oView.getModel();
+        const oEditProductForm = this.byId("productDetailsEditForm");
         const aProductsData = oProductModel.getProperty("/Products");
+
+        // Validate product form inputs
+        const bIsFormValid = Validation.validateForm(oEditProductForm);
+        if (!bIsFormValid) {
+          return;
+        }
+
         const oUpdatedProductsData = aProductsData.map((oProduct) => {
           if (oProduct.Id === oUpdatedProductData.Id) {
             return oUpdatedProductData;
@@ -323,7 +335,7 @@ sap.ui.define(
         // Search filters
         const aSearchFilters = this.createTableSearchFilters(
           sQuery,
-          Constants.oOrderTableColumns
+          Constants.oOrderTableSearchableFields
         );
 
         const oFinalFilter = new Filter({
@@ -336,6 +348,7 @@ sap.ui.define(
 
         oBinding.filter(oFinalFilter);
       },
+
       /**
        * Toggles the visibility of the action buttons and form type based on whether the user is in edit mode or not.
        *

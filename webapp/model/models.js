@@ -13,39 +13,13 @@ sap.ui.define(
           {
             Name: "",
             Price: null,
-            Category: "",
-            Brand: "",
+            Category: null,
+            Brand: null,
             SupplierName: "",
-            ReleaseDate: null,
+            ReleaseDate: new Date(),
             StockStatus: "In Stock",
             Rating: null,
           },
-          {
-            bindingMode: BindingMode.TwoWay,
-          }
-        );
-      },
-
-      /**
-       * Creates and returns a new JSON model for product form validation.
-       * Each property represents the validation state of a form field (true = valid, false = invalid).
-       * The model uses one-way binding to reflect validation results in the UI.
-       *
-       * @returns {sap.ui.model.json.JSONModel} A JSON model representing the validation state of product form fields.
-       */
-      createProductFormValidationModel: function () {
-        return new JSONModel(
-          {
-            Name: true,
-            Price: true,
-            Category: true,
-            Brand: true,
-            SupplierName: true,
-            ReleaseDate: true,
-            StockStatus: true,
-            Rating: true,
-          },
-
           {
             bindingMode: BindingMode.TwoWay,
           }

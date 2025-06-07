@@ -207,7 +207,11 @@
                   >
                     <m:Label text="{i18n>orderTableOrderDateColumn}" />
                     <t:template>
-                      <m:Text text="{OrderDate}" />
+                      <m:Text
+                        text="{ 
+                          path: 'OrderDate', 
+                          type: 'sap.ui.model.type.Date', 
+                          formatOptions: { pattern: 'yyyy-MM-dd' } }" />
                     </t:template>
                   </t:Column>
 

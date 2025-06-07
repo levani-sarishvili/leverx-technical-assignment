@@ -3,13 +3,12 @@ sap.ui.define([], function () {
 
   const sSearchFilterGroupName = "Search";
 
-  const aSearchableFields = [
+  const aProductTableSearchableFields = [
     { title: "Name", type: "String" },
     { title: "Price", type: "Number" },
     { title: "Category", type: "String" },
     { title: "Brand", type: "String" },
     { title: "SupplierName", type: "String" },
-    { title: "ReleaseDate", type: "Date" },
     { title: "StockStatus", type: "String" },
     { title: "Rating", type: "Number" },
   ];
@@ -21,15 +20,15 @@ sap.ui.define([], function () {
     BRAND_FIELD: "Brand",
     SUPPLIER_FIELD: "SupplierName",
     RELEASE_DATE_FIELD: "ReleaseDate",
+    STOCK_STATUS_FIELD: "StockStatus",
     RATING_FIELD: "Rating",
   };
 
-  const oOrderTableColumns = [
+  const oOrderTableSearchableFields = [
     { title: "ProductId", type: "String" },
     { title: "OrderId", type: "String" },
     { title: "Customer", type: "String" },
     { title: "Quantity", type: "Number" },
-    { title: "OrderDate", type: "Date" },
     { title: "Status", type: "String" },
     { title: "ShippingCost", type: "Number" },
     { title: "TotalPrice", type: "Number" },
@@ -49,11 +48,11 @@ sap.ui.define([], function () {
   };
 
   return {
-    aSearchableFields,
+    aProductTableSearchableFields,
     oProductTableColumns,
     sSearchFilterGroupName,
     oOrderStatuses,
     oStockStatuses,
-    oOrderTableColumns,
+    oOrderTableSearchableFields,
   };
 });
