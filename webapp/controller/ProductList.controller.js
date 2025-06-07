@@ -1,33 +1,31 @@
 sap.ui.define(
   [
-    "sap/ui/core/mvc/Controller",
     "levani/sarishvili/model/formatter",
     "sap/ui/core/Fragment",
     "sap/m/MessageBox",
     "sap/m/MessageToast",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
-    "levani/sarishvili/utils/i18nUtils",
     "levani/sarishvili/model/models",
     "levani/sarishvili/model/Validation",
     "levani/sarishvili/constants/Constants",
+    "levani/sarishvili/controller/BaseController",
   ],
   function (
-    Controller,
     formatter,
     Fragment,
     MessageBox,
     MessageToast,
     Filter,
     FilterOperator,
-    i18nUtils,
     models,
     Validation,
-    Constants
+    Constants,
+    BaseController
   ) {
     "use strict";
 
-    return Controller.extend("levani.sarishvili.controller.ProductList", {
+    return BaseController.extend("levani.sarishvili.controller.ProductList", {
       aSearchFilters: [],
       aFilterBarFilters: [],
       aCombinedFilters: [],
@@ -117,7 +115,13 @@ sap.ui.define(
 
         // Reset search filters and create new ones if query exists
         this.oSearchFilterGroup = sQuery
-          ? new Filter(this._createSearchFilters(sQuery), false)
+          ? new Filter(
+              this.createTableSearchFilters(
+                sQuery,
+                Constants.aSearchableFields
+              ),
+              false
+            )
           : null;
 
         this._applyCombinedFilters(oBinding);
@@ -166,7 +170,7 @@ sap.ui.define(
        */
       _updateProductCount: function (oView, oBinding) {
         const iCount = oBinding.getLength();
-        const sTitle = i18nUtils.getTranslatedText(oView, "productTableTitle");
+        const sTitle = this.getTranslatedText(oView, "productTableTitle");
         this.getView()
           .byId("productTableTitle")
           .setText(`${sTitle} (${iCount})`);
@@ -242,9 +246,7 @@ sap.ui.define(
         oMainModel.setProperty("/Products", aUpdatedProducts);
 
         // Show success message
-        MessageToast.show(
-          i18nUtils.getTranslatedText(oView, "productCreatedToast")
-        );
+        MessageToast.show(this.getTranslatedText(oView, "productCreatedToast"));
 
         // Reset product form
         this._resetProductFormModel();
@@ -324,7 +326,7 @@ sap.ui.define(
 
         // Show confirmation dialog
         MessageBox.confirm(
-          i18nUtils.getTranslatedText(oView, "confirmDeleteProducts"),
+          this.getTranslatedText(oView, "confirmDeleteProducts"),
           {
             actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             onClose: (sAction) => {
@@ -354,7 +356,7 @@ sap.ui.define(
         // Update model with filtered products
         oMainModel.setProperty("/Products", aUpdatedProducts);
         MessageToast.show(
-          i18nUtils.getTranslatedText(oView, "productsDeletedToast")
+          this.getTranslatedText(oView, "productsDeletedToast")
         );
 
         // Reset selection model
@@ -378,30 +380,6 @@ sap.ui.define(
         if (oDeleteButton) {
           oDeleteButton.setEnabled(aSelectedProductIds.length > 0);
         }
-      },
-
-      /**
-       * Creates an array of search filters for the specified searchable fields and query.
-       * Uses `Contains` for string fields and `EQ` for numeric fields like Price or Rating.
-       *
-       * @param {string} sQuery - The search query input by the user.
-       * @returns {sap.ui.model.Filter[]} An array of filters based on the query and searchable fields.
-       */
-      _createSearchFilters: function (sQuery) {
-        if (!sQuery || !Constants.aSearchableFields?.length) {
-          return [];
-        }
-
-        return Constants.aSearchableFields.map((sField) => {
-          const bIsNumericField =
-            sField === Constants.oProductTableColumns.PRICE_FIELD ||
-            sField === Constants.oProductTableColumns.RATING_FIELD;
-          return new Filter(
-            sField,
-            bIsNumericField ? FilterOperator.EQ : FilterOperator.Contains,
-            bIsNumericField ? parseFloat(sQuery) : sQuery
-          );
-        });
       },
 
       /**
@@ -447,9 +425,9 @@ sap.ui.define(
        */
       _buildFilterForSpecificField: function (sField, vFilterValue) {
         if (sField === Constants.sSearchFilterGroupName) {
-          const aSearchFilters = this._createSearchFilters(
-            Constants.aSearchableFields,
-            vFilterValue
+          const aSearchFilters = this.createTableSearchFilters(
+            vFilterValue,
+            Constants.aSearchableFields
           );
           return aSearchFilters.length
             ? new Filter(aSearchFilters, false)

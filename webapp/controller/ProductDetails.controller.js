@@ -1,29 +1,29 @@
 sap.ui.define(
   [
-    "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "levani/sarishvili/model/formatter",
     "sap/ui/core/Fragment",
     "sap/m/MessageToast",
     "sap/m/MessageBox",
-    "levani/sarishvili/utils/i18nUtils",
     "levani/sarishvili/model/models",
+    "levani/sarishvili/controller/BaseController",
+    "levani/sarishvili/constants/Constants",
   ],
   function (
-    Controller,
     Filter,
     FilterOperator,
     formatter,
     Fragment,
     MessageToast,
     MessageBox,
-    i18nUtils,
-    models
+    models,
+    BaseController,
+    Constants
   ) {
     "use strict";
 
-    return Controller.extend("webapp.controller.ProductDetails", {
+    return BaseController.extend("webapp.controller.ProductDetails", {
       // Formatters
       formatter: formatter,
 
@@ -218,9 +218,7 @@ sap.ui.define(
         this._toggleButtonsAndView(false);
 
         // Show success message
-        MessageToast.show(
-          i18nUtils.getTranslatedText(oView, "productUpdatedToast")
-        );
+        MessageToast.show(this.getTranslatedText(oView, "productUpdatedToast"));
       },
 
       /**
@@ -269,7 +267,7 @@ sap.ui.define(
 
         // Show confirmation dialog
         MessageBox.confirm(
-          i18nUtils.getTranslatedText(oView, "confirmDeleteProduct"),
+          this.getTranslatedText(oView, "confirmDeleteProduct"),
           {
             actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             onClose: (sAction) => {
@@ -287,7 +285,7 @@ sap.ui.define(
                 oProductModel.setProperty("/SalesOrders", aUpdatedSalesOrders);
                 // Show success message
                 MessageToast.show(
-                  i18nUtils.getTranslatedText(oView, "productDeletedToast")
+                  this.getTranslatedText(oView, "productDeletedToast")
                 );
 
                 oView.unbindObject();
@@ -323,11 +321,10 @@ sap.ui.define(
         }
 
         // Search filters
-        const aSearchFilters = [
-          new Filter("Status", FilterOperator.Contains, sQuery),
-          new Filter("Customer", FilterOperator.Contains, sQuery),
-          new Filter("OrderId", FilterOperator.Contains, sQuery),
-        ];
+        const aSearchFilters = this.createTableSearchFilters(
+          sQuery,
+          Constants.oOrderTableColumns
+        );
 
         const oFinalFilter = new Filter({
           filters: [
