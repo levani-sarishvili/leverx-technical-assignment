@@ -53,6 +53,12 @@ sap.ui.define(
           models.createProductSelectionModel(),
           "selectionModel"
         );
+
+        // Create table row count model
+        this.getView().setModel(
+          models.createTableRowCountModel(),
+          "tableRowCountModel"
+        );
       },
 
       /**
@@ -72,6 +78,11 @@ sap.ui.define(
           oProduct.ReleaseDate = new Date(oProduct.ReleaseDate);
           console.log(oProduct.ReleaseDate);
         });
+
+        // Update table row count model
+        this.getView()
+          .getModel("tableRowCountModel")
+          .setProperty("/productTableRowCount", oProductsData.length);
       },
 
       /**
@@ -156,17 +167,15 @@ sap.ui.define(
       },
 
       /**
-       * Updates the product count in the table title.
-       * @param {sap.ui.core.mvc.View} oView - The current view.
-       * @param {sap.ui.model.Binding} oBinding - The table's binding.
+       * Updates the product table row count model with the current binding length.
+       * @param {sap.ui.core.mvc.View} oView The view containing the product table.
+       * @param {sap.ui.model.Binding} oBinding The binding of the product table.
        * @private
        */
       _updateProductCount: function (oView, oBinding) {
         const iCount = oBinding.getLength();
-        const sTitle = this.getTranslatedText(oView, "productTableTitle");
-        this.getView()
-          .byId("productTableTitle")
-          .setText(`${sTitle} (${iCount})`);
+        const oTableRowCountModel = oView.getModel("tableRowCountModel");
+        oTableRowCountModel.setProperty("/productTableRowCount", iCount);
       },
 
       /**
@@ -229,6 +238,12 @@ sap.ui.define(
         oNewProduct.ReleaseDate = new Date(oNewProduct.ReleaseDate);
         const aUpdatedProducts = [...aProducts, oNewProduct];
         oMainModel.setProperty("/Products", aUpdatedProducts);
+
+        // Update row count in product table row count model
+        this._updateProductCount(
+          oView,
+          oView.byId("productTable").getBinding("rows")
+        );
 
         // Show success message
         MessageToast.show(this.getTranslatedText(oView, "productCreatedToast"));
@@ -352,6 +367,12 @@ sap.ui.define(
             : this.getTranslatedText(oView, "productsDeletedToast", [
                 aSelectedProductIds.length,
               ])
+        );
+
+        // Update row count in product table row count model
+        this._updateProductCount(
+          oView,
+          oView.byId("productTable").getBinding("rows")
         );
 
         // Reset selection model

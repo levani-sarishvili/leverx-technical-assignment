@@ -42,6 +42,12 @@ sap.ui.define(
           "productFormModel"
         );
 
+        // Create table row count model
+        this.getView().setModel(
+          models.createTableRowCountModel(),
+          "tableRowCountModel"
+        );
+
         this._formFragments = {};
         this._sProductId = "";
 
@@ -52,6 +58,18 @@ sap.ui.define(
 
         // Set the initial form to be the display one
         this._showFormFragment("DisplayProductDetails");
+      },
+
+      /**
+       * Updates the sales order table row count model with the current binding length.
+       * @param {sap.ui.core.mvc.View} oView The view containing the sales order table.
+       * @param {sap.ui.model.Binding} oBinding The binding of the sales order table.
+       * @private
+       */
+      _updateSalesOrderCount: function (oView, oBinding) {
+        const iCount = oBinding.getLength();
+        const oTableRowCountModel = oView.getModel("tableRowCountModel");
+        oTableRowCountModel.setProperty("/salesOrderTableRowCount", iCount);
       },
 
       /**
@@ -70,6 +88,16 @@ sap.ui.define(
         oSalesOrdersData.forEach((oSalesOrder) => {
           oSalesOrder.OrderDate = new Date(oSalesOrder.OrderDate);
         });
+
+        // Update table row count model
+        this.getView()
+          .getModel("tableRowCountModel")
+          .setProperty(
+            "/salesOrderTableRowCount",
+            oSalesOrdersData.filter(
+              (oSalesOrder) => oSalesOrder.ProductId === this._sProductId
+            ).length
+          );
       },
 
       /**
@@ -107,6 +135,11 @@ sap.ui.define(
         const oSelectedProduct = aFinalProducts.find(
           (oProduct) => String(oProduct.Id) === String(sProductId)
         );
+
+        // Bind the selected product to the form
+        this._bindSelectedProductToForm(oSelectedProduct);
+        // Update the sales order table row count
+        this._updateSalesOrderCount(oView, oBinding);
 
         oSelectedProduct.ReleaseDate = new Date(oSelectedProduct.ReleaseDate);
 
@@ -179,20 +212,7 @@ sap.ui.define(
        */
       onEditProductPress: function (oEvent) {
         const oProduct = oEvent.getSource().getBindingContext().getObject();
-
-        // Deep copy to avoid reference to original object
-        const oClonedProduct = JSON.parse(JSON.stringify(oProduct));
-
-        // Convert ReleaseDate from string to Date object
-        if (oClonedProduct.ReleaseDate) {
-          oClonedProduct.ReleaseDate = new Date(oClonedProduct.ReleaseDate);
-        }
-
-        console.log(typeof oClonedProduct.ReleaseDate);
-
-        this.getView()
-          .getModel("productFormModel")
-          .setProperty("/", oClonedProduct);
+        this._bindSelectedProductToForm(oProduct);
         this._toggleButtonsAndView(true);
       },
       /**
@@ -321,6 +341,7 @@ sap.ui.define(
        * @param {sap.ui.base.Event} oEvent - The search event containing the query parameter.
        */
       onOrderSearchPress: function (oEvent) {
+        const oView = this.getView();
         const sQuery = oEvent.getSource().getValue();
         const oTable = this.byId("productOrdersTable");
         const oBinding = oTable.getBinding("rows");
@@ -329,6 +350,8 @@ sap.ui.define(
           oBinding.filter(
             new Filter("ProductId", FilterOperator.EQ, this._sProductId)
           );
+          // Update table row count
+          this._updateSalesOrderCount(oView, oBinding);
           return;
         }
 
@@ -346,7 +369,11 @@ sap.ui.define(
           and: true,
         });
 
+        // Apply filter
         oBinding.filter(oFinalFilter);
+
+        // Update table row count
+        this._updateSalesOrderCount(oView, oBinding);
       },
 
       /**
@@ -368,6 +395,30 @@ sap.ui.define(
         this._showFormFragment(
           bEdit ? "EditProductDetails" : "DisplayProductDetails"
         );
+      },
+
+      /**
+       * Binds the selected product data to the product form model.
+       *
+       * Creates a deep copy of the product object to avoid modifying the original reference.
+       * Converts the `ReleaseDate` property from a string to a Date object, if present.
+       * Sets the cloned and modified product data to the `productFormModel` for UI data binding.
+       *
+       * @param {object} oProduct - The product object to be bound to the form model.
+       * @private
+       */
+
+      _bindSelectedProductToForm: function (oProduct) {
+        // Deep copy to avoid reference to original object
+        const oClonedProduct = JSON.parse(JSON.stringify(oProduct));
+        // Convert ReleaseDate from string to Date object
+        if (oClonedProduct.ReleaseDate) {
+          oClonedProduct.ReleaseDate = new Date(oClonedProduct.ReleaseDate);
+        }
+
+        this.getView()
+          .getModel("productFormModel")
+          .setProperty("/", oClonedProduct);
       },
     });
   }

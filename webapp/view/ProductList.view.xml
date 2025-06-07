@@ -7,6 +7,7 @@
   xmlns:fb="sap.ui.comp.filterbar"
   xmlns:t="sap.ui.table"
   xmlns:rowmode="sap.ui.table.rowmodes"
+  core:require="{formatMessage: 'sap/base/strings/formatMessage'}"
   xmlns:core="sap.ui.core">
 
   <f:DynamicPage
@@ -126,14 +127,17 @@
 
         <t:extension>
           <OverflowToolbar style="Standard">
-            <Title id="productTableTitle"
+            <Title
+              id="productTableTitle"
               text="{
-                  parts: [
-                    { path: 'i18n>productTableTitle' },
-                    { path: '/Products' }
-                  ],
-                  formatter: '.formatter.formatTableTitle'
-            }" />
+                parts: [
+                  'i18n>productTableTitle',
+                  'tableRowCountModel>/productTableRowCount'
+                ],
+                formatter: 'formatMessage'
+              }"
+            />
+
             <ToolbarSpacer />
             <Button
               text="{i18n>createButtonText}"

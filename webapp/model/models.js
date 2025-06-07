@@ -43,6 +43,13 @@ sap.ui.define(
           }
         );
       },
+
+      createTableRowCountModel: function () {
+        return new JSONModel({
+          productTableRowCount: 0,
+          salesOrderTableRowCount: 0,
+        });
+      },
     };
   }
 );
