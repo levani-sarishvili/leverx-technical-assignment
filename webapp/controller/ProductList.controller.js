@@ -299,14 +299,24 @@ sap.ui.define(
        */
       onDeleteProductPress: function () {
         const oView = this.getView();
+        const aProductsData = oView.getModel().getData().Products;
         const oSelectionModel = oView.getModel("selectionModel");
         const aSelectedProductIds = oSelectionModel.getProperty(
           "/selectedProductIds"
         );
+        const bIsSingleProductSelected = aSelectedProductIds.length === 1;
 
         // Show confirmation dialog
         MessageBox.confirm(
-          this.getTranslatedText(oView, "confirmDeleteProducts"),
+          bIsSingleProductSelected
+            ? this.getTranslatedText(oView, "confirmDeleteProduct", [
+                aProductsData.find(
+                  (oProduct) => oProduct.Id === aSelectedProductIds[0]
+                ).Name,
+              ])
+            : this.getTranslatedText(oView, "confirmDeleteProducts", [
+                aSelectedProductIds.length,
+              ]),
           {
             actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             onClose: (sAction) => {
@@ -327,6 +337,7 @@ sap.ui.define(
         const oView = this.getView();
         const oMainModel = oView.getModel();
         const aProducts = oMainModel.getProperty("/Products") || [];
+        const bIsSingleProductSelected = aSelectedProductIds.length === 1;
 
         // Filter out selected products
         const aUpdatedProducts = aProducts.filter(
@@ -336,7 +347,11 @@ sap.ui.define(
         // Update model with filtered products
         oMainModel.setProperty("/Products", aUpdatedProducts);
         MessageToast.show(
-          this.getTranslatedText(oView, "productsDeletedToast")
+          bIsSingleProductSelected
+            ? this.getTranslatedText(oView, "productDeletedToast")
+            : this.getTranslatedText(oView, "productsDeletedToast", [
+                aSelectedProductIds.length,
+              ])
         );
 
         // Reset selection model
