@@ -13,7 +13,6 @@
         <!-- Name -->
         <Label text="{i18n>productNameLabel}" labelFor="name" />
         <Input
-          id="name"
           value="{
             path: 'appStateModel>/productFormData/Name',
             type: 'sap.ui.model.type.String',
@@ -30,7 +29,6 @@
         <!-- Price -->
         <Label text="{i18n>productPriceLabel}" labelFor="price" />
         <Input
-          id="price"
           value="{
             path: 'appStateModel>/productFormData/Price',
             type: 'sap.ui.model.type.Integer',
@@ -48,7 +46,6 @@
         <!-- Category -->
         <Label text="{i18n>productCategoryLabel}" labelFor="category" />
         <Select
-          id="category"
           forceSelection="false"
           required="true"
           fieldGroupIds="productFormGroup"
@@ -69,7 +66,6 @@
         <!-- Brand -->
         <Label text="{i18n>productBrandLabel}" labelFor="brand" />
         <Select
-          id="brand"
           forceSelection="false"
           required="true"
           fieldGroupIds="productFormGroup"
@@ -90,7 +86,6 @@
         <!-- SupplierName -->
         <Label text="{i18n>productSupplierLabel}" labelFor="supplierName" />
         <Input
-          id="supplierName"
           fieldGroupIds="productFormGroup"
           value="{
             path: 'appStateModel>/productFormData/SupplierName',
@@ -126,7 +121,6 @@
         <!-- StockStatus -->
         <Label text="{i18n>productStockStatusLabel}" labelFor="stockStatus" />
         <Select
-          id="stockStatus"
           forceSelection="false"
           required="true"
           fieldGroupIds="productFormGroup"
@@ -147,7 +141,6 @@
         <!-- Rating -->
         <Label text="{i18n>productRatingLabel}" labelFor="rating" />
         <Input
-          id="rating"
           value="{
             path: 'appStateModel>/productFormData/Rating', 
             type: 'sap.ui.model.type.Float', 

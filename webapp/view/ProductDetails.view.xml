@@ -115,7 +115,6 @@
           <ObjectPageSubSection title="{i18n>productInfoSectionTitle}" showTitle="false">
             <blocks>
               <m:VBox id="productDetailsContainer">
-
               </m:VBox>
             </blocks>
           </ObjectPageSubSection>
@@ -152,11 +151,10 @@
                 <t:extension>
                   <m:OverflowToolbar style="Standard">
                     <m:Title
-                      id="salesOrdersTableTitle"
                       text="{
                         parts: [
                           'i18n>salesOrdersTableTitle',
-                          'tableRowCountModel>/salesOrderTableRowCount'
+                          'appStateModel>/tableRowCount/salesOrderTableRowCount'
                         ],
                         formatter: 'formatMessage'
                       }"

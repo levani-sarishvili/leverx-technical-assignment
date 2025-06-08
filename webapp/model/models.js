@@ -33,6 +33,8 @@ sap.ui.define(
               productTableRowCount: 0,
               salesOrderTableRowCount: 0,
             },
+
+            activeFilters: [],
           },
 
           {

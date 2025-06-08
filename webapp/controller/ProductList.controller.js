@@ -117,13 +117,14 @@ sap.ui.define(
 
         this._applyCombinedFilters(oBinding);
         this._updateProductCount(this.getView(), oBinding);
+        this._trackActiveFilters();
       },
 
       /**
        * Handles the filter bar search action and updates the table filters.
        * Applies AND filters based on the selected filter bar fields.
        */
-      onSearch: function () {
+      onFilterBarSearch: function () {
         const oTable = this.byId("productTable");
         const oBinding = oTable.getBinding("rows");
         const oFilterBar = this.byId("filterbar");
@@ -133,6 +134,7 @@ sap.ui.define(
 
         this._applyCombinedFilters(oBinding);
         this._updateProductCount(this.getView(), oBinding);
+        this._trackActiveFilters();
       },
 
       /**
@@ -423,6 +425,38 @@ sap.ui.define(
       },
 
       /**
+       * Updates the active filters in the app state model, based on the filled controls in the filter bar.
+       * Iterates over the filter group items and checks if the corresponding control has a value.
+       * If the control has a value, the filter name is added to the active filters array.
+       * The active filters array is then updated in the app state model.
+       * @private
+       */
+      _trackActiveFilters: function () {
+        const oView = this.getView();
+        const oFilterBar = oView.byId("filterbar");
+        const oAppStateModel = oView.getModel("appStateModel");
+        const aFilterGroupItems = oFilterBar.getFilterGroupItems();
+        const aActiveFilters = [];
+
+        aFilterGroupItems.forEach((oItem) => {
+          const oControl = oFilterBar.determineControlByFilterItem(oItem);
+          const sFieldName = oItem.getName();
+
+          if (
+            oControl &&
+            ((typeof oControl.getSelectedKeys === "function" &&
+              oControl.getSelectedKeys().length > 0) ||
+              (typeof oControl.getValue === "function" &&
+                oControl.getValue().trim() !== ""))
+          ) {
+            aActiveFilters.push(sFieldName);
+          }
+        });
+
+        oAppStateModel.setProperty("/activeFilters", aActiveFilters);
+      },
+
+      /**
        * Creates a filter for the given field and value, based on the field type.
        * @param {string} sField - The name of the field to filter on.
        * @param {any} vFilterValue - The value to filter on.
@@ -430,7 +464,7 @@ sap.ui.define(
        * @private
        */
       _buildFilterForSpecificField: function (sField, vFilterValue) {
-        if (sField === Constants.sSearchFilterGroupName) {
+        if (sField === Constants.oProductTableColumns.NAME_FIELD) {
           const aSearchFilters = this.createTableSearchFilters(
             vFilterValue,
             Constants.aProductTableSearchableFields

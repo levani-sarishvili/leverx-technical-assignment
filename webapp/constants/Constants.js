@@ -1,8 +1,6 @@
 sap.ui.define([], function () {
   "use strict";
 
-  const sSearchFilterGroupName = "Search";
-
   const aProductTableSearchableFields = [
     { title: "Name", type: "String" },
     { title: "Price", type: "Number" },
@@ -50,7 +48,6 @@ sap.ui.define([], function () {
   return {
     aProductTableSearchableFields,
     oProductTableColumns,
-    sSearchFilterGroupName,
     oOrderStatuses,
     oStockStatuses,
     oOrderTableSearchableFields,

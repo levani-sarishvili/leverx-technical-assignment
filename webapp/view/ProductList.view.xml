@@ -22,12 +22,27 @@
         </f:heading>
 
         <f:expandedContent>
-          <Label id="expandedLabel" text="No filters active" />
+          <Label
+            text="{
+              parts: [
+                { path: 'appStateModel>/activeFilters' },
+                { value: 'expanded' }
+              ],
+              formatter: '.formatter.formatActiveFilters'
+            }" />
+
         </f:expandedContent>
         <f:snappedContent>
-          <Label id="snappedLabel" text="No filters active" />
-        </f:snappedContent>
+          <Label
+            text="{
+              parts: [
+                { path: 'appStateModel>/activeFilters' },
+                { value: 'snapped' }
+              ],
+              formatter: '.formatter.formatActiveFilters'
+            }" />
 
+        </f:snappedContent>
       </f:DynamicPageTitle>
     </f:title>
 
@@ -36,11 +51,11 @@
         <fb:FilterBar
           id="filterbar"
           useToolbar="false"
-          search=".onSearch"
+          search=".onFilterBarSearch"
           filterChange=".onFilterChange"
         >
           <fb:filterGroupItems>
-            <fb:FilterGroupItem name="Search" groupName="Group1"
+            <fb:FilterGroupItem name="Name" groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
                 <SearchField
