@@ -42,23 +42,8 @@ sap.ui.define(
        * These models are attached to the view under named model references to enable data binding.
        */
       onInit: function () {
-        // Create product form model
-        this.getView().setModel(
-          models.createProductFormModel(),
-          "productFormModel"
-        );
-
-        // Create selection model for product selection
-        this.getView().setModel(
-          models.createProductSelectionModel(),
-          "selectionModel"
-        );
-
-        // Create table row count model
-        this.getView().setModel(
-          models.createTableRowCountModel(),
-          "tableRowCountModel"
-        );
+        // Create app state model
+        this.getView().setModel(models.createAppStateModel(), "appStateModel");
       },
 
       /**
@@ -76,13 +61,15 @@ sap.ui.define(
 
         oProductsData.forEach((oProduct) => {
           oProduct.ReleaseDate = new Date(oProduct.ReleaseDate);
-          console.log(oProduct.ReleaseDate);
         });
 
         // Update table row count model
         this.getView()
-          .getModel("tableRowCountModel")
-          .setProperty("/productTableRowCount", oProductsData.length);
+          .getModel("appStateModel")
+          .setProperty(
+            "/tableRowCount/productTableRowCount",
+            oProductsData.length
+          );
       },
 
       /**
@@ -174,8 +161,11 @@ sap.ui.define(
        */
       _updateProductCount: function (oView, oBinding) {
         const iCount = oBinding.getLength();
-        const oTableRowCountModel = oView.getModel("tableRowCountModel");
-        oTableRowCountModel.setProperty("/productTableRowCount", iCount);
+        const oAppStateModel = oView.getModel("appStateModel");
+        oAppStateModel.setProperty(
+          "/tableRowCount/productTableRowCount",
+          iCount
+        );
       },
 
       /**
@@ -198,13 +188,13 @@ sap.ui.define(
           oView.addDependent(this.oDialog);
 
           this.oDialog.bindElement({
-            path: "/",
-            model: "productFormModel",
+            path: "/productFormData",
+            model: "appStateModel",
           });
         } else {
           this.oDialog.bindElement({
-            path: "/",
-            model: "productFormModel",
+            path: "/productFormData",
+            model: "appStateModel",
           });
         }
 
@@ -221,10 +211,10 @@ sap.ui.define(
       onProductCreatePress: function () {
         const oView = this.getView();
         const oDialog = oView.byId("createProductDialog");
-        const oFormModel = oView.getModel("productFormModel");
+        const oAppStateModel = oView.getModel("appStateModel");
         const oMainModel = oView.getModel();
         const aProducts = oMainModel.getProperty("/Products") || [];
-        const oNewProduct = oFormModel.getData();
+        const oNewProduct = oAppStateModel.getProperty("/productFormData");
         const oAddProductForm = oView.byId("productDialogForm");
 
         // Validate product form inputs
@@ -290,20 +280,20 @@ sap.ui.define(
        * @private
        */
       onRowSelectionChange: function () {
-        const oSelectionModel = this.getView().getModel("selectionModel");
+        const oAppStateModel = this.getView().getModel("appStateModel");
         const oTable = this.byId("productTable");
         const aSelectedIndices = oTable.getSelectedIndices();
         const aSelectedProductIds = [];
 
         // Reset selected product IDs
-        oSelectionModel.setProperty("/selectedProductIds", []);
+        oAppStateModel.setProperty("/selectedProductIds", []);
 
         aSelectedIndices.forEach((iIndex) => {
           const oContext = oTable.getContextByIndex(iIndex);
           const iProductId = oContext.getProperty("Id");
           aSelectedProductIds.push(iProductId);
         });
-        oSelectionModel.setProperty("/selectedProductIds", aSelectedProductIds);
+        oAppStateModel.setProperty("/selectedProductIds", aSelectedProductIds);
       },
 
       /**
@@ -315,8 +305,8 @@ sap.ui.define(
       onDeleteProductPress: function () {
         const oView = this.getView();
         const aProductsData = oView.getModel().getData().Products;
-        const oSelectionModel = oView.getModel("selectionModel");
-        const aSelectedProductIds = oSelectionModel.getProperty(
+        const oAppStateModel = oView.getModel("appStateModel");
+        const aSelectedProductIds = oAppStateModel.getProperty(
           "/selectedProductIds"
         );
         const bIsSingleProductSelected = aSelectedProductIds.length === 1;
@@ -376,7 +366,7 @@ sap.ui.define(
         );
 
         // Reset selection model
-        oView.getModel("selectionModel").setProperty("/selectedProductIds", []);
+        oView.getModel("appStateModel").setProperty("/selectedProductIds", []);
       },
 
       /**
@@ -387,8 +377,8 @@ sap.ui.define(
        */
       _handleDeleteButtonState: function () {
         const oView = this.getView();
-        const oSelectionModel = oView.getModel("selectionModel");
-        const aSelectedProductIds = oSelectionModel.getProperty(
+        const oAppStateModel = oView.getModel("appStateModel");
+        const aSelectedProductIds = oAppStateModel.getProperty(
           "/selectedProductIds"
         );
         const oDeleteButton = this.byId("deleteProductButton");
@@ -428,8 +418,6 @@ sap.ui.define(
             aFilters.push(oFieldFilter);
           }
         });
-
-        console.log(aFilters);
 
         return aFilters;
       },
@@ -502,9 +490,9 @@ sap.ui.define(
        */
       _resetProductFormModel: function () {
         const oView = this.getView();
-        const oFormModel = oView.getModel("productFormModel");
+        const oAppStateModel = oView.getModel("appStateModel");
 
-        oFormModel.setData({
+        oAppStateModel.setProperty("/productFormData", {
           Name: "",
           Price: null,
           Category: "",

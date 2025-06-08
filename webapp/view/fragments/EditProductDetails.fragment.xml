@@ -8,7 +8,6 @@
       layout="ColumnLayout"
       columnsM="3"
       columnsL="4"
-      binding="{productFormModel>/}"
     >
       <form:content>
         <!-- Name -->
@@ -16,7 +15,7 @@
         <Input
           id="name"
           value="{
-            path: 'productFormModel>Name',
+            path: 'appStateModel>/productFormData/Name',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
@@ -33,7 +32,7 @@
         <Input
           id="price"
           value="{
-            path: 'productFormModel>Price',
+            path: 'appStateModel>/productFormData/Price',
             type: 'sap.ui.model.type.Integer',
             constraints: {
               minimum: 1,
@@ -54,7 +53,7 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'productFormModel>Category',
+            path: 'appStateModel>/productFormData/Category',
             type: 'sap.ui.model.type.String',
             constraints: {
               required: true
@@ -75,7 +74,7 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'productFormModel>Brand',
+            path: 'appStateModel>/productFormData/Brand',
             type: 'sap.ui.model.type.String',
             constraints: {
               required: true
@@ -94,7 +93,7 @@
           id="supplierName"
           fieldGroupIds="productFormGroup"
           value="{
-            path: 'productFormModel>SupplierName',
+            path: 'appStateModel>/productFormData/SupplierName',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
@@ -114,7 +113,7 @@
           displayFormat="dd/MM/yyyy"
           valueFormat="yyyy-MM-dd"
           value="{
-            path: 'productFormModel>ReleaseDate',
+            path: 'appStateModel>/productFormData/ReleaseDate',
             formatOptions: {
               pattern: 'yyyy/MM/dd'
             },
@@ -132,7 +131,7 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'productFormModel>StockStatus',
+            path: 'appStateModel>/productFormData/StockStatus',
             type: 'sap.ui.model.type.String',
             constraints: {
               required: true
@@ -150,7 +149,7 @@
         <Input
           id="rating"
           value="{
-            path: 'productFormModel>Rating', 
+            path: 'appStateModel>/productFormData/Rating', 
             type: 'sap.ui.model.type.Float', 
             constraints: { 
               minimum: 1, 

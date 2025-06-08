@@ -36,17 +36,8 @@ sap.ui.define(
        * and binds the onPatternMatched method as the event handler.
        */
       onInit: function () {
-        // Create product form model
-        this.getView().setModel(
-          models.createProductFormModel(),
-          "productFormModel"
-        );
-
-        // Create table row count model
-        this.getView().setModel(
-          models.createTableRowCountModel(),
-          "tableRowCountModel"
-        );
+        // Create app state model
+        this.getView().setModel(models.createAppStateModel(), "appStateModel");
 
         this._formFragments = {};
         this._sProductId = "";
@@ -68,8 +59,11 @@ sap.ui.define(
        */
       _updateSalesOrderCount: function (oView, oBinding) {
         const iCount = oBinding.getLength();
-        const oTableRowCountModel = oView.getModel("tableRowCountModel");
-        oTableRowCountModel.setProperty("/salesOrderTableRowCount", iCount);
+        const oAppStateModel = oView.getModel("appStateModel");
+        oAppStateModel.setProperty(
+          "/tableRowCount/salesOrderTableRowCount",
+          iCount
+        );
       },
 
       /**
@@ -91,7 +85,7 @@ sap.ui.define(
 
         // Update table row count model
         this.getView()
-          .getModel("tableRowCountModel")
+          .getModel("appStateModel")
           .setProperty(
             "/salesOrderTableRowCount",
             oSalesOrdersData.filter(
@@ -224,9 +218,7 @@ sap.ui.define(
        */
       onSaveChangesPress: function () {
         const oView = this.getView();
-        const oUpdatedProductData = oView
-          .getModel("productFormModel")
-          .getData();
+        const oAppStateModel = oView.getModel("appStateModel").getData();
         const oProductModel = oView.getModel();
         const oEditProductForm = this.byId("productDetailsEditForm");
         const aProductsData = oProductModel.getProperty("/Products");
@@ -238,8 +230,8 @@ sap.ui.define(
         }
 
         const oUpdatedProductsData = aProductsData.map((oProduct) => {
-          if (oProduct.Id === oUpdatedProductData.Id) {
-            return oUpdatedProductData;
+          if (oProduct.Id === oAppStateModel.productFormData.Id) {
+            return oAppStateModel.productFormData;
           }
           return oProduct;
         });
@@ -273,8 +265,9 @@ sap.ui.define(
           (oProduct) => oProduct.Id === sProductId
         );
 
-        console.log(aProductsData);
-        this.getView().getModel("productFormModel").setProperty("/", oProduct);
+        this.getView()
+          .getModel("appStateModel")
+          .setProperty("/productFormData", oProduct);
         this._toggleButtonsAndView(false);
       },
 
@@ -292,14 +285,14 @@ sap.ui.define(
       onDeleteProductPress: function (oEvent) {
         const oView = this.getView();
         const oProductModel = oView.getModel();
-        const sProductId = oEvent
-          .getSource()
-          .getBindingContext()
-          .getProperty("Id");
+        const oProductData = oEvent.getSource().getBindingContext().getObject();
+        const sProductId = oProductData.Id;
 
         // Show confirmation dialog
         MessageBox.confirm(
-          this.getTranslatedText(oView, "confirmDeleteProduct"),
+          this.getTranslatedText(oView, "confirmDeleteProduct", [
+            oProductData.Name,
+          ]),
           {
             actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             onClose: (sAction) => {
@@ -417,8 +410,8 @@ sap.ui.define(
         }
 
         this.getView()
-          .getModel("productFormModel")
-          .setProperty("/", oClonedProduct);
+          .getModel("appStateModel")
+          .setProperty("/productFormData", oClonedProduct);
       },
     });
   }

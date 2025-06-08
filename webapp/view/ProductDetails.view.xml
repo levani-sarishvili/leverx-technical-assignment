@@ -140,7 +140,7 @@
 
                 <t:rowMode>
                   <rowmode:Auto
-                    minRowCount="20" />
+                    minRowCount="{appStateModel>/tableRowCount/salesOrderTableRowCount}" />
                 </t:rowMode>
 
                 <t:noData>

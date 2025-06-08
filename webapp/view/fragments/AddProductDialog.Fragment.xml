@@ -23,7 +23,7 @@
         <Input
           id="name"
           value="{
-            path: 'productFormModel>Name',
+            path: 'appStateModel>Name',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
@@ -41,7 +41,7 @@
         <Input
           id="price"
           value="{
-            path: 'productFormModel>Price',
+            path: 'appStateModel>Price',
             type: 'sap.ui.model.type.Integer',
             constraints: {
               minimum: 1,
@@ -63,7 +63,7 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'productFormModel>Category',
+            path: 'appStateModel>Category',
             type: 'sap.ui.model.type.String',
             constraints: {
               required: true,
@@ -86,7 +86,7 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'productFormModel>StockStatus',
+            path: 'appStateModel>StockStatus',
             type: 'sap.ui.model.type.String'          
             }"
           items="{
@@ -105,7 +105,7 @@
           required="true"
           fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'productFormModel>Brand',
+            path: 'appStateModel>Brand',
             type: 'sap.ui.model.type.String',
             constraints: {
               required: true,
@@ -125,7 +125,7 @@
           id="supplierName"
           fieldGroupIds="productFormGroup"
           value="{
-            path: 'productFormModel>SupplierName',
+            path: 'appStateModel>SupplierName',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
@@ -145,7 +145,7 @@
           displayFormat="dd/MM/yyyy"
           valueFormat="yyyy-MM-dd"
           value="{
-            path: 'productFormModel>ReleaseDate',
+            path: 'appStateModel>ReleaseDate',
             type: 'sap.ui.model.type.Date',
             formatOptions: {
               pattern: 'yyyy-MM-dd'
@@ -159,7 +159,7 @@
         <Input
           id="rating"
           value="{
-            path: 'productFormModel>Rating', 
+            path: 'appStateModel>Rating', 
             type: 'sap.ui.model.type.Float', 
             constraints: { 
               minimum: 1, 
