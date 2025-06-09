@@ -182,22 +182,19 @@ sap.ui.define(
        * @param {string} sFragmentName - The name of the fragment to retrieve.
        * @returns {Promise<sap.ui.core.Fragment>} - A promise resolving with the loaded fragment.
        */
-      _getFormFragment: function (sFragmentName) {
-        let pFormFragment = this._formFragments[sFragmentName],
-          oView = this.getView();
+      _getFormFragment: async function (sFragmentName) {
+        const oView = this.getView();
 
-        if (!pFormFragment) {
-          pFormFragment = Fragment.load({
+        if (!this._formFragments[sFragmentName]) {
+          this._formFragments[sFragmentName] = await Fragment.load({
             id: oView.getId(),
             name: "levani.sarishvili.view.fragments." + sFragmentName,
             controller: this,
           });
-          this._formFragments[sFragmentName] = pFormFragment;
         }
 
-        return pFormFragment;
+        return this._formFragments[sFragmentName];
       },
-
       /**
        * Handles the edit product button press event.
        *
@@ -364,9 +361,6 @@ sap.ui.define(
 
         // Apply filter
         oBinding.filter(oFinalFilter);
-
-        // Update table row count
-        this._updateSalesOrderCount(oView, oBinding);
       },
 
       /**
