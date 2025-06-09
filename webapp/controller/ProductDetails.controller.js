@@ -261,6 +261,10 @@ sap.ui.define(
        * @private
        */
       onCancelChangesPress: function (oEvent) {
+        const oProductFormData = this.getView()
+          .getModel("appStateModel")
+          .getProperty("/productFormData");
+
         const sProductId = oEvent
           .getSource()
           .getBindingContext()
@@ -274,10 +278,30 @@ sap.ui.define(
           (oProduct) => oProduct.Id === sProductId
         );
 
-        this.getView()
-          .getModel("appStateModel")
-          .setProperty("/productFormData", oProduct);
-        this._toggleButtonsAndView(false);
+        // Compare oProductFormData and oProduct to check if there are any changes
+        if (
+          JSON.stringify(oProductFormData) === JSON.stringify(oProduct) ||
+          !oProductFormData
+        ) {
+          this._toggleButtonsAndView(false);
+          return;
+        }
+
+        // Show confirmation dialog
+        MessageBox.confirm(
+          this.getTranslatedText(this.getView(), "confirmCancelChanges"),
+          {
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+            onClose: (sAction) => {
+              if (sAction === MessageBox.Action.OK) {
+                this.getView()
+                  .getModel("appStateModel")
+                  .setProperty("/productFormData", oProduct);
+                this._toggleButtonsAndView(false);
+              }
+            },
+          }
+        );
       },
 
       /**
