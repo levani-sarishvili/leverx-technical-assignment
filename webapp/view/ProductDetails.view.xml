@@ -170,7 +170,7 @@
                   <t:Column
                     hAlign="Begin"
                     sortProperty="OrderId"
-                    width="10%"
+                    width="10rem"
                   >
                     <m:Label text="{i18n>orderTableIdColumn}" />
                     <t:template>
@@ -182,7 +182,7 @@
                   <t:Column
                     hAlign="Begin"
                     sortProperty="Customer"
-                    width="20%"
+                    width="15rem"
                   >
                     <m:Label text="{i18n>orderTableCustomerColumn}" />
                     <t:template>
@@ -194,7 +194,7 @@
                   <t:Column
                     hAlign="End"
                     sortProperty="Quantity"
-                    width="10%"
+                    width="10rem"
                   >
                     <m:Label text="{i18n>orderTableQuantityColumn}" />
                     <t:template>
@@ -206,7 +206,7 @@
                   <t:Column
                     hAlign="End"
                     sortProperty="OrderDate"
-                    width="15%"
+                    width="12rem"
                   >
                     <m:Label text="{i18n>orderTableOrderDateColumn}" />
                     <t:template>
@@ -222,7 +222,7 @@
                   <t:Column
                     hAlign="Begin"
                     sortProperty="Status"
-                    width="15%"
+                    width="12rem"
                   >
                     <m:Label text="{i18n>orderTableStatusColumn}" />
                     <t:template>
@@ -239,7 +239,7 @@
                   <t:Column
                     hAlign="End"
                     sortProperty="ShippingCost"
-                    width="15%"
+                    width="10rem"
                   >
                     <m:Label text="{i18n>orderTableShippingCostColumn}" />
                     <t:template>
@@ -257,7 +257,7 @@
                 <t:Column
                   hAlign="End"
                   sortProperty="TotalPrice"
-                  width="15%"
+                  width="10rem"
                 >
                   <m:Label text="{i18n>orderTableTotalPriceColumn}" />
                   <t:template>

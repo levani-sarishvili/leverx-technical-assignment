@@ -117,181 +117,183 @@
     </f:header>
 
     <f:content>
-      <t:Table
-        id="productTable"
-        class="sapUiResponsiveMargin"
-        rows="{/Products}"
-        rowSelectionChange="onRowSelectionChange"
-        ariaLabelledBy="title"
-        selectionMode="MultiToggle"
-        rowActionCount="1"
-        selectionBehavior="Row"
-        alternateRowColors="true"
-        sort=".onProductTableSort"
-      >
-        <t:rowMode>
-          <rowmode:Auto
-            minRowCount="{appStateModel>/tableRowCount/productTableRowCount}" />
-        </t:rowMode>
+      <VBox width="100%">
+        <t:Table
+          id="productTable"
+          class="sapUiResponsiveMargin"
+          rows="{/Products}"
+          rowSelectionChange="onRowSelectionChange"
+          ariaLabelledBy="title"
+          selectionMode="MultiToggle"
+          rowActionCount="1"
+          selectionBehavior="Row"
+          alternateRowColors="true"
+          sort=".onProductTableSort"
+        >
+          <t:rowMode>
+            <rowmode:Auto
+              minRowCount="{appStateModel>/tableRowCount/productTableRowCount}" />
+          </t:rowMode>
 
-        <t:noData>
-          <IllustratedMessage enableVerticalResponsiveness="true"
-            illustrationType="sapIllus-NoData">
-          </IllustratedMessage>
-        </t:noData>
+          <t:noData>
+            <IllustratedMessage enableVerticalResponsiveness="true"
+              illustrationType="sapIllus-NoData">
+            </IllustratedMessage>
+          </t:noData>
 
-        <t:extension>
-          <OverflowToolbar style="Standard">
-            <Title
-              id="productTableTitle"
-              text="{
+          <t:extension>
+            <OverflowToolbar style="Standard">
+              <Title
+                id="productTableTitle"
+                text="{
                 parts: [
                   'i18n>productTableTitle',
                   'appStateModel>/tableRowCount/productTableRowCount'
                 ],
                 formatter: 'formatMessage'
               }"
-            />
-
-            <ToolbarSpacer />
-            <Button
-              text="{i18n>createButtonText}"
-              type="Transparent"
-              press=".onCreateProductPress" />
-            <Button
-              id="deleteProductButton"
-              text="{i18n>deleteButtonText}"
-              type="Transparent"
-              enabled="{= ${appStateModel>/selectedProductIds}.length > 0 }"
-              press=".onDeleteProductPress" />
-          </OverflowToolbar>
-        </t:extension>
-
-        <t:columns>
-          <!-- Product name -->
-          <t:Column
-            hAlign="Begin"
-            sortProperty="Name"
-            width="20%"
-          >
-            <Label text="{i18n>productTableNameColumn}" />
-            <t:template>
-              <Text text="{Name}" />
-            </t:template>
-          </t:Column>
-
-          <!-- Price -->
-          <t:Column
-            hAlign="End"
-            sortProperty="Price"
-            width="10%"
-          >
-            <Label text="{i18n>productTablePriceColumn}" />
-            <t:template>
-              <ObjectNumber
-                number="{path: 'Price'}"
-                unit="USD"
-                emphasized="false"
-                textAlign="End"
               />
-            </t:template>
-          </t:Column>
 
-          <!-- Category -->
-          <t:Column
-            hAlign="Begin"
-            sortProperty="Category"
-            width="15%"
-          >
-            <Label text="{i18n>productTableCategoryColumn}" />
-            <t:template>
-              <Text text="{Category}" />
-            </t:template>
-          </t:Column>
+              <ToolbarSpacer />
+              <Button
+                text="{i18n>createButtonText}"
+                type="Transparent"
+                press=".onCreateProductPress" />
+              <Button
+                id="deleteProductButton"
+                text="{i18n>deleteButtonText}"
+                type="Transparent"
+                enabled="{= ${appStateModel>/selectedProductIds}.length > 0 }"
+                press=".onDeleteProductPress" />
+            </OverflowToolbar>
+          </t:extension>
 
-          <!-- Brand -->
-          <t:Column
-            hAlign="Begin"
-            sortProperty="Brand"
-            width="10%"
-          >
-            <Label text="{i18n>productTableBrandColumn}" />
-            <t:template>
-              <Text text="{Brand}" />
-            </t:template>
-          </t:Column>
+          <t:columns>
+            <!-- Product name -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="Name"
+              width="15rem"
+            >
+              <Label text="{i18n>productTableNameColumn}" />
+              <t:template>
+                <Text text="{Name}" />
+              </t:template>
+            </t:Column>
 
-          <!-- SupplierName -->
-          <t:Column
-            hAlign="Begin"
-            sortProperty="SupplierName"
-            width="20%"
-          >
-            <Label text="{i18n>productTableSupplierNameColumn}" />
-            <t:template>
-              <Text text="{SupplierName}" />
-            </t:template>
-          </t:Column>
+            <!-- Price -->
+            <t:Column
+              hAlign="End"
+              sortProperty="Price"
+              width="10rem"
+            >
+              <Label text="{i18n>productTablePriceColumn}" />
+              <t:template>
+                <ObjectNumber
+                  number="{path: 'Price'}"
+                  unit="USD"
+                  emphasized="false"
+                  textAlign="End"
+                />
+              </t:template>
+            </t:Column>
 
-          <!-- ReleaseDate -->
-          <t:Column
-            hAlign="End"
-            sortProperty="ReleaseDate"
-            width="10%"
-          >
-            <Label text="{i18n>productTableReleaseDateColumn}" />
-            <t:template>
-              <Text
-                text="{ 
+            <!-- Category -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="Category"
+              width="15rem"
+            >
+              <Label text="{i18n>productTableCategoryColumn}" />
+              <t:template>
+                <Text text="{Category}" />
+              </t:template>
+            </t:Column>
+
+            <!-- Brand -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="Brand"
+              width="12rem"
+            >
+              <Label text="{i18n>productTableBrandColumn}" />
+              <t:template>
+                <Text text="{Brand}" />
+              </t:template>
+            </t:Column>
+
+            <!-- SupplierName -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="SupplierName"
+              width="20rem"
+            >
+              <Label text="{i18n>productTableSupplierNameColumn}" />
+              <t:template>
+                <Text text="{SupplierName}" />
+              </t:template>
+            </t:Column>
+
+            <!-- ReleaseDate -->
+            <t:Column
+              hAlign="End"
+              sortProperty="ReleaseDate"
+              width="12rem"
+            >
+              <Label text="{i18n>productTableReleaseDateColumn}" />
+              <t:template>
+                <Text
+                  text="{ 
                   path: 'ReleaseDate', 
                   type: 'sap.ui.model.type.Date', 
                   formatOptions: { pattern: 'yyyy-MM-dd' } }" />
-            </t:template>
-          </t:Column>
+              </t:template>
+            </t:Column>
 
-          <!-- StockStatus -->
-          <t:Column
-            hAlign="Begin"
-            sortProperty="StockStatus"
-            width="15%"
-          >
-            <Label text="{i18n>productTableStockStatusColumn}" />
-            <t:template>
-              <ObjectStatus text="{StockStatus}"
-                state="{path: 'StockStatus', formatter: '.formatter.formatStockStatus'}"
-              />
-            </t:template>
-          </t:Column>
+            <!-- StockStatus -->
+            <t:Column
+              hAlign="Begin"
+              sortProperty="StockStatus"
+              width="15rem"
+            >
+              <Label text="{i18n>productTableStockStatusColumn}" />
+              <t:template>
+                <ObjectStatus text="{StockStatus}"
+                  state="{path: 'StockStatus', formatter: '.formatter.formatStockStatus'}"
+                />
+              </t:template>
+            </t:Column>
 
-          <!-- Rating -->
-          <t:Column
-            hAlign="Center"
-            sortProperty="Rating"
-            width="15%"
-          >
-            <Label text="{i18n>productTableRatingColumn}" />
-            <t:template>
-              <RatingIndicator
-                id="RI_display_only"
-                iconSize="0.8rem"
-                maxValue="5"
-                class="sapUiSmallMarginBottom"
-                value="{Rating}"
-                displayOnly="true" />
-            </t:template>
-          </t:Column>
-        </t:columns>
+            <!-- Rating -->
+            <t:Column
+              hAlign="Center"
+              sortProperty="Rating"
+              width="15rem"
+            >
+              <Label text="{i18n>productTableRatingColumn}" />
+              <t:template>
+                <RatingIndicator
+                  id="RI_display_only"
+                  iconSize="0.8rem"
+                  maxValue="5"
+                  class="sapUiSmallMarginBottom"
+                  value="{Rating}"
+                  displayOnly="true" />
+              </t:template>
+            </t:Column>
+          </t:columns>
 
-        <!-- Row Actions -->
-        <t:rowActionTemplate>
-          <t:RowAction>
-            <t:RowActionItem
-              icon="sap-icon://feeder-arrow"
-              type="Navigation"
-              press=".onProductPress" />
-          </t:RowAction>
-        </t:rowActionTemplate>
-      </t:Table>
+          <!-- Row Actions -->
+          <t:rowActionTemplate>
+            <t:RowAction>
+              <t:RowActionItem
+                icon="sap-icon://feeder-arrow"
+                type="Navigation"
+                press=".onProductPress" />
+            </t:RowAction>
+          </t:rowActionTemplate>
+        </t:Table>
+      </VBox>
     </f:content>
   </f:DynamicPage>
 </mvc:View>
