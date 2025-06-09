@@ -151,13 +151,7 @@
                 <t:extension>
                   <m:OverflowToolbar style="Standard">
                     <m:Title
-                      text="{
-                        parts: [
-                          'i18n>salesOrdersTableTitle',
-                          'appStateModel>/tableRowCount/salesOrderTableRowCount'
-                        ],
-                        formatter: 'formatMessage'
-                      }"
+                      text="{i18n>salesOrdersTableTitle}"
                     />
                     <m:ToolbarSpacer />
 

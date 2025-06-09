@@ -10,6 +10,8 @@
       columnsL="4"
     >
       <form:content>
+        <core:Title text="{i18n>produtDetailsHeaderEdit}" />
+
         <!-- Name -->
         <Label text="{i18n>productNameLabel}" labelFor="name" />
         <Input

@@ -10,6 +10,8 @@
       columnsXL="5"
     >
       <form:content>
+        <core:Title text="{i18n>produtDetailsHeaderDisplay}" />
+
         <Label text="{i18n>productNameLabel}" />
         <Text text="{Name}" />
 
