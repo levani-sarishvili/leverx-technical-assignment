@@ -52,21 +52,6 @@ sap.ui.define(
       },
 
       /**
-       * Updates the sales order table row count model with the current binding length.
-       * @param {sap.ui.core.mvc.View} oView The view containing the sales order table.
-       * @param {sap.ui.model.Binding} oBinding The binding of the sales order table.
-       * @private
-       */
-      _updateSalesOrderCount: function (oView, oBinding) {
-        const iCount = oBinding.getLength();
-        const oAppStateModel = oView.getModel("appStateModel");
-        oAppStateModel.setProperty(
-          "/tableRowCount/salesOrderTableRowCount",
-          iCount
-        );
-      },
-
-      /**
        * Called before the view is rendered.
        *
        * This hook is used to convert the release date from a string to a Date object
@@ -95,57 +80,55 @@ sap.ui.define(
       },
 
       /**
-       * Handles the "ProductDetails" route pattern match event.
+       * Handles route match for the ProductDetails view.
        *
-       * This method is called when the router matches the "ProductDetails" route pattern.
-       * It retrieves the product ID from the route arguments and filters the product table
-       * to show only the selected product. If the product is found, it is bound to the view.
+       * Retrieves the product ID from the route, waits for product data if needed,
+       * binds the selected product to the view, filters the orders table,
+       * and updates the sales order count.
        *
-       * @param {sap.ui.base.Event} oEvent - The event containing the route arguments.
-       * @private
+       * @param {sap.ui.base.Event} oEvent - Routing event with product ID parameter.
+       * @async
        */
+
       onPatternMatched: async function (oEvent) {
         const oView = this.getView();
         const oModel = oView.getModel();
         const sProductId = oEvent.getParameter("arguments").productId;
         this._sProductId = sProductId;
 
-        // Helper to wait for data if not loaded yet
-        const aProducts = oModel.getProperty("/Products");
-        if (!aProducts || aProducts.length === 0) {
-          await new Promise((resolve) => {
-            oModel.attachEventOnce("requestCompleted", resolve);
-          });
+        // Wait for data if not loaded
+        if (!oModel.getProperty("/Products")?.length) {
+          await new Promise((resolve) =>
+            oModel.attachEventOnce("requestCompleted", resolve)
+          );
         }
 
-        const aFinalProducts = oModel.getProperty("/Products");
-        // Filter the table
-        const oTable = this.byId("productOrdersTable");
-        const oBinding = oTable.getBinding("rows");
-        const oFilter = new Filter("ProductId", FilterOperator.EQ, sProductId);
-        oBinding.filter([oFilter]);
-
-        // Find and bind the selected product
-        const oSelectedProduct = aFinalProducts.find(
+        const aProducts = oModel.getProperty("/Products");
+        const oSelectedProduct = aProducts.find(
           (oProduct) => String(oProduct.Id) === String(sProductId)
         );
 
-        // Bind the selected product to the form
-        this._bindSelectedProductToForm(oSelectedProduct);
-        // Update the sales order table row count
-        this._updateSalesOrderCount(oView, oBinding);
-
-        oSelectedProduct.ReleaseDate = new Date(oSelectedProduct.ReleaseDate);
-
-        // If the product is found, bind it to the view
-        if (oSelectedProduct) {
-          const iIndex = aFinalProducts.indexOf(oSelectedProduct);
-          oView.bindObject({
-            path: "/Products/" + iIndex,
-          });
-        } else {
+        if (!oSelectedProduct) {
           console.error("Product not found:", sProductId);
+          return;
         }
+
+        // Process product
+        oSelectedProduct.ReleaseDate = new Date(oSelectedProduct.ReleaseDate);
+        oView.bindObject({
+          path: `/Products/${aProducts.indexOf(oSelectedProduct)}`,
+        });
+
+        // Filter table
+        const oTable = this.byId("productOrdersTable");
+        const oBinding = oTable.getBinding("rows");
+        oBinding.filter([
+          new Filter("ProductId", FilterOperator.EQ, sProductId),
+        ]);
+
+        // Update UI
+        this._bindSelectedProductToForm(oSelectedProduct);
+        this._updateSalesOrderCount(oView, oBinding);
       },
 
       /**
@@ -154,6 +137,21 @@ sap.ui.define(
        */
       onNavToHome: function () {
         this.getOwnerComponent().getRouter().navTo("ProductList");
+      },
+
+      /**
+       * Updates the sales order table row count model with the current binding length.
+       * @param {sap.ui.core.mvc.View} oView The view containing the sales order table.
+       * @param {sap.ui.model.Binding} oBinding The binding of the sales order table.
+       * @private
+       */
+      _updateSalesOrderCount: function (oView, oBinding) {
+        const iCount = oBinding.getLength();
+        const oAppStateModel = oView.getModel("appStateModel");
+        oAppStateModel.setProperty(
+          "/tableRowCount/salesOrderTableRowCount",
+          iCount
+        );
       },
 
       /**
