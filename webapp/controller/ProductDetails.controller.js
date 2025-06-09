@@ -225,12 +225,27 @@ sap.ui.define(
        * Shows a success message after the update.
        * @private
        */
-      onSaveChangesPress: function () {
+      onSaveChangesPress: function (oEvent) {
         const oView = this.getView();
         const oAppStateModel = oView.getModel("appStateModel").getData();
         const oProductModel = oView.getModel();
         const oEditProductForm = this.byId("productDetailsEditForm");
         const aProductsData = oProductModel.getProperty("/Products");
+        const oProductFormData = this.getView()
+          .getModel("appStateModel")
+          .getProperty("/productFormData");
+        const sProductId = oEvent
+          .getSource()
+          .getBindingContext()
+          .getProperty("Id");
+        const oProduct = aProductsData.find(
+          (oProduct) => oProduct.Id === sProductId
+        );
+
+        // Check if product details have been modified
+        if (!this._checkIfProductDetailsModified(oProduct, oProductFormData)) {
+          return;
+        }
 
         // Validate product form inputs
         const bIsFormValid = Validation.validateForm(oEditProductForm);
@@ -278,11 +293,8 @@ sap.ui.define(
           (oProduct) => oProduct.Id === sProductId
         );
 
-        // Compare oProductFormData and oProduct to check if there are any changes
-        if (
-          JSON.stringify(oProductFormData) === JSON.stringify(oProduct) ||
-          !oProductFormData
-        ) {
+        // Check if product details have been modified
+        if (!this._checkIfProductDetailsModified(oProduct, oProductFormData)) {
           this._toggleButtonsAndView(false);
           return;
         }
@@ -301,6 +313,28 @@ sap.ui.define(
               }
             },
           }
+        );
+      },
+
+      /**
+       * Checks if the product details have been modified.
+       *
+       * Compares the original product data with the modified product form data.
+       * Returns true if the data has been modified, false otherwise.
+       * Also returns true if the productFormData is null or undefined.
+       *
+       * @param {object} oProductData - Original product data.
+       * @param {object} oProductFormData - Modified product form data.
+       * @returns {boolean} True if the data has been modified, false otherwise.
+       * @private
+       */
+      _checkIfProductDetailsModified: function (
+        oProductData,
+        oProductFormData
+      ) {
+        return (
+          JSON.stringify(oProductData) !== JSON.stringify(oProductFormData) ||
+          !oProductFormData
         );
       },
 
