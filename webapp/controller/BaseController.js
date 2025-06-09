@@ -3,8 +3,10 @@ sap.ui.define(
     "sap/ui/core/mvc/Controller",
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
+    "sap/ui/model/Sorter",
+    "levani/sarishvili/constants/Constants",
   ],
-  function (Controller, Filter, FilterOperator) {
+  function (Controller, Filter, FilterOperator, Sorter, Constants) {
     "use strict";
 
     return Controller.extend("levani.sarishvili.controller.BaseController", {
@@ -64,6 +66,27 @@ sap.ui.define(
             oControl.setValueStateText("");
           }
         });
+      },
+
+      /**
+       * Handles the sort event for a table.
+       * @param {sap.ui.base.Event} oEvent - The sort event containing the column and sort order information.
+       * @param {sap.ui.table.Table} oTable - The table to sort.
+       * @private
+       */
+      sortTable: function (oEvent, oTable, sId) {
+        const oColumn = oEvent.getParameter("column");
+        const bDescending =
+          oEvent.getParameter("sortOrder") ===
+          Constants.oSortOptions.DESCENDING;
+        const sSortedProperty = oColumn.getSortProperty();
+
+        const sorters = [
+          new Sorter(sSortedProperty, bDescending),
+          new Sorter(sId, false),
+        ];
+
+        oTable.getBinding("rows").sort(sorters);
       },
     });
   }

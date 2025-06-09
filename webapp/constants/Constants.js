@@ -39,6 +39,16 @@ sap.ui.define([], function () {
     CANCELLED: "Cancelled",
   };
 
+  const oSortOptions = {
+    ASCENDING: "Ascending",
+    DESCENDING: "Descending",
+  };
+
+  const oUniqueIdNames = {
+    Id: "Id",
+    OrderId: "OrderId",
+  };
+
   const oStockStatuses = {
     IN_STOCK: "In Stock",
     OUT_OF_STOCK: "Out of Stock",
@@ -51,5 +61,7 @@ sap.ui.define([], function () {
     oOrderStatuses,
     oStockStatuses,
     oOrderTableSearchableFields,
+    oSortOptions,
+    oUniqueIdNames,
   };
 });

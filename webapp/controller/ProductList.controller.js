@@ -5,6 +5,7 @@ sap.ui.define(
     "sap/m/MessageBox",
     "sap/m/MessageToast",
     "sap/ui/model/Filter",
+    "sap/ui/model/Sorter",
     "sap/ui/model/FilterOperator",
     "levani/sarishvili/model/models",
     "levani/sarishvili/model/Validation",
@@ -17,6 +18,7 @@ sap.ui.define(
     MessageBox,
     MessageToast,
     Filter,
+    Sorter,
     FilterOperator,
     models,
     Validation,
@@ -92,6 +94,19 @@ sap.ui.define(
 
       // Formatters
       formatter: formatter,
+
+      /**
+       * Handles the sort event for the product table.
+       * Retrieves the product table by its ID and calls the sortTable method
+       * to apply sorting based on the event parameters and the product ID.
+       *
+       * @param {sap.ui.base.Event} oEvent - The sort event containing the column and sort order information.
+       * @private
+       */
+      onProductTableSort: function (oEvent) {
+        const oTable = this.byId("productTable");
+        this.sortTable(oEvent, oTable, Constants.oUniqueIdNames.Id);
+      },
 
       /**
        * Handles the product search input and updates the table filters.

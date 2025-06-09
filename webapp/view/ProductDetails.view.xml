@@ -135,6 +135,7 @@
                 rowActionCount="1"
                 selectionBehavior="Row"
                 alternateRowColors="true"
+                sort=".onOrderTableSort"
               >
 
                 <t:rowMode>

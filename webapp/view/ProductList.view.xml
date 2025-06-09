@@ -127,6 +127,7 @@
         rowActionCount="1"
         selectionBehavior="Row"
         alternateRowColors="true"
+        sort=".onProductTableSort"
       >
         <t:rowMode>
           <rowmode:Auto

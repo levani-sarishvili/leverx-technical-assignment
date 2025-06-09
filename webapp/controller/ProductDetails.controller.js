@@ -157,6 +157,20 @@ sap.ui.define(
       },
 
       /**
+       * Handles the sort event on the orders table by calling the sortTable method.
+       *
+       * Retrieves the orders table by its ID and calls the sortTable method
+       * to apply sorting based on the event parameters and the order ID.
+       *
+       * @param {sap.ui.base.Event} oEvent - The sort event containing the column and sort order information.
+       * @private
+       */
+      onOrderTableSort: function (oEvent) {
+        const oTable = this.byId("productOrdersTable");
+        this.sortTable(oEvent, oTable, Constants.oUniqueIdNames.OrderId);
+      },
+
+      /**
        * Shows a form fragment by name, removing the existing fragment if necessary.
        *
        * Retrieves the named fragment using the _getFormFragment method, and adds it to the
