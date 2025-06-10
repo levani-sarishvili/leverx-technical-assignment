@@ -320,7 +320,7 @@ sap.ui.define(
        * Checks if the product details have been modified.
        *
        * Compares the original product data with the modified product form data.
-       * Returns true if the data has been modified, false otherwise.
+       * Returns true if npm the data has been modified, false otherwise.
        * Also returns true if the productFormData is null or undefined.
        *
        * @param {object} oProductData - Original product data.
