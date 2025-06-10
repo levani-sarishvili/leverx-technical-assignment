@@ -55,6 +55,17 @@ sap.ui.define([], function () {
     LESS_THAN_10_LEFT: "Less Than 10 Left",
   };
 
+  const oDataTypes = {
+    STRING: "String",
+    NUMBER: "Number",
+    BOOLEAN: "Boolean",
+  };
+
+  const oHeaderModes = {
+    SNAPPED: "snapped",
+    EXPANDED: "expanded",
+  };
+
   return {
     aProductTableSearchableFields,
     oProductTableColumns,
@@ -63,5 +74,7 @@ sap.ui.define([], function () {
     oOrderTableSearchableFields,
     oSortOptions,
     oUniqueIdNames,
+    oDataTypes,
+    oHeaderModes,
   };
 });

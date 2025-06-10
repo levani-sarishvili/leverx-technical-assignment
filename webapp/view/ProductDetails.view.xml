@@ -1,135 +1,137 @@
 <mvc:View
   controllerName="levani.sarishvili.controller.ProductDetails"
-  xmlns:m="sap.m"
-  xmlns="sap.uxap"
+  xmlns="sap.m"
+  xmlns:uxap="sap.uxap"
   xmlns:mvc="sap.ui.core.mvc"
   xmlns:t="sap.ui.table"
   core:require="{formatMessage: 'sap/base/strings/formatMessage'}"
   xmlns:rowmode="sap.ui.table.rowmodes"
   xmlns:core="sap.ui.core">
 
-  <ObjectPageLayout upperCaseAnchorBar="false">
-    <headerTitle>
-      <ObjectPageDynamicHeaderTitle>
-        <breadcrumbs>
-          <m:Breadcrumbs separatorStyle="{/selected}"
+  <uxap:ObjectPageLayout upperCaseAnchorBar="false">
+    <uxap:headerTitle>
+      <uxap:ObjectPageDynamicHeaderTitle>
+        <uxap:breadcrumbs>
+          <Breadcrumbs separatorStyle="{/selected}"
             currentLocationText="{i18n>breadcrumbProductDetails}">
-            <m:Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
-          </m:Breadcrumbs>
-        </breadcrumbs>
+            <Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
+          </Breadcrumbs>
+        </uxap:breadcrumbs>
 
-        <expandedHeading>
-          <m:Title text="{Name}" level="H1" />
-        </expandedHeading>
+        <uxap:expandedHeading>
+          <Title text="{Name}" level="H1" />
+        </uxap:expandedHeading>
 
-        <snappedHeading>
-          <m:HBox>
-            <m:VBox>
-              <m:Title text="{Name}" level="H1" />
-              <m:Label text="{Id}" />
-            </m:VBox>
-          </m:HBox>
-        </snappedHeading>
+        <uxap:snappedHeading>
+          <HBox>
+            <VBox>
+              <Title text="{Name}" level="H1" />
+              <Label text="{Id}" />
+            </VBox>
+          </HBox>
+        </uxap:snappedHeading>
 
-        <expandedContent>
-          <m:Label text="{Id}" />
-        </expandedContent>
+        <uxap:expandedContent>
+          <Label text="{Id}" />
+        </uxap:expandedContent>
 
-        <snappedTitleOnMobile>
-          <m:Title text="{Name}" />
-        </snappedTitleOnMobile>
+        <uxap:snappedTitleOnMobile>
+          <Title text="{Name}" />
+        </uxap:snappedTitleOnMobile>
 
-        <actions>
-          <m:Button
+        <uxap:actions>
+          <Button
             id="productEditButton"
             text="{i18n>editButtonText}"
             press=".onEditProductPress"
             type="Emphasized"
+            visible="{= !${appViewModel>/editMode} }"
             class="sapUiSmallMarginEnd" />
-          <m:Button
+          <Button
             id="productDeleteButton"
             text="{i18n>deleteButtonText}"
             type="Default"
+            visible="{= !${appViewModel>/editMode} }"
             press=".onDeleteProductPress" />
 
-          <m:Button
+          <Button
             id="productSaveButton"
             text="{i18n>saveButtonText}"
             press=".onSaveChangesPress"
             type="Emphasized"
-            visible="false"
+            visible="{appViewModel>/editMode}"
             class="sapUiSmallMarginEnd" />
-          <m:Button
+          <Button
             id="productCancelButton"
             text="{i18n>cancelButtonText}"
             type="Default"
-            visible="false"
+            visible="{appViewModel>/editMode}"
             press=".onCancelChangesPress" />
-        </actions>
-      </ObjectPageDynamicHeaderTitle>
-    </headerTitle>
+        </uxap:actions>
+      </uxap:ObjectPageDynamicHeaderTitle>
+    </uxap:headerTitle>
 
-    <headerContent>
-      <m:FlexBox wrap="Wrap" fitContainer="true">
-        <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-          <m:HBox>
-            <m:Label text="{i18n>productCategoryLabel}" showColon="true"
+    <uxap:headerContent>
+      <FlexBox wrap="Wrap" fitContainer="true">
+        <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+          <HBox>
+            <Label text="{i18n>productCategoryLabel}" showColon="true"
               class="sapUiTinyMarginEnd" />
-            <m:Text text="{Category}" />
-          </m:HBox>
+            <Text text="{Category}" />
+          </HBox>
 
-          <m:HBox>
-            <m:Label text="{i18n>productBrandLabel}" showColon="true"
+          <HBox>
+            <Label text="{i18n>productBrandLabel}" showColon="true"
               class="sapUiTinyMarginEnd" />
-            <m:Text text="{Brand}" />
-          </m:HBox>
+            <Text text="{Brand}" />
+          </HBox>
 
-          <m:HBox>
-            <m:Label text="{i18n>productSupplierLabel}" showColon="true"
+          <HBox>
+            <Label text="{i18n>productSupplierLabel}" showColon="true"
               class="sapUiTinyMarginEnd" />
-            <m:Text text="{SupplierName}" />
-          </m:HBox>
-        </m:VBox>
+            <Text text="{SupplierName}" />
+          </HBox>
+        </VBox>
 
-        <m:VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-          <m:Title text="{i18n>productStockStatusLabel}" class="sapUiTinyMarginBottom" />
-          <m:ObjectStatus text="{StockStatus}"
+        <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+          <Title text="{i18n>productStockStatusLabel}" class="sapUiTinyMarginBottom" />
+          <ObjectStatus text="{StockStatus}"
             state="{path: 'StockStatus', formatter: '.formatter.formatStockStatus'}"
             class="sapMObjectStatusLarge"
           />
-        </m:VBox>
+        </VBox>
 
-        <m:VBox class="sapUiLargeMarginEnd">
-          <m:Title text="{i18n>productPriceLabel}" class="sapUiTinyMarginBottom" />
-          <m:ObjectNumber number="{Price}"
+        <VBox class="sapUiLargeMarginEnd">
+          <Title text="{i18n>productPriceLabel}" class="sapUiTinyMarginBottom" />
+          <ObjectNumber number="{Price}"
             unit="USD"
             emphasized="false"
             class="sapMObjectNumberLarge" />
-        </m:VBox>
-      </m:FlexBox>
-    </headerContent>
+        </VBox>
+      </FlexBox>
+    </uxap:headerContent>
 
-    <sections>
-      <ObjectPageSection titleUppercase="false" title="{i18n>productInfoSectionTitle}">
-        <subSections>
-          <ObjectPageSubSection title="{i18n>productInfoSectionTitle}" showTitle="false">
-            <blocks>
-              <m:VBox id="productDetailsContainer">
-              </m:VBox>
-            </blocks>
-          </ObjectPageSubSection>
-        </subSections>
-      </ObjectPageSection>
+    <uxap:sections>
+      <uxap:ObjectPageSection titleUppercase="false" title="{i18n>productInfoSectionTitle}">
+        <uxap:subSections>
+          <uxap:ObjectPageSubSection title="{i18n>productInfoSectionTitle}" showTitle="false">
+            <uxap:blocks>
+              <VBox id="productDetailsContainer">
+              </VBox>
+            </uxap:blocks>
+          </uxap:ObjectPageSubSection>
+        </uxap:subSections>
+      </uxap:ObjectPageSection>
 
-      <ObjectPageSection titleUppercase="false" title="{i18n>salesOrdersSectionTitle}">
-        <subSections>
-          <ObjectPageSubSection title="{i18n>salesOrdersSectionTitle}" showTitle="false">
-            <blocks>
+      <uxap:ObjectPageSection titleUppercase="false" title="{i18n>salesOrdersSectionTitle}">
+        <uxap:subSections>
+          <uxap:ObjectPageSubSection title="{i18n>salesOrdersSectionTitle}" showTitle="false">
+            <uxap:blocks>
               <!-- Order Table -->
               <t:Table
                 id="productOrdersTable"
                 rows="{/SalesOrders}"
-                rowSelectionChange="onRowSelectionChange"
+                rowSelectionChange=".onRowSelectionChange"
                 ariaLabelledBy="title"
                 selectionMode="MultiToggle"
                 rowActionCount="1"
@@ -140,29 +142,29 @@
 
                 <t:rowMode>
                   <rowmode:Auto
-                    minRowCount="{appStateModel>/tableRowCount/salesOrderTableRowCount}" />
+                    minRowCount="{appViewModel>/tableRowCount/salesOrderTableRowCount}" />
                 </t:rowMode>
 
                 <t:noData>
-                  <m:IllustratedMessage enableVerticalResponsiveness="true"
+                  <IllustratedMessage enableVerticalResponsiveness="true"
                     illustrationType="sapIllus-NoData">
-                  </m:IllustratedMessage>
+                  </IllustratedMessage>
                 </t:noData>
 
                 <t:extension>
-                  <m:OverflowToolbar style="Standard">
-                    <m:Title
+                  <OverflowToolbar style="Standard">
+                    <Title
                       text="{i18n>salesOrdersTableTitle}"
                     />
-                    <m:ToolbarSpacer />
+                    <ToolbarSpacer />
 
-                    <m:SearchField
+                    <SearchField
                       width="17.5rem"
                       search=".onOrderSearchPress"
-                      placeholder="Search order">
+                      placeholder="{i18n>orderSearchPlaceholder}">
 
-                    </m:SearchField>
-                  </m:OverflowToolbar>
+                    </SearchField>
+                  </OverflowToolbar>
                 </t:extension>
 
                 <t:columns>
@@ -172,9 +174,9 @@
                     sortProperty="OrderId"
                     width="10rem"
                   >
-                    <m:Label text="{i18n>orderTableIdColumn}" />
+                    <Label text="{i18n>orderTableIdColumn}" />
                     <t:template>
-                      <m:Text text="{OrderId}" />
+                      <Text text="{OrderId}" />
                     </t:template>
                   </t:Column>
 
@@ -184,9 +186,9 @@
                     sortProperty="Customer"
                     width="15rem"
                   >
-                    <m:Label text="{i18n>orderTableCustomerColumn}" />
+                    <Label text="{i18n>orderTableCustomerColumn}" />
                     <t:template>
-                      <m:Text text="{Customer}" />
+                      <Text text="{Customer}" />
                     </t:template>
                   </t:Column>
 
@@ -196,9 +198,9 @@
                     sortProperty="Quantity"
                     width="10rem"
                   >
-                    <m:Label text="{i18n>orderTableQuantityColumn}" />
+                    <Label text="{i18n>orderTableQuantityColumn}" />
                     <t:template>
-                      <m:Text text="{Quantity}" />
+                      <Text text="{Quantity}" />
                     </t:template>
                   </t:Column>
 
@@ -208,9 +210,9 @@
                     sortProperty="OrderDate"
                     width="12rem"
                   >
-                    <m:Label text="{i18n>orderTableOrderDateColumn}" />
+                    <Label text="{i18n>orderTableOrderDateColumn}" />
                     <t:template>
-                      <m:Text
+                      <Text
                         text="{ 
                           path: 'OrderDate', 
                           type: 'sap.ui.model.type.Date', 
@@ -224,9 +226,9 @@
                     sortProperty="Status"
                     width="12rem"
                   >
-                    <m:Label text="{i18n>orderTableStatusColumn}" />
+                    <Label text="{i18n>orderTableStatusColumn}" />
                     <t:template>
-                      <m:ObjectStatus
+                      <ObjectStatus
                         text="{Status}"
                         state="{
                           path: 'Status',
@@ -241,9 +243,9 @@
                     sortProperty="ShippingCost"
                     width="10rem"
                   >
-                    <m:Label text="{i18n>orderTableShippingCostColumn}" />
+                    <Label text="{i18n>orderTableShippingCostColumn}" />
                     <t:template>
-                      <m:ObjectNumber
+                      <ObjectNumber
                         number="{path: 'ShippingCost'}"
                         unit="USD"
                         emphasized="false"
@@ -259,9 +261,9 @@
                   sortProperty="TotalPrice"
                   width="10rem"
                 >
-                  <m:Label text="{i18n>orderTableTotalPriceColumn}" />
+                  <Label text="{i18n>orderTableTotalPriceColumn}" />
                   <t:template>
-                    <m:ObjectNumber
+                    <ObjectNumber
                       number="{path: 'TotalPrice'}"
                       unit="USD"
                       emphasized="false"
@@ -280,10 +282,10 @@
                   </t:RowAction>
                 </t:rowActionTemplate>
               </t:Table>
-            </blocks>
-          </ObjectPageSubSection>
-        </subSections>
-      </ObjectPageSection>
-    </sections>
-  </ObjectPageLayout>
+            </uxap:blocks>
+          </uxap:ObjectPageSubSection>
+        </uxap:subSections>
+      </uxap:ObjectPageSection>
+    </uxap:sections>
+  </uxap:ObjectPageLayout>
 </mvc:View>

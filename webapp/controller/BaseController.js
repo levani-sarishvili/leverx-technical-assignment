@@ -5,19 +5,29 @@ sap.ui.define(
     "sap/ui/model/FilterOperator",
     "sap/ui/model/Sorter",
     "levani/sarishvili/constants/Constants",
+    "sap/ui/core/library",
   ],
-  function (Controller, Filter, FilterOperator, Sorter, Constants) {
+  function (
+    Controller,
+    Filter,
+    FilterOperator,
+    Sorter,
+    Constants,
+    coreLibrary
+  ) {
     "use strict";
 
     return Controller.extend("levani.sarishvili.controller.BaseController", {
       /**
-       * Retrieves a translated text from the i18n model.
-       * @param {sap.ui.core.mvc.View} oView - The view to retrieve the i18n model from.
+       * Retrieves a translated text for the given key from the i18n resource model.
+       *
+       * @param {sap.ui.core.mvc.View} oView - The view to use for retrieving the i18n model.
        * @param {string} sKey - The key of the text to retrieve.
-       * @param {Array} [aArgs] - The arguments to format the text with.
+       * @param {Array<string>} aArgs - Optional array of arguments to use for text formatting.
        * @returns {string} The translated text.
        */
-      getTranslatedText: function (oView, sKey, aArgs) {
+      getTranslatedText: function (sKey, aArgs) {
+        const oView = this.getView();
         return oView.getModel("i18n").getResourceBundle().getText(sKey, aArgs);
       },
 
@@ -31,7 +41,7 @@ sap.ui.define(
        * @param {string} sQuery - The search query to filter with.
        * @param {Object[]} aFields - An array of field objects, each containing a title and type.
        * @returns {sap.ui.model.Filter[]} An array of Filter objects or an empty array if no query or fields are provided.
-       * @private
+       * @public
        */
       createTableSearchFilters: function (sQuery, aFields) {
         if (!sQuery || !aFields?.length) {
@@ -39,7 +49,7 @@ sap.ui.define(
         }
 
         return aFields.map((oField) => {
-          const bIsNumericField = oField.type === "Number";
+          const bIsNumericField = oField.type === Constants.oDataTypes.NUMBER;
           return new Filter(
             oField.title,
             bIsNumericField ? FilterOperator.EQ : FilterOperator.Contains,
@@ -53,14 +63,14 @@ sap.ui.define(
        * Each control in the form is checked if it has the setValueState and setValueStateText methods.
        * If a control has these methods, its validation state is reset to "None" and its validation message is cleared.
        * @param {sap.ui.core.Control} oForm - The form to reset the validations for.
-       * @private
+       * @public
        */
       resetFormValidations: function (oForm) {
         const aControls = oForm.getContent();
 
         aControls.forEach(function (oControl) {
           if (oControl.setValueState) {
-            oControl.setValueState("None");
+            oControl.setValueState(coreLibrary.ValueState.None);
           }
           if (oControl.setValueStateText) {
             oControl.setValueStateText("");
@@ -72,7 +82,7 @@ sap.ui.define(
        * Handles the sort event for a table.
        * @param {sap.ui.base.Event} oEvent - The sort event containing the column and sort order information.
        * @param {sap.ui.table.Table} oTable - The table to sort.
-       * @private
+       * @public
        */
       sortTable: function (oEvent, oTable, sId) {
         const oColumn = oEvent.getParameter("column");
@@ -81,12 +91,62 @@ sap.ui.define(
           Constants.oSortOptions.DESCENDING;
         const sSortedProperty = oColumn.getSortProperty();
 
-        const sorters = [
+        const aSorters = [
           new Sorter(sSortedProperty, bDescending),
           new Sorter(sId, false),
         ];
 
-        oTable.getBinding("rows").sort(sorters);
+        oTable.getBinding("rows").sort(aSorters);
+      },
+
+      /**
+       * Validates all controls within the given form and returns whether the form is valid or not.
+       * Iterates over all form elements and validates their values using the corresponding data type's validateValue method.
+       * If a control is invalid, its value state is set to "Error" and the validation error message is set as its value state text.
+       * Otherwise, the value state is set to "None" and the value state text is cleared.
+       * @param {sap.ui.core.Control} oForm - The form containing the controls to be validated.
+       * @returns {boolean} Whether the form is valid or not.
+       */
+      validateForm: function (oForm) {
+        let bIsFormValid = true;
+        const aFormElements = oForm.getContent();
+
+        aFormElements.forEach(function (oControl) {
+          // Validate controls with "value" binding (Input, DatePicker, etc.)
+          if (oControl.getBinding && oControl.getBinding("value")) {
+            try {
+              const oBinding = oControl.getBinding("value");
+              const oType = oBinding.getType();
+              const sValue = oControl.getValue();
+              oType.validateValue(sValue);
+              oControl.setValueState("None");
+              oControl.setValueStateText("");
+            } catch (oException) {
+              oControl.setValueState("Error");
+              oControl.setValueStateText(oException.message);
+              bIsFormValid = false;
+            }
+          }
+
+          // Validate Select with "selectedKey" binding
+          else if (oControl.getBinding && oControl.getBinding("selectedKey")) {
+            try {
+              const oBinding = oControl.getBinding("selectedKey");
+              const oType = oBinding.getType();
+              const sKey = oControl.getSelectedKey();
+
+              oType.validateValue(sKey);
+              oControl.setValueState("None");
+              oControl.setValueStateText("");
+            } catch (oException) {
+              oControl.setValueState("Error");
+              oControl.setValueStateText(oException.message);
+              bIsFormValid = false;
+            }
+          }
+        });
+
+        return bIsFormValid;
       },
     });
   }

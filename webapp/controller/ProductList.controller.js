@@ -7,7 +7,6 @@ sap.ui.define(
     "sap/ui/model/Filter",
     "sap/ui/model/FilterOperator",
     "levani/sarishvili/model/models",
-    "levani/sarishvili/model/Validation",
     "levani/sarishvili/constants/Constants",
     "levani/sarishvili/controller/BaseController",
   ],
@@ -19,7 +18,6 @@ sap.ui.define(
     Filter,
     FilterOperator,
     models,
-    Validation,
     Constants,
     BaseController
   ) {
@@ -29,6 +27,9 @@ sap.ui.define(
       aSearchFilters: [],
       aFilterBarFilters: [],
       aCombinedFilters: [],
+
+      // Formatters
+      formatter: formatter,
 
       /**
        * Initializes the ProductList controller.
@@ -43,7 +44,7 @@ sap.ui.define(
        */
       onInit: function () {
         // Create app state model
-        this.getView().setModel(models.createAppStateModel(), "appStateModel");
+        this.getView().setModel(models.createAppViewModel(), "appViewModel");
       },
 
       /**
@@ -52,58 +53,24 @@ sap.ui.define(
        * This hook is used to convert the release date from a string to a Date object
        * so that it can be bound to the table using the sap.ui.model.type.Date type.
        *
-       * @private
+       * @public
        */
       onBeforeRendering: function () {
         const oView = this.getView();
         const oModel = oView.getModel();
-        const oProductsData = oModel.getData().Products;
+        const aProductsData = oModel.getData().Products;
 
-        oProductsData.forEach((oProduct) => {
+        aProductsData.forEach((oProduct) => {
           oProduct.ReleaseDate = new Date(oProduct.ReleaseDate);
         });
 
         // Update table row count model
         this.getView()
-          .getModel("appStateModel")
+          .getModel("appViewModel")
           .setProperty(
             "/tableRowCount/productTableRowCount",
-            oProductsData.length
+            aProductsData.length
           );
-      },
-
-      /**
-       * Handles the press event on a product item in the list.
-       *
-       * Retrieves the selected product's ID from the binding context and navigates to the ProductDetails page.
-       *
-       * @param {sap.ui.base.Event} oEvent - The press event triggered when a product item is selected.
-       */
-      onProductPress: function (oEvent) {
-        const oSelectedItem = oEvent.getSource();
-        const oContext = oSelectedItem.getBindingContext();
-        const sProductId = oContext.getProperty("Id");
-
-        // Navigate to the product detail page with the selected product ID
-        this.getOwnerComponent().getRouter().navTo("ProductDetails", {
-          productId: sProductId,
-        });
-      },
-
-      // Formatters
-      formatter: formatter,
-
-      /**
-       * Handles the sort event for the product table.
-       * Retrieves the product table by its ID and calls the sortTable method
-       * to apply sorting based on the event parameters and the product ID.
-       *
-       * @param {sap.ui.base.Event} oEvent - The sort event containing the column and sort order information.
-       * @private
-       */
-      onProductTableSort: function (oEvent) {
-        const oTable = this.byId("productTable");
-        this.sortTable(oEvent, oTable, Constants.oUniqueIdNames.Id);
       },
 
       /**
@@ -169,241 +136,6 @@ sap.ui.define(
       },
 
       /**
-       * Updates the product table row count model with the current binding length.
-       * @param {sap.ui.core.mvc.View} oView The view containing the product table.
-       * @param {sap.ui.model.Binding} oBinding The binding of the product table.
-       * @private
-       */
-      _updateProductCount: function (oView, oBinding) {
-        const iCount = oBinding.getLength();
-        const oAppStateModel = oView.getModel("appStateModel");
-        oAppStateModel.setProperty(
-          "/tableRowCount/productTableRowCount",
-          iCount
-        );
-      },
-
-      /**
-       * Handles the add product button press.
-       * If the dialog doesn't already exist, it is loaded and opened.
-       * If the dialog already exists, it is opened without loading.
-       * The dialog is bound to the product form model to display the current product data.
-       * @private
-       */
-      onCreateProductPress: async function () {
-        const oView = this.getView();
-
-        if (!this.oDialog) {
-          this.oDialog = await Fragment.load({
-            id: oView.getId(),
-            name: "levani.sarishvili.view.fragments.AddProductDialog",
-            controller: this,
-          });
-
-          oView.addDependent(this.oDialog);
-
-          this.oDialog.bindElement({
-            path: "/productFormData",
-            model: "appStateModel",
-          });
-        } else {
-          this.oDialog.bindElement({
-            path: "/productFormData",
-            model: "appStateModel",
-          });
-        }
-
-        this.oDialog.open();
-      },
-
-      /**
-       * Handles the create product button press in the add product dialog.
-       * Gets the current product data from the product form model and adds it to the main model.
-       * Creates a new array with the new product added and sets the property in the main model with the new array reference.
-       * Resets the product form model and closes the add product dialog.
-       * @private
-       */
-      onProductCreatePress: function () {
-        const oView = this.getView();
-        const oDialog = oView.byId("createProductDialog");
-        const oAppStateModel = oView.getModel("appStateModel");
-        const oMainModel = oView.getModel();
-        const aProducts = oMainModel.getProperty("/Products") || [];
-        const oNewProduct = oAppStateModel.getProperty("/productFormData");
-        const oAddProductForm = oView.byId("productDialogForm");
-
-        // Validate product form inputs
-        const bIsFormValid = Validation.validateForm(oAddProductForm);
-        if (!bIsFormValid) {
-          return;
-        }
-
-        // Add new product
-        oNewProduct.Id = this._createNewProductId(aProducts);
-        oNewProduct.ReleaseDate = new Date(oNewProduct.ReleaseDate);
-        const aUpdatedProducts = [...aProducts, oNewProduct];
-        oMainModel.setProperty("/Products", aUpdatedProducts);
-
-        // Update row count in product table row count model
-        this._updateProductCount(
-          oView,
-          oView.byId("productTable").getBinding("rows")
-        );
-
-        // Show success message
-        MessageToast.show(this.getTranslatedText(oView, "productCreatedToast"));
-
-        // Reset product form
-        this._resetProductFormModel();
-        oDialog.close();
-      },
-
-      /**
-       * Creates a new product ID based on the last product ID in the product list.
-       * The new ID is created by incrementing the numeric part of the last product ID.
-       * @param {object[]} aProducts - The list of products.
-       * @returns {string} The new product ID.
-       * @private
-       */
-      _createNewProductId: function (aProducts) {
-        if (aProducts.length === 0) {
-          return 0;
-        }
-        const sLastProductId = aProducts[aProducts.length - 1].Id;
-        const iNumericPart = Number(sLastProductId.replace(/[^0-9]/g, ""));
-        return `PO-${String(iNumericPart + 1)}`;
-      },
-
-      /**
-       * Handles the cancel button press in the add product dialog.
-       * Closes the dialog and resets the product form model.
-       * @private
-       */
-      onProductCancelPress: function () {
-        const oView = this.getView();
-        const oDialog = oView.byId("createProductDialog");
-        if (oDialog) {
-          oDialog.close();
-          this._resetProductFormModel();
-          this.resetFormValidations(oView.byId("productDialogForm"));
-        }
-      },
-
-      /**
-       * Handles the selection change event of the product table.
-       * Resets the selected product IDs property in the selection model and sets the new IDs based on the selected rows.
-       * @private
-       */
-      onRowSelectionChange: function () {
-        const oAppStateModel = this.getView().getModel("appStateModel");
-        const oTable = this.byId("productTable");
-        const aSelectedIndices = oTable.getSelectedIndices();
-        const aSelectedProductIds = [];
-
-        // Reset selected product IDs
-        oAppStateModel.setProperty("/selectedProductIds", []);
-
-        aSelectedIndices.forEach((iIndex) => {
-          const oContext = oTable.getContextByIndex(iIndex);
-          const iProductId = oContext.getProperty("Id");
-          aSelectedProductIds.push(iProductId);
-        });
-        oAppStateModel.setProperty("/selectedProductIds", aSelectedProductIds);
-      },
-
-      /**
-       * Handles the delete button press in the product table toolbar.
-       * Shows a confirmation dialog asking to confirm the deletion of the selected products.
-       * If confirmed, calls the _deleteSelectedProducts function to delete the products.
-       * @private
-       */
-      onDeleteProductPress: function () {
-        const oView = this.getView();
-        const aProductsData = oView.getModel().getData().Products;
-        const oAppStateModel = oView.getModel("appStateModel");
-        const aSelectedProductIds = oAppStateModel.getProperty(
-          "/selectedProductIds"
-        );
-        const bIsSingleProductSelected = aSelectedProductIds.length === 1;
-
-        // Show confirmation dialog
-        MessageBox.confirm(
-          bIsSingleProductSelected
-            ? this.getTranslatedText(oView, "confirmDeleteProduct", [
-                aProductsData.find(
-                  (oProduct) => oProduct.Id === aSelectedProductIds[0]
-                ).Name,
-              ])
-            : this.getTranslatedText(oView, "confirmDeleteProducts", [
-                aSelectedProductIds.length,
-              ]),
-          {
-            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-            onClose: (sAction) => {
-              if (sAction === MessageBox.Action.OK) {
-                this._deleteSelectedProducts(aSelectedProductIds);
-              }
-            },
-          }
-        );
-      },
-
-      /**
-       * Deletes the selected products from the main model.
-       * @param {number[]} aSelectedProductIds - The IDs of the products to delete.
-       * @private
-       */
-      _deleteSelectedProducts: function (aSelectedProductIds) {
-        const oView = this.getView();
-        const oMainModel = oView.getModel();
-        const aProducts = oMainModel.getProperty("/Products") || [];
-        const bIsSingleProductSelected = aSelectedProductIds.length === 1;
-
-        // Filter out selected products
-        const aUpdatedProducts = aProducts.filter(
-          (oProduct) => !aSelectedProductIds.includes(oProduct.Id)
-        );
-
-        // Update model with filtered products
-        oMainModel.setProperty("/Products", aUpdatedProducts);
-        MessageToast.show(
-          bIsSingleProductSelected
-            ? this.getTranslatedText(oView, "productDeletedToast")
-            : this.getTranslatedText(oView, "productsDeletedToast", [
-                aSelectedProductIds.length,
-              ])
-        );
-
-        // Update row count in product table row count model
-        this._updateProductCount(
-          oView,
-          oView.byId("productTable").getBinding("rows")
-        );
-
-        // Reset selection model
-        oView.getModel("appStateModel").setProperty("/selectedProductIds", []);
-      },
-
-      /**
-       * Enables or disables the delete button based on whether any products are selected.
-       * Checks the `selectionModel` for selected product IDs and updates the delete button state accordingly.
-       *
-       * @private
-       */
-      _handleDeleteButtonState: function () {
-        const oView = this.getView();
-        const oAppStateModel = oView.getModel("appStateModel");
-        const aSelectedProductIds = oAppStateModel.getProperty(
-          "/selectedProductIds"
-        );
-        const oDeleteButton = this.byId("deleteProductButton");
-
-        if (oDeleteButton) {
-          oDeleteButton.setEnabled(aSelectedProductIds.length > 0);
-        }
-      },
-
-      /**
        * Builds an array of filters based on the user inputs in the filter bar controls.
        * Each control's value is extracted and converted into a corresponding filter.
        *
@@ -438,6 +170,22 @@ sap.ui.define(
       },
 
       /**
+       * Extracts the filter value from a given control.
+       * Handles different control types like Select, MultiSelect, DatePicker, and Input.
+       *
+       * @param {sap.ui.core.Control} oControl - The control to extract the value from.
+       * @returns {string|string[]|Date|undefined} The extracted filter value.
+       */
+      _getFilterValueFromControl: function (oControl) {
+        return (
+          oControl.getSelectedKey?.() ||
+          oControl.getSelectedItems?.()?.map((oItem) => oItem.getKey()) ||
+          oControl.getDateValue?.() ||
+          oControl.getValue?.()
+        );
+      },
+
+      /**
        * Updates the active filters in the app state model, based on the filled controls in the filter bar.
        * Iterates over the filter group items and checks if the corresponding control has a value.
        * If the control has a value, the filter name is added to the active filters array.
@@ -447,7 +195,7 @@ sap.ui.define(
       _trackActiveFilters: function () {
         const oView = this.getView();
         const oFilterBar = oView.byId("filterbar");
-        const oAppStateModel = oView.getModel("appStateModel");
+        const oAppViewModel = oView.getModel("appViewModel");
         const aFilterGroupItems = oFilterBar.getFilterGroupItems();
         const aActiveFilters = [];
 
@@ -466,7 +214,7 @@ sap.ui.define(
           }
         });
 
-        oAppStateModel.setProperty("/activeFilters", aActiveFilters);
+        oAppViewModel.setProperty("/activeFilters", aActiveFilters);
       },
 
       /**
@@ -516,19 +264,248 @@ sap.ui.define(
       },
 
       /**
-       * Extracts the filter value from a given control.
-       * Handles different control types like Select, MultiSelect, DatePicker, and Input.
-       *
-       * @param {sap.ui.core.Control} oControl - The control to extract the value from.
-       * @returns {string|string[]|Date|undefined} The extracted filter value.
+       * Updates the product table row count model with the current binding length.
+       * @param {sap.ui.core.mvc.View} oView The view containing the product table.
+       * @param {sap.ui.model.Binding} oBinding The binding of the product table.
+       * @private
        */
-      _getFilterValueFromControl: function (oControl) {
-        return (
-          oControl.getSelectedKey?.() ||
-          oControl.getSelectedItems?.()?.map((oItem) => oItem.getKey()) ||
-          oControl.getDateValue?.() ||
-          oControl.getValue?.()
+      _updateProductCount: function (oView, oBinding) {
+        const iCount = oBinding.getLength();
+        const oAppViewModel = oView.getModel("appViewModel");
+        oAppViewModel.setProperty(
+          "/tableRowCount/productTableRowCount",
+          iCount
         );
+      },
+
+      /**
+       * Handles the press event on a product item in the list.
+       *
+       * Retrieves the selected product's ID from the binding context and navigates to the ProductDetails page.
+       *
+       * @param {sap.ui.base.Event} oEvent - The press event triggered when a product item is selected.
+       */
+      onProductPress: function (oEvent) {
+        const oSelectedItem = oEvent.getSource();
+        const oContext = oSelectedItem.getBindingContext();
+        const sProductId = oContext.getProperty("Id");
+
+        // Navigate to the product detail page with the selected product ID
+        this.getOwnerComponent().getRouter().navTo("ProductDetails", {
+          productId: sProductId,
+        });
+      },
+
+      /**
+       * Handles the sort event for the product table.
+       * Retrieves the product table by its ID and calls the sortTable method
+       * to apply sorting based on the event parameters and the product ID.
+       *
+       * @param {sap.ui.base.Event} oEvent - The sort event containing the column and sort order information.
+       * @public
+       */
+      onProductTableSort: function (oEvent) {
+        const oTable = this.byId("productTable");
+        this.sortTable(oEvent, oTable, Constants.oUniqueIdNames.Id);
+      },
+
+      /**
+       * Handles the add product button press.
+       * If the dialog doesn't already exist, it is loaded and opened.
+       * If the dialog already exists, it is opened without loading.
+       * The dialog is bound to the product form model to display the current product data.
+       * @public
+       */
+      onCreateProductPress: async function () {
+        const oView = this.getView();
+
+        if (!this.oDialog) {
+          try {
+            this.oDialog = await Fragment.load({
+              id: oView.getId(),
+              name: "levani.sarishvili.view.fragments.AddProductDialog",
+              controller: this,
+            });
+            oView.addDependent(this.oDialog);
+          } catch (error) {
+            console.error("Error loading dialog fragment:", error);
+            return;
+          }
+        }
+
+        // Bind element to the product form model
+        this.oDialog.bindElement({
+          path: "/productFormData",
+          model: "appViewModel",
+        });
+
+        this.oDialog.open();
+      },
+
+      /**
+       * Handles the create product button press in the add product dialog.
+       * Gets the current product data from the product form model and adds it to the main model.
+       * Creates a new array with the new product added and sets the property in the main model with the new array reference.
+       * Resets the product form model and closes the add product dialog.
+       * @public
+       */
+      onSubmitProductCreation: function () {
+        const oView = this.getView();
+        const oAppViewModel = oView.getModel("appViewModel");
+        const oMainModel = oView.getModel();
+        const aProducts = oMainModel.getProperty("/Products") || [];
+        const oNewProduct = oAppViewModel.getProperty("/productFormData");
+        const oAddProductForm = oView.byId("productDialogForm");
+
+        // Validate product form inputs
+        const bIsFormValid = this.validateForm(oAddProductForm);
+        if (!bIsFormValid) {
+          return;
+        }
+
+        // Add new product
+        oNewProduct.Id = this._createNewProductId(aProducts);
+        oNewProduct.ReleaseDate = new Date(oNewProduct.ReleaseDate);
+        const aUpdatedProducts = [...aProducts, oNewProduct];
+        oMainModel.setProperty("/Products", aUpdatedProducts);
+
+        // Update row count in product table row count model
+        this._updateProductCount(
+          oView,
+          oView.byId("productTable").getBinding("rows")
+        );
+
+        // Show success message
+        MessageToast.show(this.getTranslatedText("productCreatedToast"));
+
+        // Reset product form
+        this._resetProductFormModel();
+        this.oDialog.close();
+      },
+
+      /**
+       * Creates a new product ID based on the last product ID in the product list.
+       * The new ID is created by incrementing the numeric part of the last product ID.
+       * @param {object[]} aProducts - The list of products.
+       * @returns {string} The new product ID.
+       * @private
+       */
+      _createNewProductId: function (aProducts) {
+        if (aProducts.length === 0) {
+          return 0;
+        }
+        const sLastProductId = aProducts[aProducts.length - 1].Id;
+        const iNumericPart = Number(sLastProductId.replace(/[^0-9]/g, ""));
+        return `PO-${String(iNumericPart + 1)}`;
+      },
+
+      /**
+       * Handles the cancel button press in the add product dialog.
+       * Closes the dialog and resets the product form model.
+       * @public
+       */
+      onCancelProductCreation: function () {
+        const oView = this.getView();
+        if (this.oDialog) {
+          this.oDialog.close();
+          this._resetProductFormModel();
+          this.resetFormValidations(oView.byId("productDialogForm"));
+        }
+      },
+
+      /**
+       * Handles the selection change event of the product table.
+       * Resets the selected product IDs property in the selection model and sets the new IDs based on the selected rows.
+       * @public
+       */
+      onRowSelectionChange: function () {
+        const oAppViewModel = this.getView().getModel("appViewModel");
+        const oTable = this.byId("productTable");
+        const aSelectedIndices = oTable.getSelectedIndices();
+        const aSelectedProductIds = [];
+
+        // Reset selected product IDs
+        oAppViewModel.setProperty("/selectedProductIds", []);
+
+        aSelectedIndices.forEach((iIndex) => {
+          const oContext = oTable.getContextByIndex(iIndex);
+          const iProductId = oContext.getProperty("Id");
+          aSelectedProductIds.push(iProductId);
+        });
+        oAppViewModel.setProperty("/selectedProductIds", aSelectedProductIds);
+      },
+
+      /**
+       * Handles the delete button press in the product table toolbar.
+       * Shows a confirmation dialog asking to confirm the deletion of the selected products.
+       * If confirmed, calls the _deleteSelectedProducts function to delete the products.
+       * @public
+       */
+      onDeleteProductPress: function () {
+        const oView = this.getView();
+        const aProductsData = oView.getModel().getData().Products;
+        const oAppViewModel = oView.getModel("appViewModel");
+        const aSelectedProductIds = oAppViewModel.getProperty(
+          "/selectedProductIds"
+        );
+        const bIsSingleProductSelected = aSelectedProductIds.length === 1;
+
+        // Show confirmation dialog
+        MessageBox.confirm(
+          bIsSingleProductSelected
+            ? this.getTranslatedText("confirmDeleteProduct", [
+                aProductsData.find(
+                  (oProduct) => oProduct.Id === aSelectedProductIds[0]
+                ).Name,
+              ])
+            : this.getTranslatedText("confirmDeleteProducts", [
+                aSelectedProductIds.length,
+              ]),
+          {
+            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+            onClose: (sAction) => {
+              if (sAction === MessageBox.Action.OK) {
+                this._deleteSelectedProducts(aSelectedProductIds);
+              }
+            },
+          }
+        );
+      },
+
+      /**
+       * Deletes the selected products from the main model.
+       * @param {number[]} aSelectedProductIds - The IDs of the products to delete.
+       * @private
+       */
+      _deleteSelectedProducts: function (aSelectedProductIds) {
+        const oView = this.getView();
+        const oMainModel = oView.getModel();
+        const aProducts = oMainModel.getProperty("/Products") || [];
+        const bIsSingleProductSelected = aSelectedProductIds.length === 1;
+
+        // Filter out selected products
+        const aUpdatedProducts = aProducts.filter(
+          (oProduct) => !aSelectedProductIds.includes(oProduct.Id)
+        );
+
+        // Update model with filtered products
+        oMainModel.setProperty("/Products", aUpdatedProducts);
+        MessageToast.show(
+          bIsSingleProductSelected
+            ? this.getTranslatedText("productDeletedToast")
+            : this.getTranslatedText("productsDeletedToast", [
+                aSelectedProductIds.length,
+              ])
+        );
+
+        // Update row count in product table row count model
+        this._updateProductCount(
+          oView,
+          oView.byId("productTable").getBinding("rows")
+        );
+
+        // Reset selection model
+        oView.getModel("appViewModel").setProperty("/selectedProductIds", []);
       },
 
       /**
@@ -537,9 +514,9 @@ sap.ui.define(
        */
       _resetProductFormModel: function () {
         const oView = this.getView();
-        const oAppStateModel = oView.getModel("appStateModel");
+        const oAppViewModel = oView.getModel("appViewModel");
 
-        oAppStateModel.setProperty("/productFormData", {
+        oAppViewModel.setProperty("/productFormData", {
           Name: "",
           Price: null,
           Category: "",

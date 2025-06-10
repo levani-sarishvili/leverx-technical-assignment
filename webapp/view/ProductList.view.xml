@@ -11,7 +11,6 @@
   xmlns:core="sap.ui.core">
 
   <f:DynamicPage
-    toggleHeaderOnTitleClick="true"
     preserveHeaderStateOnScroll="false"
     class="sapUiNoContentPadding">
 
@@ -25,7 +24,7 @@
           <Label
             text="{
               parts: [
-                { path: 'appStateModel>/activeFilters' },
+                { path: 'appViewModel>/activeFilters' },
                 { value: 'expanded' }
               ],
               formatter: '.formatter.formatActiveFilters'
@@ -36,7 +35,7 @@
           <Label
             text="{
               parts: [
-                { path: 'appStateModel>/activeFilters' },
+                { path: 'appViewModel>/activeFilters' },
                 { value: 'snapped' }
               ],
               formatter: '.formatter.formatActiveFilters'
@@ -52,7 +51,6 @@
           id="filterbar"
           useToolbar="false"
           search=".onFilterBarSearch"
-          filterChange=".onFilterChange"
         >
           <fb:filterGroupItems>
             <fb:FilterGroupItem name="Name" groupName="Group1"
@@ -60,14 +58,15 @@
               <fb:control>
                 <SearchField
                   placeholder="{i18n>searchFilterPlaceholder}"
-                  search="onProductSearchPress"
+                  search=".onProductSearchPress"
                 />
               </fb:control>
             </fb:FilterGroupItem>
 
             <fb:FilterGroupItem name="Category" label="{i18n>categoryFilterLabel}"
               groupName="Group1"
-              visibleInFilterBar="true">
+              visibleInFilterBar="true"
+            >
               <fb:control>
                 <ComboBox
                   items="{
@@ -81,11 +80,10 @@
 
             <fb:FilterGroupItem name="Brand" label="{i18n>brandFilterLabel}"
               groupName="Group1"
-              visibleInFilterBar="true">
+              visibleInFilterBar="true"
+            >
               <fb:control>
                 <MultiComboBox
-                  selectionChange="handleSelectionChange"
-                  selectionFinish="handleSelectionFinish"
                   items="{
                     path: '/ProductBrands',
                     sorter: { path: 'Name' }
@@ -123,7 +121,6 @@
           class="sapUiResponsiveMargin"
           rows="{/Products}"
           rowSelectionChange="onRowSelectionChange"
-          ariaLabelledBy="title"
           selectionMode="MultiToggle"
           rowActionCount="1"
           selectionBehavior="Row"
@@ -132,7 +129,7 @@
         >
           <t:rowMode>
             <rowmode:Auto
-              minRowCount="{appStateModel>/tableRowCount/productTableRowCount}" />
+              minRowCount="{appViewModel>/tableRowCount/productTableRowCount}" />
           </t:rowMode>
 
           <t:noData>
@@ -146,12 +143,12 @@
               <Title
                 id="productTableTitle"
                 text="{
-                parts: [
-                  'i18n>productTableTitle',
-                  'appStateModel>/tableRowCount/productTableRowCount'
-                ],
-                formatter: 'formatMessage'
-              }"
+                  parts: [
+                    'i18n>productTableTitle',
+                    'appViewModel>/tableRowCount/productTableRowCount'
+                  ],
+                  formatter: 'formatMessage'
+                }"
               />
 
               <ToolbarSpacer />
@@ -163,7 +160,7 @@
                 id="deleteProductButton"
                 text="{i18n>deleteButtonText}"
                 type="Transparent"
-                enabled="{= ${appStateModel>/selectedProductIds}.length > 0 }"
+                enabled="{= ${appViewModel>/selectedProductIds}.length > 0 }"
                 press=".onDeleteProductPress" />
             </OverflowToolbar>
           </t:extension>

@@ -9,7 +9,6 @@ sap.ui.define(
     "levani/sarishvili/model/models",
     "levani/sarishvili/controller/BaseController",
     "levani/sarishvili/constants/Constants",
-    "levani/sarishvili/model/Validation",
   ],
   function (
     Filter,
@@ -20,8 +19,7 @@ sap.ui.define(
     MessageBox,
     models,
     BaseController,
-    Constants,
-    Validation
+    Constants
   ) {
     "use strict";
 
@@ -37,7 +35,7 @@ sap.ui.define(
        */
       onInit: function () {
         // Create app state model
-        this.getView().setModel(models.createAppStateModel(), "appStateModel");
+        this.getView().setModel(models.createAppViewModel(), "appViewModel");
 
         this._formFragments = {};
         this._sProductId = "";
@@ -57,23 +55,23 @@ sap.ui.define(
        * This hook is used to convert the release date from a string to a Date object
        * so that it can be bound to the table using the sap.ui.model.type.Date type.
        *
-       * @private
+       * @public
        */
       onBeforeRendering: function () {
         const oView = this.getView();
         const oModel = oView.getModel();
-        const oSalesOrdersData = oModel.getData().SalesOrders;
+        const aSalesOrdersData = oModel.getData().SalesOrders;
 
-        oSalesOrdersData.forEach((oSalesOrder) => {
+        aSalesOrdersData.forEach((oSalesOrder) => {
           oSalesOrder.OrderDate = new Date(oSalesOrder.OrderDate);
         });
 
         // Update table row count model
         this.getView()
-          .getModel("appStateModel")
+          .getModel("appViewModel")
           .setProperty(
             "/salesOrderTableRowCount",
-            oSalesOrdersData.filter(
+            aSalesOrdersData.filter(
               (oSalesOrder) => oSalesOrder.ProductId === this._sProductId
             ).length
           );
@@ -147,25 +145,11 @@ sap.ui.define(
        */
       _updateSalesOrderCount: function (oView, oBinding) {
         const iCount = oBinding.getLength();
-        const oAppStateModel = oView.getModel("appStateModel");
-        oAppStateModel.setProperty(
+        const oAppViewModel = oView.getModel("appViewModel");
+        oAppViewModel.setProperty(
           "/tableRowCount/salesOrderTableRowCount",
           iCount
         );
-      },
-
-      /**
-       * Handles the sort event on the orders table by calling the sortTable method.
-       *
-       * Retrieves the orders table by its ID and calls the sortTable method
-       * to apply sorting based on the event parameters and the order ID.
-       *
-       * @param {sap.ui.base.Event} oEvent - The sort event containing the column and sort order information.
-       * @private
-       */
-      onOrderTableSort: function (oEvent) {
-        const oTable = this.byId("productOrdersTable");
-        this.sortTable(oEvent, oTable, Constants.oUniqueIdNames.OrderId);
       },
 
       /**
@@ -177,12 +161,11 @@ sap.ui.define(
        * @param {string} sFragmentName - The name of the fragment to show.
        * @private
        */
-      _showFormFragment: function (sFragmentName) {
+      _showFormFragment: async function (sFragmentName) {
         let oVBoxContainer = this.byId("productDetailsContainer");
         oVBoxContainer.removeAllItems();
-        this._getFormFragment(sFragmentName).then(function (oFragment) {
-          oVBoxContainer.addItem(oFragment);
-        });
+        const oFragment = await this._getFormFragment(sFragmentName);
+        oVBoxContainer.addItem(oFragment);
       },
 
       /**
@@ -200,18 +183,19 @@ sap.ui.define(
         if (!this._formFragments[sFragmentName]) {
           this._formFragments[sFragmentName] = await Fragment.load({
             id: oView.getId(),
-            name: "levani.sarishvili.view.fragments." + sFragmentName,
+            name: `levani.sarishvili.view.fragments.${sFragmentName}`,
             controller: this,
           });
         }
 
         return this._formFragments[sFragmentName];
       },
+
       /**
        * Handles the edit product button press event.
        *
        * Toggles the buttons and the view to the edit form.
-       * @private
+       * @public
        */
       onEditProductPress: function (oEvent) {
         const oProduct = oEvent.getSource().getBindingContext().getObject();
@@ -223,16 +207,16 @@ sap.ui.define(
        *
        * Updates the product with the new data in the model and toggles the buttons and view back to the display mode.
        * Shows a success message after the update.
-       * @private
+       * @public
        */
       onSaveChangesPress: function (oEvent) {
         const oView = this.getView();
-        const oAppStateModel = oView.getModel("appStateModel").getData();
+        const oAppViewModel = oView.getModel("appViewModel").getData();
         const oProductModel = oView.getModel();
         const oEditProductForm = this.byId("productDetailsEditForm");
         const aProductsData = oProductModel.getProperty("/Products");
         const oProductFormData = this.getView()
-          .getModel("appStateModel")
+          .getModel("appViewModel")
           .getProperty("/productFormData");
         const sProductId = oEvent
           .getSource()
@@ -248,14 +232,14 @@ sap.ui.define(
         }
 
         // Validate product form inputs
-        const bIsFormValid = Validation.validateForm(oEditProductForm);
+        const bIsFormValid = this.validateForm(oEditProductForm);
         if (!bIsFormValid) {
           return;
         }
 
         const oUpdatedProductsData = aProductsData.map((oProduct) => {
-          if (oProduct.Id === oAppStateModel.productFormData.Id) {
-            return oAppStateModel.productFormData;
+          if (oProduct.Id === oAppViewModel.productFormData.Id) {
+            return oAppViewModel.productFormData;
           }
           return oProduct;
         });
@@ -266,18 +250,18 @@ sap.ui.define(
         this._toggleButtonsAndView(false);
 
         // Show success message
-        MessageToast.show(this.getTranslatedText(oView, "productUpdatedToast"));
+        MessageToast.show(this.getTranslatedText("productUpdatedToast"));
       },
 
       /**
        * Handles the cancel changes button press event.
        *
        * Cancels the editing and goes back to the product details view.
-       * @private
+       * @public
        */
       onCancelChangesPress: function (oEvent) {
         const oProductFormData = this.getView()
-          .getModel("appStateModel")
+          .getModel("appViewModel")
           .getProperty("/productFormData");
 
         const sProductId = oEvent
@@ -300,20 +284,17 @@ sap.ui.define(
         }
 
         // Show confirmation dialog
-        MessageBox.confirm(
-          this.getTranslatedText(this.getView(), "confirmCancelChanges"),
-          {
-            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
-            onClose: (sAction) => {
-              if (sAction === MessageBox.Action.OK) {
-                this.getView()
-                  .getModel("appStateModel")
-                  .setProperty("/productFormData", oProduct);
-                this._toggleButtonsAndView(false);
-              }
-            },
-          }
-        );
+        MessageBox.confirm(this.getTranslatedText("confirmCancelChanges"), {
+          actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
+          onClose: (sAction) => {
+            if (sAction === MessageBox.Action.OK) {
+              this.getView()
+                .getModel("appViewModel")
+                .setProperty("/productFormData", oProduct);
+              this._toggleButtonsAndView(false);
+            }
+          },
+        });
       },
 
       /**
@@ -357,9 +338,7 @@ sap.ui.define(
 
         // Show confirmation dialog
         MessageBox.confirm(
-          this.getTranslatedText(oView, "confirmDeleteProduct", [
-            oProductData.Name,
-          ]),
+          this.getTranslatedText("confirmDeleteProduct", [oProductData.Name]),
           {
             actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             onClose: (sAction) => {
@@ -377,7 +356,7 @@ sap.ui.define(
                 oProductModel.setProperty("/SalesOrders", aUpdatedSalesOrders);
                 // Show success message
                 MessageToast.show(
-                  this.getTranslatedText(oView, "productDeletedToast")
+                  this.getTranslatedText("productDeletedToast")
                 );
 
                 oView.unbindObject();
@@ -388,6 +367,18 @@ sap.ui.define(
             },
           }
         );
+      },
+
+      /**
+       * Handles the sort event for the orders table.
+       *
+       * Applies a sort to the orders table binding based on the event parameters and the order ID.
+       * @param {sap.ui.base.Event} oEvent - The sort event containing the column and sort order information.
+       * @public
+       */
+      onOrderTableSort: function (oEvent) {
+        const oTable = this.byId("productOrdersTable");
+        this.sortTable(oEvent, oTable, Constants.oUniqueIdNames.OrderId);
       },
 
       /**
@@ -441,12 +432,10 @@ sap.ui.define(
        */
       _toggleButtonsAndView: function (bEdit) {
         const oView = this.getView();
+        const oAppViewModel = oView.getModel("appViewModel");
 
-        // Show the appropriate action buttons
-        oView.byId("productEditButton").setVisible(!bEdit);
-        oView.byId("productDeleteButton").setVisible(!bEdit);
-        oView.byId("productSaveButton").setVisible(bEdit);
-        oView.byId("productCancelButton").setVisible(bEdit);
+        // Update editMode state
+        oAppViewModel.setProperty("/editMode", bEdit);
 
         // Set the right form type
         this._showFormFragment(
@@ -474,7 +463,7 @@ sap.ui.define(
         }
 
         this.getView()
-          .getModel("appStateModel")
+          .getModel("appViewModel")
           .setProperty("/productFormData", oClonedProduct);
       },
     });

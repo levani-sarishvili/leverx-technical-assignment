@@ -22,7 +22,7 @@
         <Label text="{i18n>productNameLabel}" labelFor="name" />
         <Input
           value="{
-            path: 'appStateModel>Name',
+            path: 'appViewModel>Name',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
@@ -32,14 +32,13 @@
             }"
           placeholder="{i18n>productNameInputPlaceholder}"
           type="Text"
-          fieldGroupIds="productFormGroup"
           required="true" />
 
         <!-- Price -->
         <Label text="{i18n>productPriceLabel}" labelFor="price" />
         <Input
           value="{
-            path: 'appStateModel>Price',
+            path: 'appViewModel>Price',
             type: 'sap.ui.model.type.Integer',
             constraints: {
               minimum: 1,
@@ -48,7 +47,6 @@
               }
             }"
           placeholder="{i18n>productPriceInputPlaceholder}"
-          fieldGroupIds="productFormGroup"
           type="Number"
           required="true" />
 
@@ -58,9 +56,8 @@
           width="100%"
           forceSelection="false"
           required="true"
-          fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'appStateModel>Category',
+            path: 'appViewModel>Category',
             type: 'sap.ui.model.type.String',
             constraints: {
               required: true,
@@ -80,9 +77,8 @@
           width="100%"
           forceSelection="false"
           required="true"
-          fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'appStateModel>StockStatus',
+            path: 'appViewModel>StockStatus',
             type: 'sap.ui.model.type.String'          
             }"
           items="{
@@ -98,9 +94,8 @@
           width="100%"
           forceSelection="false"
           required="true"
-          fieldGroupIds="productFormGroup"
           selectedKey="{
-            path: 'appStateModel>Brand',
+            path: 'appViewModel>Brand',
             type: 'sap.ui.model.type.String',
             constraints: {
               required: true,
@@ -117,9 +112,8 @@
         <!-- SupplierName -->
         <Label text="{i18n>productSupplierLabel}" labelFor="supplierName" />
         <Input
-          fieldGroupIds="productFormGroup"
           value="{
-            path: 'appStateModel>SupplierName',
+            path: 'appViewModel>SupplierName',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
@@ -139,20 +133,19 @@
           displayFormat="dd/MM/yyyy"
           valueFormat="yyyy-MM-dd"
           value="{
-            path: 'appStateModel>ReleaseDate',
+            path: 'appViewModel>ReleaseDate',
             type: 'sap.ui.model.type.Date',
             formatOptions: {
               pattern: 'yyyy-MM-dd'
             }
           }"
-          fieldGroupIds="productFormGroup"
           required="true" />
 
         <!-- Rating -->
         <Label text="{i18n>productRatingLabel}" labelFor="rating" />
         <Input
           value="{
-            path: 'appStateModel>Rating', 
+            path: 'appViewModel>Rating', 
             type: 'sap.ui.model.type.Float', 
             constraints: { 
               minimum: 1, 
@@ -162,7 +155,6 @@
             }"
           placeholder="{i18n>productRatingInputPlaceholder}"
           type="Number"
-          fieldGroupIds="productFormGroup"
           required="true" />
       </f:content>
     </f:SimpleForm>
@@ -171,11 +163,11 @@
       <Button
         type="Accept"
         text="{i18n>createButtonText}"
-        press="onProductCreatePress" />
+        press=".onSubmitProductCreation" />
       <Button
         type="Reject"
         text="{i18n>cancelButtonText}"
-        press="onProductCancelPress" />
+        press=".onCancelProductCreation" />
     </buttons>
   </Dialog>
 </core:FragmentDefinition>

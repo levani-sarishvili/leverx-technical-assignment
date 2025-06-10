@@ -10,11 +10,11 @@ sap.ui.define(["levani/sarishvili/constants/Constants"], function (Constants) {
       const iCount = aActiveFilters.length;
 
       // Expanded mode
-      if (sMode === "expanded") {
+      if (sMode === Constants.oHeaderModes.EXPANDED) {
         return iCount === 1 ? "1 filter active" : `${iCount} filters active`;
       }
       // Snapped mode
-      if (sMode === "snapped") {
+      if (sMode === Constants.oHeaderModes.SNAPPED) {
         return iCount === 1
           ? `1 filter active: ${aActiveFilters[0]}`
           : `${iCount} filters active: ${aActiveFilters.join(", ")}`;

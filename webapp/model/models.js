@@ -1,6 +1,6 @@
 sap.ui.define(
-  ["sap/ui/model/json/JSONModel", "sap/ui/model/BindingMode"],
-  function (JSONModel, BindingMode) {
+  ["sap/ui/model/json/JSONModel", "levani/sarishvili/constants/Constants"],
+  function (JSONModel, Constants) {
     return {
       /**
        * Creates an instance of a JSONModel to store the application state.
@@ -13,34 +13,30 @@ sap.ui.define(
        * The model uses two-way binding to synchronize the data between the model and the UI controls.
        * @returns {sap.ui.model.json.JSONModel} The application state model
        */
-      createAppStateModel: function () {
-        return new JSONModel(
-          {
-            productFormData: {
-              Name: "",
-              Price: null,
-              Category: null,
-              Brand: null,
-              SupplierName: "",
-              ReleaseDate: new Date(),
-              StockStatus: "In Stock",
-              Rating: null,
-            },
-
-            selectedProductIds: [],
-
-            tableRowCount: {
-              productTableRowCount: 0,
-              salesOrderTableRowCount: 0,
-            },
-
-            activeFilters: [],
+      createAppViewModel: function () {
+        return new JSONModel({
+          productFormData: {
+            Name: "",
+            Price: 0,
+            Category: "",
+            Brand: "",
+            SupplierName: "",
+            ReleaseDate: new Date(),
+            StockStatus: Constants.oStockStatuses.IN_STOCK,
+            Rating: 0,
           },
 
-          {
-            bindingMode: BindingMode.TwoWay,
-          }
-        );
+          selectedProductIds: [],
+
+          tableRowCount: {
+            productTableRowCount: 0,
+            salesOrderTableRowCount: 0,
+          },
+
+          activeFilters: [],
+
+          editMode: false,
+        });
       },
     };
   }
