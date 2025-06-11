@@ -2,13 +2,13 @@ sap.ui.define([], function () {
   "use strict";
 
   const aProductTableSearchableFields = [
-    { title: "Name", type: "String" },
-    { title: "Price", type: "Number" },
-    { title: "Category", type: "String" },
-    { title: "Brand", type: "String" },
-    { title: "SupplierName", type: "String" },
-    { title: "StockStatus", type: "String" },
-    { title: "Rating", type: "Number" },
+    { label: "Name", type: "String" },
+    { label: "Price", type: "Number" },
+    { label: "Category", type: "String" },
+    { label: "Brand", type: "String" },
+    { label: "SupplierName", type: "String" },
+    { label: "StockStatus", type: "String" },
+    { label: "Rating", type: "Number" },
   ];
 
   const oProductTableColumns = {
@@ -23,13 +23,13 @@ sap.ui.define([], function () {
   };
 
   const oOrderTableSearchableFields = [
-    { title: "ProductId", type: "String" },
-    { title: "OrderId", type: "String" },
-    { title: "Customer", type: "String" },
-    { title: "Quantity", type: "Number" },
-    { title: "Status", type: "String" },
-    { title: "ShippingCost", type: "Number" },
-    { title: "TotalPrice", type: "Number" },
+    { label: "ProductId", type: "String" },
+    { label: "OrderId", type: "String" },
+    { label: "Customer", type: "String" },
+    { label: "Quantity", type: "Number" },
+    { label: "Status", type: "String" },
+    { label: "ShippingCost", type: "Number" },
+    { label: "TotalPrice", type: "Number" },
   ];
 
   const oOrderStatuses = {

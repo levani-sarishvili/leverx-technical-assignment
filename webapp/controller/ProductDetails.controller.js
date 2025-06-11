@@ -285,7 +285,6 @@ sap.ui.define(
 
         // Show confirmation dialog
         MessageBox.confirm(this.getTranslatedText("confirmCancelChanges"), {
-          actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
           onClose: (sAction) => {
             if (sAction === MessageBox.Action.OK) {
               this.getView()
@@ -340,7 +339,6 @@ sap.ui.define(
         MessageBox.confirm(
           this.getTranslatedText("confirmDeleteProduct", [oProductData.Name]),
           {
-            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             onClose: (sAction) => {
               if (sAction === MessageBox.Action.OK) {
                 const aProducts = oProductModel.getProperty("/Products");
@@ -356,7 +354,9 @@ sap.ui.define(
                 oProductModel.setProperty("/SalesOrders", aUpdatedSalesOrders);
                 // Show success message
                 MessageToast.show(
-                  this.getTranslatedText("productDeletedToast")
+                  this.getTranslatedText("productDeletedToast", [
+                    oProductData.Name,
+                  ])
                 );
 
                 oView.unbindObject();

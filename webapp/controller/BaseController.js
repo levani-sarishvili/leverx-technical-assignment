@@ -51,7 +51,7 @@ sap.ui.define(
         return aFields.map((oField) => {
           const bIsNumericField = oField.type === Constants.oDataTypes.NUMBER;
           return new Filter(
-            oField.title,
+            oField.label,
             bIsNumericField ? FilterOperator.EQ : FilterOperator.Contains,
             bIsNumericField ? parseFloat(sQuery) : sQuery
           );

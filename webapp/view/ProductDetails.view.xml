@@ -8,7 +8,7 @@
   xmlns:rowmode="sap.ui.table.rowmodes"
   xmlns:core="sap.ui.core">
 
-  <uxap:ObjectPageLayout upperCaseAnchorBar="false">
+  <uxap:ObjectPageLayout upperCaseAnchorBar="false" showFooter="{appViewModel>/editMode}">
     <uxap:headerTitle>
       <uxap:ObjectPageDynamicHeaderTitle>
         <uxap:breadcrumbs>
@@ -53,20 +53,6 @@
             type="Default"
             visible="{= !${appViewModel>/editMode} }"
             press=".onDeleteProductPress" />
-
-          <Button
-            id="productSaveButton"
-            text="{i18n>saveButtonText}"
-            press=".onSaveChangesPress"
-            type="Emphasized"
-            visible="{appViewModel>/editMode}"
-            class="sapUiSmallMarginEnd" />
-          <Button
-            id="productCancelButton"
-            text="{i18n>cancelButtonText}"
-            type="Default"
-            visible="{appViewModel>/editMode}"
-            press=".onCancelChangesPress" />
         </uxap:actions>
       </uxap:ObjectPageDynamicHeaderTitle>
     </uxap:headerTitle>
@@ -94,9 +80,14 @@
         </VBox>
 
         <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
-          <Title text="{i18n>productStockStatusLabel}" class="sapUiTinyMarginBottom" />
+          <Title
+            text="{i18n>productStockStatusLabel}"
+            class="sapUiTinyMarginBottom" />
           <ObjectStatus text="{StockStatus}"
-            state="{path: 'StockStatus', formatter: '.formatter.formatStockStatus'}"
+            state="{
+              path: 'StockStatus', 
+              formatter: '.formatter.formatStockStatus'
+            }"
             class="sapMObjectStatusLarge"
           />
         </VBox>
@@ -132,10 +123,7 @@
                 id="productOrdersTable"
                 rows="{/SalesOrders}"
                 rowSelectionChange=".onRowSelectionChange"
-                ariaLabelledBy="title"
-                selectionMode="MultiToggle"
-                rowActionCount="1"
-                selectionBehavior="Row"
+                selectionMode="None"
                 alternateRowColors="true"
                 sort=".onOrderTableSort"
               >
@@ -216,7 +204,8 @@
                         text="{ 
                           path: 'OrderDate', 
                           type: 'sap.ui.model.type.Date', 
-                          formatOptions: { pattern: 'yyyy-MM-dd' } }" />
+                          formatOptions: { pattern: 'yyyy-MM-dd' } 
+                        }" />
                     </t:template>
                   </t:Column>
 
@@ -253,39 +242,48 @@
                       />
                     </t:template>
                   </t:Column>
+
+                  <!-- TotalPrice -->
+                  <t:Column
+                    hAlign="End"
+                    sortProperty="TotalPrice"
+                    width="10rem"
+                  >
+                    <Label text="{i18n>orderTableTotalPriceColumn}" />
+                    <t:template>
+                      <ObjectNumber
+                        number="{path: 'TotalPrice'}"
+                        unit="USD"
+                        emphasized="false"
+                        textAlign="End"
+                      />
+                    </t:template>
+                  </t:Column>
                 </t:columns>
-
-                <!-- TotalPrice -->
-                <t:Column
-                  hAlign="End"
-                  sortProperty="TotalPrice"
-                  width="10rem"
-                >
-                  <Label text="{i18n>orderTableTotalPriceColumn}" />
-                  <t:template>
-                    <ObjectNumber
-                      number="{path: 'TotalPrice'}"
-                      unit="USD"
-                      emphasized="false"
-                      textAlign="End"
-                    />
-                  </t:template>
-                </t:Column>
-
-                <!-- Row Actions -->
-                <t:rowActionTemplate>
-                  <t:RowAction>
-                    <t:RowActionItem
-                      icon="sap-icon://feeder-arrow"
-                      type="Custom"
-                      press=".onEditRowPress" />
-                  </t:RowAction>
-                </t:rowActionTemplate>
               </t:Table>
             </uxap:blocks>
           </uxap:ObjectPageSubSection>
         </uxap:subSections>
       </uxap:ObjectPageSection>
     </uxap:sections>
+
+    <uxap:footer>
+      <Toolbar>
+        <ToolbarSpacer />
+        <Button
+          id="productSaveButton"
+          text="{i18n>saveButtonText}"
+          press=".onSaveChangesPress"
+          type="Emphasized"
+          visible="{appViewModel>/editMode}"
+          class="sapUiSmallMarginEnd" />
+        <Button
+          id="productCancelButton"
+          text="{i18n>cancelButtonText}"
+          type="Default"
+          visible="{appViewModel>/editMode}"
+          press=".onCancelChangesPress" />
+      </Toolbar>
+    </uxap:footer>
   </uxap:ObjectPageLayout>
 </mvc:View>

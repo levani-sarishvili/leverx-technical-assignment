@@ -120,7 +120,7 @@
           id="productTable"
           class="sapUiResponsiveMargin"
           rows="{/Products}"
-          rowSelectionChange="onRowSelectionChange"
+          rowSelectionChange=".onRowSelectionChange"
           selectionMode="MultiToggle"
           rowActionCount="1"
           selectionBehavior="Row"

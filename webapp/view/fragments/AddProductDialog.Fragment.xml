@@ -161,11 +161,11 @@
 
     <buttons>
       <Button
-        type="Accept"
+        type="Emphasized"
         text="{i18n>createButtonText}"
         press=".onSubmitProductCreation" />
       <Button
-        type="Reject"
+        type="Transparent"
         text="{i18n>cancelButtonText}"
         press=".onCancelProductCreation" />
     </buttons>

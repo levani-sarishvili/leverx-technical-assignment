@@ -381,6 +381,11 @@ sap.ui.define(
         // Reset product form
         this._resetProductFormModel();
         this.oDialog.close();
+
+        // Navigate to the newly created product
+        this.getOwnerComponent().getRouter().navTo("ProductDetails", {
+          productId: oNewProduct.Id,
+        });
       },
 
       /**
@@ -462,10 +467,12 @@ sap.ui.define(
                 aSelectedProductIds.length,
               ]),
           {
-            actions: [MessageBox.Action.OK, MessageBox.Action.CANCEL],
             onClose: (sAction) => {
               if (sAction === MessageBox.Action.OK) {
-                this._deleteSelectedProducts(aSelectedProductIds);
+                this._deleteSelectedProducts(
+                  aSelectedProductIds,
+                  aProductsData
+                );
               }
             },
           }
@@ -477,7 +484,7 @@ sap.ui.define(
        * @param {number[]} aSelectedProductIds - The IDs of the products to delete.
        * @private
        */
-      _deleteSelectedProducts: function (aSelectedProductIds) {
+      _deleteSelectedProducts: function (aSelectedProductIds, aProductsData) {
         const oView = this.getView();
         const oMainModel = oView.getModel();
         const aProducts = oMainModel.getProperty("/Products") || [];
@@ -490,9 +497,14 @@ sap.ui.define(
 
         // Update model with filtered products
         oMainModel.setProperty("/Products", aUpdatedProducts);
+
         MessageToast.show(
           bIsSingleProductSelected
-            ? this.getTranslatedText("productDeletedToast")
+            ? this.getTranslatedText("productDeletedToast", [
+                aProductsData.find(
+                  (oProduct) => oProduct.Id === aSelectedProductIds[0]
+                ).Name,
+              ])
             : this.getTranslatedText("productsDeletedToast", [
                 aSelectedProductIds.length,
               ])
