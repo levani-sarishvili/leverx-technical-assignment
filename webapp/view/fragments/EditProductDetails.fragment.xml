@@ -1,44 +1,37 @@
 <core:FragmentDefinition
   xmlns="sap.m"
-  xmlns:f="sap.ui.layout.form"
+  xmlns:form="sap.ui.layout.form"
   xmlns:core="sap.ui.core">
-  <Dialog
-    id="createProductDialog"
-    title="{i18n>productDialogTitle}"
-    resizable="true"
-    contentWidth="28rem"
-  >
-    <f:SimpleForm
-      id="productDialogForm"
-      layout="ResponsiveGridLayout"
-      editable="true"
-      labelSpanL="4"
-      labelSpanM="12"
-      columnsL="2"
-      columnsM="1"
+  <VBox>
+    <form:SimpleForm
+      id="productDetailsEditForm"
+      layout="ColumnLayout"
+      columnsM="3"
+      columnsL="4"
     >
-      <f:content>
+      <form:content>
+        <core:Title text="{i18n>produtDetailsHeaderEdit}" />
+
         <!-- Name -->
         <Label text="{i18n>productNameLabel}" labelFor="name" />
         <Input
           value="{
-            path: 'appViewModel>Name',
+            path: 'appViewModel>/productFormData/Name',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
               maxLength: 100,
               required: true
              } 
-            }"
+          }"
           placeholder="{i18n>productNameInputPlaceholder}"
-          type="Text"
           required="true" />
 
         <!-- Price -->
         <Label text="{i18n>productPriceLabel}" labelFor="price" />
         <Input
           value="{
-            path: 'appViewModel>Price',
+            path: 'appViewModel>/productFormData/Price',
             type: 'sap.ui.model.type.Integer',
             constraints: {
               minimum: 1,
@@ -53,15 +46,13 @@
         <!-- Category -->
         <Label text="{i18n>productCategoryLabel}" labelFor="category" />
         <Select
-          width="100%"
           forceSelection="false"
           required="true"
           selectedKey="{
-            path: 'appViewModel>Category',
+            path: 'appViewModel>/productFormData/Category',
             type: 'sap.ui.model.type.String',
             constraints: {
-              required: true,
-              minLength: 2
+              required: true
              } 
             }"
           items="{
@@ -71,35 +62,16 @@
           <core:Item key="{Key}" text="{Name}" />
         </Select>
 
-        <!-- StockStatus -->
-        <Label text="{i18n>productStockStatusLabel}" labelFor="stockStatus" />
-        <Select
-          width="100%"
-          forceSelection="false"
-          required="true"
-          selectedKey="{
-            path: 'appViewModel>StockStatus',
-            type: 'sap.ui.model.type.String'          
-            }"
-          items="{
-							path: '/ProductStockStatuses',
-							sorter: { path: 'Name' }
-						}">
-          <core:Item key="{Key}" text="{Name}" />
-        </Select>
-
         <!-- Brand -->
         <Label text="{i18n>productBrandLabel}" labelFor="brand" />
         <Select
-          width="100%"
           forceSelection="false"
           required="true"
           selectedKey="{
-            path: 'appViewModel>Brand',
+            path: 'appViewModel>/productFormData/Brand',
             type: 'sap.ui.model.type.String',
             constraints: {
-              required: true,
-              minLength: 2
+              required: true
              } 
             }"
           items="{
@@ -113,7 +85,7 @@
         <Label text="{i18n>productSupplierLabel}" labelFor="supplierName" />
         <Input
           value="{
-            path: 'appViewModel>SupplierName',
+            path: 'appViewModel>/productFormData/SupplierName',
             type: 'sap.ui.model.type.String',
             constraints: {
               minLength: 3,
@@ -133,19 +105,39 @@
           displayFormat="dd/MM/yyyy"
           valueFormat="yyyy-MM-dd"
           value="{
-            path: 'appViewModel>ReleaseDate',
-            type: 'sap.ui.model.type.Date',
+            path: 'appViewModel>/productFormData/ReleaseDate',
             formatOptions: {
-              pattern: 'yyyy-MM-dd'
-            }
+              pattern: 'yyyy/MM/dd'
+            },
+            type: 'sap.ui.model.type.Date'
           }"
+          class="sapUiSmallMarginBottom"
           required="true" />
+
+        <!-- StockStatus -->
+        <Label text="{i18n>productStockStatusLabel}" labelFor="stockStatus" />
+        <Select
+          forceSelection="false"
+          required="true"
+          selectedKey="{
+            path: 'appViewModel>/productFormData/StockStatus',
+            type: 'sap.ui.model.type.String',
+            constraints: {
+              required: true
+             } 
+            }"
+          items="{
+							path: '/ProductStockStatuses',
+							sorter: { path: 'Name' }
+						}">
+          <core:Item key="{Key}" text="{Name}" />
+        </Select>
 
         <!-- Rating -->
         <Label text="{i18n>productRatingLabel}" labelFor="rating" />
         <Input
           value="{
-            path: 'appViewModel>Rating', 
+            path: 'appViewModel>/productFormData/Rating', 
             type: 'sap.ui.model.type.Float', 
             constraints: { 
               minimum: 1, 
@@ -153,21 +145,11 @@
               required: true 
               }
             }"
+          valueState="{= ${productFormValidationModel>/Rating} ? 'None' : 'Error'}"
           placeholder="{i18n>productRatingInputPlaceholder}"
           type="Number"
           required="true" />
-      </f:content>
-    </f:SimpleForm>
-
-    <buttons>
-      <Button
-        type="Emphasized"
-        text="{i18n>createButtonText}"
-        press=".onSubmitProductCreation" />
-      <Button
-        type="Transparent"
-        text="{i18n>cancelButtonText}"
-        press=".onCancelProductCreation" />
-    </buttons>
-  </Dialog>
+      </form:content>
+    </form:SimpleForm>
+  </VBox>
 </core:FragmentDefinition>

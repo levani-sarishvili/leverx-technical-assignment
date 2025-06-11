@@ -1,0 +1,54 @@
+<core:FragmentDefinition
+  xmlns="sap.m"
+  xmlns:form="sap.ui.layout.form"
+  xmlns:core="sap.ui.core">
+  <VBox>
+    <form:SimpleForm
+      layout="ColumnLayout"
+      columnsM="3"
+      columnsL="4"
+      columnsXL="5"
+    >
+      <form:content>
+        <core:Title text="{i18n>produtDetailsHeaderDisplay}" />
+
+        <Label text="{i18n>productNameLabel}" />
+        <Text text="{Name}" />
+
+        <Label text="{i18n>productPriceLabel}" />
+        <ObjectNumber
+          number="{path: 'Price'}"
+          unit="USD"
+          emphasized="false"
+        />
+
+        <Label text="{i18n>productCategoryLabel}" />
+        <Text text="{Category}" />
+
+        <Label text="{i18n>productBrandLabel}" />
+        <Text text="{Brand}" />
+
+        <Label text="{i18n>productSupplierLabel}" />
+        <Text text="{SupplierName}" />
+
+        <Label text="{i18n>productReleaseDateLabel}" />
+        <Text
+          text="{ 
+            path: 'ReleaseDate', 
+            type: 'sap.ui.model.type.Date', 
+            formatOptions: { pattern: 'yyyy-MM-dd' } }" />
+
+        <Label text="{i18n>productStockStatusLabel}" />
+        <ObjectStatus text="{StockStatus}"
+          state="{path: 'Products>StockStatus', formatter: '.formatter.formatStockStatus'}"
+        />
+
+        <Label text="{i18n>productRatingLabel}" />
+        <RatingIndicator
+          displayOnly="true"
+          iconSize="1.2rem"
+          value="{Rating}" />
+      </form:content>
+    </form:SimpleForm>
+  </VBox>
+</core:FragmentDefinition>

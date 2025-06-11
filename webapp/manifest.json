@@ -33,8 +33,7 @@
 
     "rootView": {
       "viewName": "levani.sarishvili.view.App",
-      "type": "XML",
-      "id": "app"
+      "type": "XML"
     },
 
     "contentDensities": {
@@ -73,12 +72,21 @@
           "pattern": "",
           "name": "ProductList",
           "target": ["ProductList"]
+        },
+        {
+          "pattern": "ProductDetails/{productId}",
+          "name": "ProductDetails",
+          "target": ["ProductDetails"]
         }
       ],
       "targets": {
         "ProductList": {
           "viewId": "ProductList",
           "viewName": "ProductList"
+        },
+        "ProductDetails": {
+          "viewId": "ProductDetails",
+          "viewName": "ProductDetails"
         }
       }
     }

@@ -1,54 +1,69 @@
-sap.ui.define(["sap/ui/core/format/DateFormat"], function (DateFormat) {
-  "use strict";
+sap.ui.define(
+  ["levani/sarishvili/constants/Constants", "sap/ui/core/library"],
+  function (Constants, coreLibrary) {
+    "use strict";
 
-  return {
-    /**
-     * Formats a given price string to a string with a USD currency label.
-     *
-     * @param {string} sPrice - The price string to format.
-     * @returns {string} The formatted string, e.g. "140.00 USD".
-     */
-    formatPrice: function (sPrice) {
-      if (sPrice) {
-        return parseFloat(sPrice) + " USD";
-      }
-      return "";
-    },
+    return {
+      formatActiveFilters: function (aActiveFilters, sMode) {
+        if (!aActiveFilters || aActiveFilters.length === 0) {
+          return "No filters active";
+        }
 
-    /**
-     * Formats a given Date object to a string with the pattern "yyyy-MM-dd".
-     *
-     * @param {Date} oDate - The Date object to format.
-     * @returns {string} The formatted string, e.g. "2022-07-01".
-     */
-    formatDate: function (oDate) {
-      if (!oDate) return "";
-      const oDateFormat = DateFormat.getDateInstance({
-        pattern: "yyyy-MM-dd",
-      });
-      return oDateFormat.format(oDate);
-    },
+        const iCount = aActiveFilters.length;
 
-    /**
-     * Formats the title of a table by appending the total number of products it contains.
-     *
-     * @param {string} sTitle - The title of the table.
-     * @param {sap.ui.model.json.JSONList} aProducts - The list of products the table contains.
-     * @returns {string} The formatted title, e.g. "Products (10)".
-     */
-    formatTableTitle: function (sTitle, aProducts) {
-      const sTotalProducts = Array.isArray(aProducts) ? aProducts.length : 0;
-      return `${sTitle} (${sTotalProducts})`;
-    },
+        // Expanded mode
+        if (sMode === Constants.oHeaderModes.EXPANDED) {
+          return iCount === 1 ? "1 filter active" : `${iCount} filters active`;
+        }
+        // Snapped mode
+        if (sMode === Constants.oHeaderModes.SNAPPED) {
+          return iCount === 1
+            ? `1 filter active: ${aActiveFilters[0]}`
+            : `${iCount} filters active: ${aActiveFilters.join(", ")}`;
+        }
 
-    /**
-     * Returns the count of products in a given array.
-     *
-     * @param {sap.ui.model.json.JSONList} aProducts - The list of products.
-     * @returns {number} The number of products in the list.
-     */
-    formatTableRowCount: function (aProducts) {
-      return Array.isArray(aProducts) ? aProducts.length : 0;
-    },
-  };
-});
+        return `${iCount} filter${iCount > 1 ? "s" : ""} active`;
+      },
+
+      /**
+       * Maps an order status to a semantic color.
+       * @param {string} sStatus - The order status to map.
+       * @returns {string} A semantic color as a string (e.g., "Success", "Warning", "Error", or "None").
+       */
+      formatOrderStatus: function (sStatus) {
+        if (!sStatus) return;
+        switch (sStatus) {
+          case Constants.oOrderStatuses.DELIVERED:
+            return coreLibrary.ValueState.Success;
+          case Constants.oOrderStatuses.PROCESSING:
+            return coreLibrary.ValueState.Warning;
+          case Constants.oOrderStatuses.SHIPPED:
+            return coreLibrary.ValueState.Success;
+          case Constants.oOrderStatuses.CANCELLED:
+            return coreLibrary.ValueState.Error;
+          default:
+            return coreLibrary.ValueState.None;
+        }
+      },
+
+      /**
+       * Maps a stock status to a semantic color.
+       * @param {string} sStatus - The stock status to map.
+       * @returns {string} A semantic color as a string (e.g., "Success", "Warning", "Error", or "None").
+       */
+      formatStockStatus: function (sStatus) {
+        if (!sStatus) return;
+        switch (sStatus) {
+          case Constants.oStockStatuses.IN_STOCK:
+            return coreLibrary.ValueState.Success;
+          case Constants.oStockStatuses.LESS_THAN_10_LEFT:
+            return coreLibrary.ValueState.Warning;
+          case Constants.oStockStatuses.OUT_OF_STOCK:
+            return coreLibrary.ValueState.Error;
+          default:
+            return coreLibrary.ValueState.None;
+        }
+      },
+    };
+  }
+);

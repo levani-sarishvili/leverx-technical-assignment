@@ -1,0 +1,289 @@
+<mvc:View
+  controllerName="levani.sarishvili.controller.ProductDetails"
+  xmlns="sap.m"
+  xmlns:uxap="sap.uxap"
+  xmlns:mvc="sap.ui.core.mvc"
+  xmlns:t="sap.ui.table"
+  core:require="{formatMessage: 'sap/base/strings/formatMessage'}"
+  xmlns:rowmode="sap.ui.table.rowmodes"
+  xmlns:core="sap.ui.core">
+
+  <uxap:ObjectPageLayout upperCaseAnchorBar="false" showFooter="{appViewModel>/editMode}">
+    <uxap:headerTitle>
+      <uxap:ObjectPageDynamicHeaderTitle>
+        <uxap:breadcrumbs>
+          <Breadcrumbs separatorStyle="{/selected}"
+            currentLocationText="{i18n>breadcrumbProductDetails}">
+            <Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
+          </Breadcrumbs>
+        </uxap:breadcrumbs>
+
+        <uxap:expandedHeading>
+          <Title text="{Name}" level="H1" />
+        </uxap:expandedHeading>
+
+        <uxap:snappedHeading>
+          <HBox>
+            <VBox>
+              <Title text="{Name}" level="H1" />
+              <Label text="{Id}" />
+            </VBox>
+          </HBox>
+        </uxap:snappedHeading>
+
+        <uxap:expandedContent>
+          <Label text="{Id}" />
+        </uxap:expandedContent>
+
+        <uxap:snappedTitleOnMobile>
+          <Title text="{Name}" />
+        </uxap:snappedTitleOnMobile>
+
+        <uxap:actions>
+          <Button
+            id="productEditButton"
+            text="{i18n>editButtonText}"
+            press=".onEditProductPress"
+            type="Emphasized"
+            visible="{= !${appViewModel>/editMode} }"
+            class="sapUiSmallMarginEnd" />
+          <Button
+            id="productDeleteButton"
+            text="{i18n>deleteButtonText}"
+            type="Default"
+            visible="{= !${appViewModel>/editMode} }"
+            press=".onDeleteProductPress" />
+        </uxap:actions>
+      </uxap:ObjectPageDynamicHeaderTitle>
+    </uxap:headerTitle>
+
+    <uxap:headerContent>
+      <FlexBox wrap="Wrap" fitContainer="true">
+        <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+          <HBox>
+            <Label text="{i18n>productCategoryLabel}" showColon="true"
+              class="sapUiTinyMarginEnd" />
+            <Text text="{Category}" />
+          </HBox>
+
+          <HBox>
+            <Label text="{i18n>productBrandLabel}" showColon="true"
+              class="sapUiTinyMarginEnd" />
+            <Text text="{Brand}" />
+          </HBox>
+
+          <HBox>
+            <Label text="{i18n>productSupplierLabel}" showColon="true"
+              class="sapUiTinyMarginEnd" />
+            <Text text="{SupplierName}" />
+          </HBox>
+        </VBox>
+
+        <VBox class="sapUiLargeMarginEnd sapUiSmallMarginBottom">
+          <Title
+            text="{i18n>productStockStatusLabel}"
+            class="sapUiTinyMarginBottom" />
+          <ObjectStatus text="{StockStatus}"
+            state="{
+              path: 'StockStatus', 
+              formatter: '.formatter.formatStockStatus'
+            }"
+            class="sapMObjectStatusLarge"
+          />
+        </VBox>
+
+        <VBox class="sapUiLargeMarginEnd">
+          <Title text="{i18n>productPriceLabel}" class="sapUiTinyMarginBottom" />
+          <ObjectNumber number="{Price}"
+            unit="USD"
+            emphasized="false"
+            class="sapMObjectNumberLarge" />
+        </VBox>
+      </FlexBox>
+    </uxap:headerContent>
+
+    <uxap:sections>
+      <uxap:ObjectPageSection titleUppercase="false" title="{i18n>productInfoSectionTitle}">
+        <uxap:subSections>
+          <uxap:ObjectPageSubSection title="{i18n>productInfoSectionTitle}" showTitle="false">
+            <uxap:blocks>
+              <VBox id="productDetailsContainer">
+              </VBox>
+            </uxap:blocks>
+          </uxap:ObjectPageSubSection>
+        </uxap:subSections>
+      </uxap:ObjectPageSection>
+
+      <uxap:ObjectPageSection titleUppercase="false" title="{i18n>salesOrdersSectionTitle}">
+        <uxap:subSections>
+          <uxap:ObjectPageSubSection title="{i18n>salesOrdersSectionTitle}" showTitle="false">
+            <uxap:blocks>
+              <!-- Order Table -->
+              <t:Table
+                id="productOrdersTable"
+                rows="{/SalesOrders}"
+                rowSelectionChange=".onRowSelectionChange"
+                selectionMode="None"
+                alternateRowColors="true"
+                sort=".onOrderTableSort"
+              >
+
+                <t:rowMode>
+                  <rowmode:Auto
+                    minRowCount="{appViewModel>/tableRowCount/salesOrderTableRowCount}" />
+                </t:rowMode>
+
+                <t:noData>
+                  <IllustratedMessage enableVerticalResponsiveness="true"
+                    illustrationType="sapIllus-NoData">
+                  </IllustratedMessage>
+                </t:noData>
+
+                <t:extension>
+                  <OverflowToolbar style="Standard">
+                    <Title
+                      text="{i18n>salesOrdersTableTitle}"
+                    />
+                    <ToolbarSpacer />
+
+                    <SearchField
+                      width="17.5rem"
+                      search=".onOrderSearchPress"
+                      placeholder="{i18n>orderSearchPlaceholder}">
+
+                    </SearchField>
+                  </OverflowToolbar>
+                </t:extension>
+
+                <t:columns>
+                  <!-- OrderId -->
+                  <t:Column
+                    hAlign="Begin"
+                    sortProperty="OrderId"
+                    width="10rem"
+                  >
+                    <Label text="{i18n>orderTableIdColumn}" />
+                    <t:template>
+                      <Text text="{OrderId}" />
+                    </t:template>
+                  </t:Column>
+
+                  <!-- Customer -->
+                  <t:Column
+                    hAlign="Begin"
+                    sortProperty="Customer"
+                    width="15rem"
+                  >
+                    <Label text="{i18n>orderTableCustomerColumn}" />
+                    <t:template>
+                      <Text text="{Customer}" />
+                    </t:template>
+                  </t:Column>
+
+                  <!-- Quantity -->
+                  <t:Column
+                    hAlign="End"
+                    sortProperty="Quantity"
+                    width="10rem"
+                  >
+                    <Label text="{i18n>orderTableQuantityColumn}" />
+                    <t:template>
+                      <Text text="{Quantity}" />
+                    </t:template>
+                  </t:Column>
+
+                  <!-- OrderDate -->
+                  <t:Column
+                    hAlign="End"
+                    sortProperty="OrderDate"
+                    width="12rem"
+                  >
+                    <Label text="{i18n>orderTableOrderDateColumn}" />
+                    <t:template>
+                      <Text
+                        text="{ 
+                          path: 'OrderDate', 
+                          type: 'sap.ui.model.type.Date', 
+                          formatOptions: { pattern: 'yyyy-MM-dd' } 
+                        }" />
+                    </t:template>
+                  </t:Column>
+
+                  <!-- Status -->
+                  <t:Column
+                    hAlign="Begin"
+                    sortProperty="Status"
+                    width="12rem"
+                  >
+                    <Label text="{i18n>orderTableStatusColumn}" />
+                    <t:template>
+                      <ObjectStatus
+                        text="{Status}"
+                        state="{
+                          path: 'Status',
+                          formatter: '.formatter.formatOrderStatus'
+                        }" />
+                    </t:template>
+                  </t:Column>
+
+                  <!-- ShippingCost -->
+                  <t:Column
+                    hAlign="End"
+                    sortProperty="ShippingCost"
+                    width="10rem"
+                  >
+                    <Label text="{i18n>orderTableShippingCostColumn}" />
+                    <t:template>
+                      <ObjectNumber
+                        number="{path: 'ShippingCost'}"
+                        unit="USD"
+                        emphasized="false"
+                        textAlign="End"
+                      />
+                    </t:template>
+                  </t:Column>
+
+                  <!-- TotalPrice -->
+                  <t:Column
+                    hAlign="End"
+                    sortProperty="TotalPrice"
+                    width="10rem"
+                  >
+                    <Label text="{i18n>orderTableTotalPriceColumn}" />
+                    <t:template>
+                      <ObjectNumber
+                        number="{path: 'TotalPrice'}"
+                        unit="USD"
+                        emphasized="false"
+                        textAlign="End"
+                      />
+                    </t:template>
+                  </t:Column>
+                </t:columns>
+              </t:Table>
+            </uxap:blocks>
+          </uxap:ObjectPageSubSection>
+        </uxap:subSections>
+      </uxap:ObjectPageSection>
+    </uxap:sections>
+
+    <uxap:footer>
+      <Toolbar>
+        <ToolbarSpacer />
+        <Button
+          id="productSaveButton"
+          text="{i18n>saveButtonText}"
+          press=".onSaveChangesPress"
+          type="Emphasized"
+          visible="{appViewModel>/editMode}"
+          class="sapUiSmallMarginEnd" />
+        <Button
+          id="productCancelButton"
+          text="{i18n>cancelButtonText}"
+          type="Default"
+          visible="{appViewModel>/editMode}"
+          press=".onCancelChangesPress" />
+      </Toolbar>
+    </uxap:footer>
+  </uxap:ObjectPageLayout>
+</mvc:View>
