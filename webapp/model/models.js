@@ -17,13 +17,13 @@ sap.ui.define(
         return new JSONModel({
           productFormData: {
             Name: "",
-            Price: 0,
+            Price: null,
             Category: "",
             Brand: "",
             SupplierName: "",
             ReleaseDate: new Date(),
             StockStatus: Constants.oStockStatuses.IN_STOCK,
-            Rating: 0,
+            Rating: null,
           },
 
           selectedProductIds: [],

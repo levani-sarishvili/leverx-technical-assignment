@@ -36,11 +36,17 @@
           text="{ 
             path: 'ReleaseDate', 
             type: 'sap.ui.model.type.Date', 
-            formatOptions: { pattern: 'yyyy-MM-dd' } }" />
+            formatOptions: { 
+              pattern: 'yyyy-MM-dd' 
+            } 
+          }" />
 
         <Label text="{i18n>productStockStatusLabel}" />
         <ObjectStatus text="{StockStatus}"
-          state="{path: 'Products>StockStatus', formatter: '.formatter.formatStockStatus'}"
+          state="{
+            path: 'Products>StockStatus', 
+            formatter: '.formatter.formatStockStatus'
+          }"
         />
 
         <Label text="{i18n>productRatingLabel}" />
