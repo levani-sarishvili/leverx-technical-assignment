@@ -137,10 +137,7 @@
             type: 'sap.ui.model.type.Date',
             formatOptions: {
               pattern: 'yyyy-MM-dd'
-            },
-            constraints: {
-              required: true
-            } 
+            }
           }"
           required="true" />
 

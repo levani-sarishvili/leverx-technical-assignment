@@ -33,6 +33,7 @@
 		"karma-chrome-launcher": "^3.2.0",
 		"karma-coverage": "^2.2.1",
 		"karma-ui5": "^4.0.1",
+		"qunit": "^2.24.1",
 		"rimraf": "^6.0.1",
 		"ui5-middleware-livereload": "^3.0.3",
 		"wdio-ui5-service": "^2.1.1"
