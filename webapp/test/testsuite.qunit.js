@@ -14,6 +14,11 @@ sap.ui.define(function () {
       ui5: {
         theme: "sap_horizon",
       },
+      coverage: {
+        only: null,
+        never: null,
+        branchTracking: false,
+      },
       loader: {
         paths: {
           "test-resources/levani/sarishvili": "../",
@@ -21,7 +26,7 @@ sap.ui.define(function () {
       },
     },
     tests: {
-      "unit/MyTest": {
+      "unit/AllTests": {
         title: "Unit tests for levani/sarishvili",
       },
     },
