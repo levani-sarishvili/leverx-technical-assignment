@@ -49,7 +49,9 @@ sap.ui.define(
         }
 
         return aFields.map((oField) => {
-          const bIsNumericField = oField.type === Constants.oDataTypes.NUMBER;
+          const bIsNumericField =
+            oField.type.toLowerCase() ===
+            Constants.oDataTypes.NUMBER.toLowerCase();
           return new Filter(
             oField.label,
             bIsNumericField ? FilterOperator.EQ : FilterOperator.Contains,
