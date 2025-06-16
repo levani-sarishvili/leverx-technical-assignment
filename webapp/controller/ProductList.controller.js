@@ -218,6 +218,7 @@ sap.ui.define(
         });
 
         oAppViewModel.setProperty("/activeFilters", aActiveFilters);
+        console.log("aActiveFilters", aActiveFilters);
 
         this._createActiveFiltersLabel();
       },
@@ -235,8 +236,12 @@ sap.ui.define(
         const oAppViewModel = oView.getModel("appViewModel");
         const aActiveFilters = oAppViewModel.getProperty("/activeFilters");
 
-        // If no filters active then return
+        // If no filters active then set label text to "No filters active"
         if (!aActiveFilters || aActiveFilters.length === 0) {
+          this.oExpandedLabel.setText(
+            this.getTranslatedText("noFiltersActive")
+          );
+          this.oSnappedLabel.setText(this.getTranslatedText("noFiltersActive"));
           return;
         }
 
