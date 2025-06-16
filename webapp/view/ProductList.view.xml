@@ -22,24 +22,14 @@
 
         <f:expandedContent>
           <Label
-            text="{
-              parts: [
-                { path: 'appViewModel>/activeFilters' },
-                { value: 'expanded' }
-              ],
-              formatter: '.formatter.formatActiveFilters'
-            }" />
+            id="expandedLabel"
+            text="{i18n>noFiltersActive}" />
 
         </f:expandedContent>
         <f:snappedContent>
           <Label
-            text="{
-              parts: [
-                { path: 'appViewModel>/activeFilters' },
-                { value: 'snapped' }
-              ],
-              formatter: '.formatter.formatActiveFilters'
-            }" />
+            id="snappedLabel"
+            text="{i18n>noFiltersActive}" />
 
         </f:snappedContent>
       </f:DynamicPageTitle>
@@ -53,7 +43,7 @@
           search=".onFilterBarSearch"
         >
           <fb:filterGroupItems>
-            <fb:FilterGroupItem name="Name" groupName="Group1"
+            <fb:FilterGroupItem name="Search" groupName="Group1"
               visibleInFilterBar="true">
               <fb:control>
                 <SearchField
@@ -243,7 +233,10 @@
                   text="{ 
                   path: 'ReleaseDate', 
                   type: 'sap.ui.model.type.Date', 
-                  formatOptions: { pattern: 'yyyy-MM-dd' } }" />
+                  formatOptions: { 
+                    pattern: 'yyyy-MM-dd' 
+                  } 
+                }" />
               </t:template>
             </t:Column>
 
@@ -256,7 +249,10 @@
               <Label text="{i18n>productTableStockStatusColumn}" />
               <t:template>
                 <ObjectStatus text="{StockStatus}"
-                  state="{path: 'StockStatus', formatter: '.formatter.formatStockStatus'}"
+                  state="{
+                    path: 'StockStatus', 
+                    formatter: '.formatter.formatStockStatus'
+                  }"
                 />
               </t:template>
             </t:Column>

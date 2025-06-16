@@ -4,27 +4,6 @@ sap.ui.define(
     "use strict";
 
     return {
-      formatActiveFilters: function (aActiveFilters, sMode) {
-        if (!aActiveFilters || aActiveFilters.length === 0) {
-          return "No filters active";
-        }
-
-        const iCount = aActiveFilters.length;
-
-        // Expanded mode
-        if (sMode === Constants.oHeaderModes.EXPANDED) {
-          return iCount === 1 ? "1 filter active" : `${iCount} filters active`;
-        }
-        // Snapped mode
-        if (sMode === Constants.oHeaderModes.SNAPPED) {
-          return iCount === 1
-            ? `1 filter active: ${aActiveFilters[0]}`
-            : `${iCount} filters active: ${aActiveFilters.join(", ")}`;
-        }
-
-        return `${iCount} filter${iCount > 1 ? "s" : ""} active`;
-      },
-
       /**
        * Maps an order status to a semantic color.
        * @param {string} sStatus - The order status to map.

@@ -28,8 +28,8 @@
               minLength: 3,
               maxLength: 100,
               required: true
-             } 
-            }"
+            } 
+          }"
           placeholder="{i18n>productNameInputPlaceholder}"
           type="Text"
           required="true" />
@@ -42,10 +42,10 @@
             type: 'sap.ui.model.type.Integer',
             constraints: {
               minimum: 1,
-              maximum: 100000,
+              maximum: 10000,
               required: true
-              }
-            }"
+            }
+          }"
           placeholder="{i18n>productPriceInputPlaceholder}"
           type="Number"
           required="true" />
@@ -62,12 +62,12 @@
             constraints: {
               required: true,
               minLength: 2
-             } 
-            }"
+            } 
+          }"
           items="{
-							path: '/ProductCategories',
-							sorter: { path: 'Name' }
-						}">
+            path: '/ProductCategories',
+            sorter: { path: 'Name' }
+					}">
           <core:Item key="{Key}" text="{Name}" />
         </Select>
 
@@ -80,11 +80,11 @@
           selectedKey="{
             path: 'appViewModel>StockStatus',
             type: 'sap.ui.model.type.String'          
-            }"
+          }"
           items="{
-							path: '/ProductStockStatuses',
-							sorter: { path: 'Name' }
-						}">
+            path: '/ProductStockStatuses',
+            sorter: { path: 'Name' }
+					}">
           <core:Item key="{Key}" text="{Name}" />
         </Select>
 
@@ -100,12 +100,12 @@
             constraints: {
               required: true,
               minLength: 2
-             } 
-            }"
+            } 
+          }"
           items="{
-							path: '/ProductBrands',
-							sorter: { path: 'Name' }
-						}">
+            path: '/ProductBrands',
+            sorter: { path: 'Name' }
+					}">
           <core:Item key="{Key}" text="{Name}" />
         </Select>
 
@@ -119,8 +119,8 @@
               minLength: 3,
               maxLength: 100,
               required: true
-             } 
-            }"
+            } 
+          }"
           placeholder="{i18n>productSupplierInputPlaceholder}"
           type="Text"
           required="true" />
@@ -151,8 +151,8 @@
               minimum: 1, 
               maximum: 5,
               required: true 
-              }
-            }"
+            }
+          }"
           placeholder="{i18n>productRatingInputPlaceholder}"
           type="Number"
           required="true" />

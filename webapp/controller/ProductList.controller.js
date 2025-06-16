@@ -45,6 +45,9 @@ sap.ui.define(
       onInit: function () {
         // Create app state model
         this.getView().setModel(models.createAppViewModel(), "appViewModel");
+
+        this.oExpandedLabel = this.getView().byId("expandedLabel");
+        this.oSnappedLabel = this.getView().byId("snappedLabel");
       },
 
       /**
@@ -215,6 +218,52 @@ sap.ui.define(
         });
 
         oAppViewModel.setProperty("/activeFilters", aActiveFilters);
+
+        this._createActiveFiltersLabel();
+      },
+
+      /**
+       * Creates the active filter label text based on the active filters array in the app state model.
+       * If one filter is active, sets the text to "1 filter active" and formats the label text
+       * with the first filter name when snapped.
+       * If multiple filters are active, sets the text to "x filters active" and formats the label text
+       * with the number of filters and the comma-separated list of filter names when snapped.
+       * @private
+       */
+      _createActiveFiltersLabel: function () {
+        const oView = this.getView();
+        const oAppViewModel = oView.getModel("appViewModel");
+        const aActiveFilters = oAppViewModel.getProperty("/activeFilters");
+
+        // If no filters active then return
+        if (!aActiveFilters || aActiveFilters.length === 0) {
+          return;
+        }
+
+        const iCount = aActiveFilters.length;
+
+        // If 1 filter is active
+        if (iCount === 1) {
+          this.oExpandedLabel.setText(
+            this.getTranslatedText("oneFilterActive")
+          );
+          this.oSnappedLabel.setText(
+            this.getTranslatedText("oneFilterActiveSnapped", [
+              aActiveFilters[0],
+            ])
+          );
+        } else {
+          // If multiple filters are active
+          this.oExpandedLabel.setText(
+            this.getTranslatedText("multipleFiltersActive", [iCount])
+          );
+          this.oSnappedLabel.setText(
+            this.getTranslatedText("multipleFiltersActiveSnapped", [
+              iCount,
+              aActiveFilters.join(", "),
+            ])
+          );
+        }
       },
 
       /**
@@ -528,16 +577,10 @@ sap.ui.define(
         const oView = this.getView();
         const oAppViewModel = oView.getModel("appViewModel");
 
-        oAppViewModel.setProperty("/productFormData", {
-          Name: "",
-          Price: null,
-          Category: "",
-          Brand: "",
-          SupplierName: "",
-          ReleaseDate: new Date(),
-          StockStatus: Constants.oStockStatuses.IN_STOCK,
-          Rating: null,
-        });
+        oAppViewModel.setProperty(
+          "/productFormData",
+          models.getInitialProductFormData()
+        );
       },
     });
   }
