@@ -577,16 +577,10 @@ sap.ui.define(
         const oView = this.getView();
         const oAppViewModel = oView.getModel("appViewModel");
 
-        oAppViewModel.setProperty("/productFormData", {
-          Name: "",
-          Price: null,
-          Category: "",
-          Brand: "",
-          SupplierName: "",
-          ReleaseDate: new Date(),
-          StockStatus: Constants.oStockStatuses.IN_STOCK,
-          Rating: null,
-        });
+        oAppViewModel.setProperty(
+          "/productFormData",
+          models.getInitialProductFormData()
+        );
       },
     });
   }
