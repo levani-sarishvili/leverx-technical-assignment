@@ -14,12 +14,12 @@
         <uxap:breadcrumbs>
           <Breadcrumbs separatorStyle="{/selected}"
             currentLocationText="{i18n>breadcrumbProductDetails}">
-            <Link text="{i18n>breadcrumbHome}" press=".onNavToHome" />
+            <Link id="navigateToHome" text="{i18n>breadcrumbHome}" press=".onNavToHome" />
           </Breadcrumbs>
         </uxap:breadcrumbs>
 
         <uxap:expandedHeading>
-          <Title text="{Name}" level="H1" />
+          <Title id="productDetailsTitle" text="{Name}" level="H1" />
         </uxap:expandedHeading>
 
         <uxap:snappedHeading>

@@ -47,6 +47,7 @@
               visibleInFilterBar="true">
               <fb:control>
                 <SearchField
+                  id="searchField"
                   placeholder="{i18n>searchFilterPlaceholder}"
                   search=".onProductSearchPress"
                 />
@@ -143,6 +144,7 @@
 
               <ToolbarSpacer />
               <Button
+                id="createProductButton"
                 text="{i18n>createButtonText}"
                 type="Transparent"
                 press=".onCreateProductPress" />

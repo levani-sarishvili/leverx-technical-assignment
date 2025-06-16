@@ -8,7 +8,7 @@ sap.ui.define(
 
     QUnit.module("controller/BaseController.js");
 
-    const mockFields = [
+    const oMockFields = [
       { label: "title", type: "STRING" },
       { label: "amount", type: "NUMBER" },
     ];
@@ -17,7 +17,7 @@ sap.ui.define(
 
     // Text for empty query
     QUnit.test("Returns empty array when query is empty", function (assert) {
-      const result = controller.createTableSearchFilters("", mockFields);
+      const result = controller.createTableSearchFilters("", oMockFields);
       assert.deepEqual(result, [], "Empty query returns []");
     });
 
