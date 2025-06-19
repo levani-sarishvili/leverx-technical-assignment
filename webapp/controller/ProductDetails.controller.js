@@ -24,7 +24,6 @@ sap.ui.define(
     "use strict";
 
     return BaseController.extend("webapp.controller.ProductDetails", {
-      // Formatters
       formatter: formatter,
 
       /**
@@ -256,7 +255,12 @@ sap.ui.define(
       /**
        * Handles the cancel changes button press event.
        *
-       * Cancels the editing and goes back to the product details view.
+       * Retrieves the current product form data and the original product data for the selected product.
+       * If the data has not been modified, toggles the view back to display mode.
+       * If modifications are detected, shows a confirmation dialog to confirm discarding changes.
+       * On confirmation, resets the product form data to its original state and toggles the view back to display mode.
+       *
+       * @param {sap.ui.base.Event} oEvent - The event triggered when the cancel changes button is pressed.
        * @public
        */
       onCancelChangesPress: function (oEvent) {
@@ -300,7 +304,7 @@ sap.ui.define(
        * Checks if the product details have been modified.
        *
        * Compares the original product data with the modified product form data.
-       * Returns true if npm the data has been modified, false otherwise.
+       * Returns true if the data has been modified, false otherwise.
        * Also returns true if the productFormData is null or undefined.
        *
        * @param {object} oProductData - Original product data.
@@ -341,6 +345,10 @@ sap.ui.define(
           {
             onClose: (sAction) => {
               if (sAction === MessageBox.Action.OK) {
+                if (sAction !== MessageBox.Action.OK) {
+                  return;
+                }
+
                 const aProducts = oProductModel.getProperty("/Products");
                 const aSalesOrders = oProductModel.getProperty("/SalesOrders");
 
@@ -453,7 +461,6 @@ sap.ui.define(
        * @param {object} oProduct - The product object to be bound to the form model.
        * @private
        */
-
       _bindSelectedProductToForm: function (oProduct) {
         // Deep copy to avoid reference to original object
         const oClonedProduct = JSON.parse(JSON.stringify(oProduct));

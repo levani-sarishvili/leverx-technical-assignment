@@ -49,34 +49,12 @@ sap.ui.define(
         }
 
         return aFields.map((oField) => {
-          const bIsNumericField =
-            oField.type.toLowerCase() ===
-            Constants.oDataTypes.NUMBER.toLowerCase();
+          const bIsNumericField = oField.type === Constants.oDataTypes.NUMBER;
           return new Filter(
             oField.label,
             bIsNumericField ? FilterOperator.EQ : FilterOperator.Contains,
             bIsNumericField ? parseFloat(sQuery) : sQuery
           );
-        });
-      },
-
-      /**
-       * Resets the validation state and message of all controls in the form.
-       * Each control in the form is checked if it has the setValueState and setValueStateText methods.
-       * If a control has these methods, its validation state is reset to "None" and its validation message is cleared.
-       * @param {sap.ui.core.Control} oForm - The form to reset the validations for.
-       * @public
-       */
-      resetFormValidations: function (oForm) {
-        const aControls = oForm.getContent();
-
-        aControls.forEach(function (oControl) {
-          if (oControl.setValueState) {
-            oControl.setValueState(coreLibrary.ValueState.None);
-          }
-          if (oControl.setValueStateText) {
-            oControl.setValueStateText("");
-          }
         });
       },
 
@@ -121,10 +99,10 @@ sap.ui.define(
               const oType = oBinding.getType();
               const sValue = oControl.getValue();
               oType.validateValue(sValue);
-              oControl.setValueState("None");
+              oControl.setValueState(coreLibrary.ValueState.None);
               oControl.setValueStateText("");
             } catch (oException) {
-              oControl.setValueState("Error");
+              oControl.setValueState(coreLibrary.ValueState.Error);
               oControl.setValueStateText(oException.message);
               bIsFormValid = false;
             }
@@ -138,10 +116,10 @@ sap.ui.define(
               const sKey = oControl.getSelectedKey();
 
               oType.validateValue(sKey);
-              oControl.setValueState("None");
+              oControl.setValueState(coreLibrary.ValueState.None);
               oControl.setValueStateText("");
             } catch (oException) {
-              oControl.setValueState("Error");
+              oControl.setValueState(coreLibrary.ValueState.Error);
               oControl.setValueStateText(oException.message);
               bIsFormValid = false;
             }

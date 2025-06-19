@@ -9,8 +9,8 @@ sap.ui.define(
     QUnit.module("controller/BaseController.js");
 
     const oMockFields = [
-      { label: "title", type: "STRING" },
-      { label: "amount", type: "NUMBER" },
+      { label: "title", type: "String" },
+      { label: "amount", type: "Number" },
     ];
 
     const controller = new BaseController();
@@ -31,9 +31,9 @@ sap.ui.define(
     );
 
     // Text for STRING field
-    QUnit.test("Creates correct filter for STRING field", function (assert) {
+    QUnit.test("Creates correct filter for String field", function (assert) {
       const result = controller.createTableSearchFilters("apple", [
-        { label: "name", type: "STRING" },
+        { label: "name", type: "String" },
       ]);
       assert.equal(result.length, 1, "Should return 1 filter");
       assert.equal(result[0].sPath, "name", "Should use correct path");
@@ -46,9 +46,9 @@ sap.ui.define(
     });
 
     // Text for NUMBER field
-    QUnit.test("Creates correct filter for NUMBER field", function (assert) {
+    QUnit.test("Creates correct filter for Number field", function (assert) {
       const result = controller.createTableSearchFilters("42", [
-        { label: "price", type: "NUMBER" },
+        { label: "price", type: "Number" },
       ]);
       assert.equal(result.length, 1, "Should return 1 filter");
       assert.equal(result[0].sPath, "price", "Should use correct path");
