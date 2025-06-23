@@ -8,8 +8,7 @@
   xmlns:t="sap.ui.table"
   xmlns:rowmode="sap.ui.table.rowmodes"
   core:require="{formatMessage: 'sap/base/strings/formatMessage'}"
-  xmlns:core="sap.ui.core"
-  xmlns:custom="levani.sarishvili.controls">
+  xmlns:core="sap.ui.core">
 
   <f:DynamicPage
     preserveHeaderStateOnScroll="false"
@@ -50,19 +49,6 @@
                   placeholder="{i18n>searchFilterPlaceholder}"
                   search=".onProductSearchPress"
                 />
-              </fb:control>
-            </fb:FilterGroupItem>
-
-            <fb:FilterGroupItem name="Custom" groupName="Group1"
-              visibleInFilterBar="true">
-              <fb:control>
-                <custom:LabeledInput
-                  label="First Name"
-                  placeholder="Enter your name"
-                  required="true"
-                  change="onInputChange"
-                />
-
               </fb:control>
             </fb:FilterGroupItem>
 

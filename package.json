@@ -9,7 +9,7 @@
     "test": "ui5 serve --open test/testsuite.qunit.html"
   },
   "devDependencies": {
-    "@ui5/cli": "^4.0.15",
+    "@ui5/cli": "^4.0.19",
     "@ui5/middleware-code-coverage": "^2.0.0",
     "@wdio/cli": "^8.44.1",
     "@wdio/local-runner": "^8.44.1",
